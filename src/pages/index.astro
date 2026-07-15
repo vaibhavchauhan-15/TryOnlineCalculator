@@ -5,18 +5,51 @@ import CategoryCard from '../components/CategoryCard.astro';
 import CalculatorCard from '../components/CalculatorCard.astro';
 import { categories } from '../lib/categories';
 import { allCalculators, popularCalculators, calculatorsByCategory } from '../lib/calculators';
-import { websiteSchema } from '../lib/seo';
+import { websiteSchema, organizationSchema, itemListSchema, faqPageSchema } from '../lib/seo';
+import HomeFaq from '../components/HomeFaq.astro';
+import { homeFaqItems } from '../lib/faq';
 
 const popular = popularCalculators(8);
 const total = allCalculators.length;
 const featured = ['finance', 'health', 'math'] as const;
+
+const homeKeywords = [
+  'calculator',
+  'online calculator',
+  'calculator online',
+  'free calculator',
+  'calculator app',
+  'scientific calculator',
+  'loan calculator',
+  'emi calculator',
+  'mortgage calculator',
+  'bmi calculator',
+  'age calculator',
+  'percentage calculator',
+  'investment calculator',
+  'sip calculator',
+  'compound interest calculator',
+  'interest calculator',
+  'gpa calculator',
+  'grade calculator',
+  'calorie calculator',
+  'salary calculator',
+  'date calculator',
+  'math solver',
+  'unit converter',
+];
+
+const popularListSchema = itemListSchema(
+  popular.map((c) => ({ name: c.title, path: `/${c.category}/${c.slug}` })),
+);
 ---
 
 <Layout
-  title="Try Online Calculator — Free Calculators for Finance, Health & Math"
-  description={`Free, fast online calculators for finance, health, math, dates and more. ${total}+ tools including mortgage, BMI, loan, percentage and age calculators. No sign-up required.`}
+  title="Calculator — Free Online Calculator for Finance, Health & Math"
+  description={`Free online calculator hub with ${total}+ fast, accurate tools: mortgage, loan/EMI, SIP, BMI, calorie, percentage, scientific, GPA, age and compound interest calculators. No sign-up required.`}
   path="/"
-  jsonLd={websiteSchema()}
+  keywords={homeKeywords}
+  jsonLd={[websiteSchema(), organizationSchema(), popularListSchema, faqPageSchema(homeFaqItems)]}
 >
   <!-- Hero -->
   <section class="hero">
@@ -109,6 +142,120 @@ const featured = ['finance', 'health', 'math'] as const;
       </div>
     </div>
   </section>
+
+  <!-- Site pages — About, Contact, Privacy, Terms -->
+  <section class="container-page section">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">More</span>
+        <h2 class="section-title">About this site</h2>
+      </div>
+    </div>
+    <div class="grid-pages">
+      <a href="/about" class="page-card">
+        <span class="page-card-title">About us</span>
+        <span class="page-card-desc">Who we are and how our {total}+ free calculators work.</span>
+        <span class="page-card-arrow" aria-hidden="true">→</span>
+      </a>
+      <a href="/contact" class="page-card">
+        <span class="page-card-title">Contact us</span>
+        <span class="page-card-desc">Report a bug or request a calculator you need.</span>
+        <span class="page-card-arrow" aria-hidden="true">→</span>
+      </a>
+      <a href="/privacy" class="page-card">
+        <span class="page-card-title">Privacy Policy</span>
+        <span class="page-card-desc">Your calculator inputs never leave your device.</span>
+        <span class="page-card-arrow" aria-hidden="true">→</span>
+      </a>
+      <a href="/terms" class="page-card">
+        <span class="page-card-title">Terms &amp; Conditions</span>
+        <span class="page-card-desc">The terms for using our free online tools.</span>
+        <span class="page-card-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- SEO content — long-form, keyword-rich copy about the tool -->
+  <section class="container-page section">
+    <div class="seo-prose">
+      <h2>The free online calculator for everyday math and big decisions</h2>
+      <p>
+        Try Online Calculator is a free online calculator hub that brings every calculation you
+        need into one fast, clutter-free place. Instead of hunting for a different website every
+        time, you get {total}+ purpose-built tools — from a simple online calculator for quick
+        sums to a full <a href="/math/scientific-calculator">scientific calculator</a> for
+        trigonometry, logarithms and exponents. It behaves like a proper calculator app right in
+        your tab: no install, no download, and no account. Every calculator runs instantly in your
+        browser, works on phones and desktops, and never asks you to share your data.
+      </p>
+
+      <h3>Finance, loan and mortgage calculators</h3>
+      <p>
+        Planning money decisions is easier with the right numbers in front of you. Use the
+        <a href="/finance/mortgage-calculator">mortgage calculator</a> to estimate a monthly home
+        payment with principal, interest, tax and insurance, or check what you can afford before
+        you shop. The <a href="/finance/loan-calculator">loan calculator</a> doubles as an EMI
+        calculator, working out the equated monthly instalment on any personal loan, while the
+        <a href="/finance/auto-loan-calculator">auto loan calculator</a> and
+        <a href="/finance/car-payment-calculator">car payment calculator</a> show the true cost of
+        financing a vehicle, interest included. Looking further ahead? The
+        <a href="/finance/investment-calculator">investment calculator</a> and
+        <a href="/finance/compound-interest-calculator">compound interest calculator</a> work as an
+        SIP calculator too, projecting how regular monthly deposits and compounding grow your
+        savings over time, while the
+        <a href="/finance/interest-calculator">interest calculator</a> shows exactly how much
+        interest you pay or earn on any balance.
+      </p>
+
+      <h3>Health, BMI and calorie calculators</h3>
+      <p>
+        Take charge of your wellbeing with trusted health tools. The free
+        <a href="/health/bmi-calculator">BMI calculator</a> tells you where your body mass index
+        sits, and the <a href="/health/calorie-calculator">calorie calculator</a> and
+        <a href="/health/tdee-calculator">TDEE calculator</a> estimate the daily energy you burn so
+        you can plan weight loss, maintenance or gain. Pair them with the
+        <a href="/health/bmr-calculator">BMR</a> and <a href="/health/macro-calculator">macro</a>
+        calculators to fine-tune nutrition. Every formula follows the same equations used by
+        clinicians and coaches, and each result page explains what the numbers mean.
+      </p>
+
+      <h3>Education, GPA and grade calculators</h3>
+      <p>
+        Students rely on our <a href="/education/gpa-calculator">GPA calculator</a> to track college
+        performance, the <a href="/education/grade-calculator">grade calculator</a> to score a test
+        or assignment, and the <a href="/education/final-grade-calculator">final grade calculator</a>
+        to find out exactly what they need on the final exam to hit a target. It removes the
+        last-minute guesswork before results day.
+      </p>
+
+      <h3>Math, dates, salary and more</h3>
+      <p>
+        For homework and quick checks, use our tools as a lightweight math solver: the
+        <a href="/math/percentage-calculator">percentage calculator</a>,
+        <a href="/math/fraction-calculator">fraction calculator</a> and
+        <a href="/math/average-calculator">average calculator</a> break every step down for you.
+        Need a date answer? The
+        <a href="/date-time/age-calculator">age calculator</a> gives your exact age by date of
+        birth, and the <a href="/date-time/date-difference-calculator">date calculator</a> and
+        working-days tools measure any span between two dates. Working
+        professionals use the <a href="/salary/salary-calculator">salary calculator</a> and
+        <a href="/salary/paycheck-calculator">paycheck calculator</a> to convert between hourly,
+        weekly, monthly and annual pay and estimate take-home earnings, while shopping tools handle
+        discounts, tips and sales tax. Need to switch units instead? The all-in-one
+        <a href="/unit-converter">unit converter</a> handles length, weight, temperature, speed,
+        volume, area, currency and BMI in one place.
+      </p>
+
+      <p>
+        Whether you need a scientific calculator, a mortgage calculator, a percentage calculator or
+        a simple free calculator for everyday sums, everything here is fast, accurate and free to
+        use. Bookmark Try Online Calculator and keep the calculator you need one click away.
+      </p>
+    </div>
+  </section>
+
+  <!-- FAQ — SEO-friendly, JSON-LD FAQPage schema injected via Layout -->
+  <HomeFaq />
 </Layout>
 
 <style>
@@ -314,9 +461,55 @@ const featured = ['finance', 'health', 'math'] as const;
   .trust-item h3 { font-size: 16px; margin: 0 0 0.375rem; }
   .trust-item p { margin: 0; font-size: 14px; line-height: 1.6; color: var(--color-mute); }
 
+  /* ---------- Site pages grid ---------- */
+  .grid-pages { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+  .page-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    padding: 1.25rem;
+    background-color: var(--color-canvas);
+    box-shadow: var(--shadow-card);
+    border-radius: var(--radius-md);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .page-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-soft); }
+  .page-card-title { font-size: 15px; font-weight: 600; color: var(--color-ink); letter-spacing: -0.01em; }
+  .page-card-desc { font-size: 13px; line-height: 1.5; color: var(--color-mute); }
+  .page-card-arrow {
+    margin-top: 0.25rem;
+    font-size: 15px;
+    color: var(--color-mute);
+    transition: transform 0.15s ease, color 0.15s ease;
+  }
+  .page-card:hover .page-card-arrow { color: var(--color-ink); transform: translateX(3px); }
+
+  /* ---------- Long-form SEO copy ---------- */
+  .seo-prose { max-width: 72ch; }
+  .seo-prose h2 {
+    font-size: clamp(1.375rem, 3vw, 1.75rem);
+    letter-spacing: -0.02em;
+    margin: 0 0 1rem;
+  }
+  .seo-prose h3 {
+    font-size: 1.125rem;
+    letter-spacing: -0.01em;
+    margin: 1.75rem 0 0.5rem;
+  }
+  .seo-prose p {
+    margin: 0 0 1rem;
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--color-body);
+  }
+  .seo-prose a { color: var(--color-link); }
+  .seo-prose a:hover { text-decoration: underline; }
+
   @media (max-width: 960px) {
     .grid-cards { grid-template-columns: repeat(2, 1fr); }
     .grid-categories { grid-template-columns: repeat(2, 1fr); }
+    .grid-pages { grid-template-columns: repeat(2, 1fr); }
   }
   @media (max-width: 720px) {
     .trust { grid-template-columns: 1fr; gap: 1.5rem; }
@@ -324,5 +517,6 @@ const featured = ['finance', 'health', 'math'] as const;
   @media (max-width: 460px) {
     .grid-cards { grid-template-columns: 1fr; }
     .grid-categories { grid-template-columns: 1fr; }
+    .grid-pages { grid-template-columns: 1fr; }
   }
 </style>

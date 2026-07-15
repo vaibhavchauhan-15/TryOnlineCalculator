@@ -6,7 +6,7 @@ import { getCalculator } from './calculators';
 import type { Values } from './types';
 import { renderResultsHTML } from './render';
 import { loadState, saveState, clearState } from './storage';
-import { createHistoryUI, copyWithFeedback } from './history';
+import { createHistoryUI, copyWithFeedback, wireCalculateButton } from './history';
 
 type FormEl = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
@@ -48,6 +48,32 @@ function collect(form: HTMLFormElement): Values {
     if (!(el.name in values) && el.type !== 'radio') values[el.name] = el.value;
   });
   return values;
+}
+
+// Build a compact "label: value" summary of the currently visible inputs so a
+// multi-field calculation is distinguishable in the history panel (e.g.
+// "Amount: 1000 · Rate: 5% · Years: 10"). Choice controls resolve to their
+// selected option's label; hidden/disabled fields are skipped.
+function summarizeInputs(form: HTMLFormElement): string {
+  const parts: string[] = [];
+  form.querySelectorAll<HTMLElement>('.field-group').forEach((group) => {
+    if (group.hidden) return;
+    const label = group.querySelector('.field-label')?.textContent?.trim() ?? '';
+    const control = group.querySelector<FormEl>('[name]');
+    if (!control || control.disabled) return;
+
+    let value = '';
+    if (control instanceof HTMLSelectElement) {
+      value = control.options[control.selectedIndex]?.textContent?.trim() ?? control.value;
+    } else if (control instanceof HTMLInputElement && control.type === 'radio') {
+      const checked = group.querySelector<HTMLInputElement>('input[type="radio"]:checked');
+      value = checked?.nextElementSibling?.textContent?.trim() ?? checked?.value ?? '';
+    } else {
+      value = control.value.trim();
+    }
+    if (value) parts.push(label ? `${label}: ${value}` : value);
+  });
+  return parts.join(' \u00B7 ');
 }
 
 function applyVisibility(root: HTMLElement, values: Values): void {
@@ -99,10 +125,18 @@ function mount(root: HTMLElement): void {
   };
 
   form.addEventListener('input', update);
-  form.addEventListener('change', () => {
-    update();
+
+  // History is recorded only when the user presses Calculate — the expression
+  // captures every visible input so multi-field runs stay meaningful later.
+  const commit = (): boolean => {
     const primary = readPrimary();
-    if (primary) history?.record(primary.label, primary.value);
+    if (!primary || !primary.value) return false;
+    const summary = summarizeInputs(form);
+    return history?.record(summary || primary.label, primary.value) ?? false;
+  };
+  wireCalculateButton(root, () => {
+    update();
+    return commit();
   });
 
   // The small copy icon on the headline result (re-rendered each update, so

@@ -306,6 +306,12 @@ html[data-theme='dark'] {
     box-shadow: 0 0 0 3px var(--color-link-soft);
   }
   .field::placeholder { color: var(--color-mute); }
+  /* On phones, bump inputs to 16px (prevents iOS auto-zoom on focus) and grow
+     the tap target so every calculator stays comfortable for small and older
+     hands alike. Applies site-wide: form fields, selects, search. */
+  @media (max-width: 640px) {
+    .field { height: 46px; font-size: 16px; }
+  }
 
   /* Inline body link */
   .link {
@@ -418,12 +424,21 @@ html[data-theme='dark'] {
   .breakdown-row dd { color: var(--color-body); margin: 0; font-variant-numeric: tabular-nums; font-weight: 500; }
 
   .calc-error {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
     padding: 0.875rem 1rem;
     font-size: 14px;
+    line-height: 1.5;
     color: var(--color-body);
     background-color: var(--color-canvas-soft);
     border: 1px dashed var(--color-hairline-strong);
     border-radius: var(--radius-md);
+  }
+  .calc-hint-ico {
+    flex: 0 0 auto;
+    margin-top: 1px;
+    color: var(--color-link);
   }
 
   /* ---- Result layout shell: splits a rich result into a summary column and
@@ -943,7 +958,36 @@ html[data-theme='dark'] {
   .calc-copy-action.is-copied { color: var(--color-success); box-shadow: inset 0 0 0 1px var(--color-success); }
   .calc-copy-action svg { display: block; }
 
-  /* ---- History panel ---- */
+  /* ---- Reusable "Calculate" primary action (shared by every calculator) ----
+     The single black-ink pill CTA. Clicking it commits the current result to
+     history; the read-out above still previews live as the user types. ---- */
+  .calc-calculate-row { display: flex; }
+  .calc-calculate {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    min-height: 48px;
+    padding: 0.625rem 1.25rem;
+    font-family: var(--font-sans);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-on-primary);
+    background-color: var(--color-primary);
+    border: none;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition: background-color 0.15s ease, transform 0.06s ease;
+  }
+  .calc-calculate:hover { background-color: color-mix(in srgb, var(--color-primary) 82%, var(--color-canvas-soft)); }
+  .calc-calculate:active { transform: scale(0.985); }
+  .calc-calculate:focus-visible { outline: 2px solid var(--color-link); outline-offset: 3px; }
+  .calc-calculate.is-saved { background-color: var(--color-success); }
+  .calc-calculate svg { display: block; }
+  .calc-calculate-ico { display: inline-flex; }
+
+  /* History panel */
   .calc-history { display: none; margin-top: 0.25rem; }
   .calc-history.has-entries { display: block; }
 

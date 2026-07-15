@@ -9,7 +9,18 @@ interface Props {
 const { variant = 'bar', placeholder = 'Search calculators…' } = Astro.props;
 
 const catNames = Object.fromEntries(categories.map((c) => [c.id, c.name]));
-const index = searchIndex().map((e) => ({ ...e, cat: catNames[e.category] }));
+const index = [
+  ...searchIndex().map((e) => ({ ...e, cat: catNames[e.category] })),
+  // Standalone tools that live outside the calculator registry.
+  {
+    slug: 'unit-converter',
+    title: 'Unit Converter',
+    path: '/unit-converter',
+    keywords:
+      'unit converter conversion calculator length weight temperature speed volume area currency bmi metric imperial measurement',
+    cat: 'Tools',
+  },
+];
 
 // Unique id per instance so the combobox → listbox association (aria-controls
 // and aria-activedescendant) stays valid when the component renders more than

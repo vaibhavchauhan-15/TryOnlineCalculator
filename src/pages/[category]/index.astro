@@ -16,12 +16,22 @@ const crumbs = [
   { name: 'Home', path: '/' },
   { name: category.name, path: category.path },
 ];
+
+// Build a keyword list from the calculators in this category (deduped).
+const catKeywords = Array.from(
+  new Set([
+    `${category.name.toLowerCase()} calculator`,
+    ...calcs.map((c) => c.title.toLowerCase()),
+    ...calcs.flatMap((c) => c.keywords ?? []),
+  ]),
+).slice(0, 20);
 ---
 
 <Layout
-  title={`${category.name} Calculators`}
+  title={`${category.name} Calculators — Free Online ${category.name} Tools`}
   description={category.description}
   path={category.path}
+  keywords={catKeywords}
   jsonLd={breadcrumbSchema(crumbs)}
 >
   <div class="container-page">

@@ -19,10 +19,19 @@ const toneClass: Record<string, string> = {
   default: '',
 };
 
+// A small neutral info glyph shown next to guidance / validation hints so the
+// message reads as a friendly nudge rather than a dead-end. Used for both the
+// empty state and any compute() message (which are guidance, never scary red).
+const HINT_ICON =
+  '<svg class="calc-hint-ico" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>';
+
+function hintHTML(msg: string): string {
+  return `<div class="result-shell"><div class="calc-error" role="status">${HINT_ICON}<span>${esc(msg)}</span></div></div>`;
+}
+
 export function renderResultsHTML(out: ComputeOutput): string {
-  if (out.error) return `<div class="result-shell"><div class="calc-error" role="status">${esc(out.error)}</div></div>`;
-  if (!out.results.length)
-    return `<div class="result-shell"><div class="calc-error" role="status">Enter values to see the result.</div></div>`;
+  if (out.error) return hintHTML(out.error);
+  if (!out.results.length) return hintHTML('Fill in the fields and your answer appears here instantly — no button to press.');
 
   const primary = out.results.find((r) => r.primary) ?? out.results[0];
   const rest = out.results.filter((r) => r !== primary);

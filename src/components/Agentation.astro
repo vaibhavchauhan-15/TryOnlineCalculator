@@ -1,0 +1,36 @@
+---
+/**
+ * Agentation — visual feedback tool for AI coding agents.
+ *
+ * This is a development-only overlay. The client script below is guarded by
+ * `import.meta.env.DEV`, so Vite dead-code-eliminates the whole block (and the
+ * dynamic imports of react/react-dom/agentation) from production builds.
+ * Nothing here ships to the production bundle.
+ *
+ * Docs: https://agentation.com
+ */
+---
+
+<script>
+  if (import.meta.env.DEV) {
+    (async () => {
+      const [React, ReactDOM, { Agentation }] = await Promise.all([
+        import('react'),
+        import('react-dom/client'),
+        import('agentation'),
+      ]);
+
+      const mount = document.createElement('div');
+      mount.id = 'agentation-root';
+      document.body.appendChild(mount);
+
+      ReactDOM.createRoot(mount).render(
+        React.createElement(Agentation, {
+          // Local Agent Sync server (agentation-mcp). Local-first: works
+          // offline and syncs when the server is available on this port.
+          endpoint: 'http://localhost:4747',
+        })
+      );
+    })();
+  }
+</script>

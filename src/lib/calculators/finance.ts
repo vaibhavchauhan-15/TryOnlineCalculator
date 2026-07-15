@@ -133,8 +133,8 @@ export const financeCalculators: Calculator[] = [
     category: 'finance',
     title: 'Loan Calculator',
     description: 'Calculate the monthly payment, total interest and total cost of any fixed-rate loan.',
-    intro: 'Works for personal loans, student loans and any fixed-rate installment loan. Enter the amount, rate and term.',
-    keywords: ['loan calculator', 'personal loan', 'monthly payment', 'installment loan'],
+    intro: 'Works as an EMI calculator for personal loans, student loans and any fixed-rate installment loan. Enter the amount, rate and term to see your equated monthly instalment.',
+    keywords: ['loan calculator', 'emi calculator', 'loan emi calculator', 'personal loan', 'monthly payment', 'installment loan'],
     popular: true,
     inputs: [
       { name: 'amount', label: 'Loan amount', type: 'number', prefix: '$', default: 25000, min: 0, step: 500 },
@@ -249,8 +249,8 @@ export const financeCalculators: Calculator[] = [
     category: 'finance',
     title: 'Investment Calculator',
     description: 'Project the future value of an investment with regular contributions and compound growth.',
-    intro: 'See how an initial investment plus monthly contributions can grow over time at an expected annual return.',
-    keywords: ['investment calculator', 'future value', 'portfolio growth'],
+    intro: 'See how an initial investment plus monthly contributions can grow over time at an expected annual return. It also works as an SIP calculator for regular monthly investing.',
+    keywords: ['investment calculator', 'sip calculator', 'future value', 'portfolio growth', 'monthly investment'],
     popular: true,
     inputs: [
       { name: 'initial', label: 'Initial investment', type: 'number', prefix: '$', default: 10000, min: 0, step: 500 },

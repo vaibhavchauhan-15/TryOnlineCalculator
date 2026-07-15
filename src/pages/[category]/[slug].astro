@@ -27,9 +27,11 @@ const isVisual = Boolean(calc.visual);
 ---
 
 <Layout
-  title={calc.title}
+  title={`Free ${calc.title} Online`}
   description={calc.description}
   path={`/${calc.category}/${calc.slug}`}
+  keywords={calc.keywords ?? [calc.title.toLowerCase()]}
+  ogType="website"
   jsonLd={schemas}
 >
   <div class="container-page">

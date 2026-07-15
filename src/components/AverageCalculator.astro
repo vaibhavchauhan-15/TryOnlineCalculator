@@ -47,7 +47,7 @@ const { storeKey } = Astro.props;
 <script>
   import { num, number } from '../lib/format';
   import { loadState, saveState } from '../lib/storage';
-  import { createHistoryUI, copyWithFeedback } from '../lib/history';
+  import { createHistoryUI, copyWithFeedback, wireCalculateButton } from '../lib/history';
 
   type Saved = { values: string };
 
@@ -70,11 +70,20 @@ const { storeKey } = Astro.props;
     const history = historyMount && store ? createHistoryUI({ key: store, mount: historyMount }) : null;
     const copyBtn = root.querySelector<HTMLElement>('[data-copy-btn]');
     let currentMean = '';
-    let currentCount = 0;
+    let currentExpr = '';
     copyBtn?.addEventListener('click', () => copyWithFeedback(copyBtn, currentMean));
-    const commit = () => {
-      if (currentMean) history?.record(`Mean of ${currentCount} number${currentCount === 1 ? '' : 's'}`, currentMean);
+
+    // Build a history label that keeps the actual numbers so multi-value runs
+    // are distinguishable later (e.g. "Mean of 12, 7, 19"). The list is capped
+    // so a long paste stays readable in the history panel.
+    const exprFor = (values: number[]): string => {
+      const shown = values.slice(0, 8).map((n) => number(n, 6));
+      const list = shown.join(', ') + (values.length > shown.length ? ', …' : '');
+      return `Mean of ${values.length} number${values.length === 1 ? '' : 's'} (${list})`;
     };
+
+    // Save the current mean to history (only fires on Calculate click).
+    const commit = () => (currentMean ? (history?.record(currentExpr, currentMean) ?? false) : false);
 
     const clearStats = () =>
       [meanEl, medianEl, modeEl, sumEl, rangeEl, minEl, maxEl].forEach((el) => (el.textContent = '\u2014'));
@@ -129,7 +138,7 @@ const { storeKey } = Astro.props;
 
       meanEl.textContent = number(mean, 6);
       currentMean = number(mean, 6);
-      currentCount = nums.length;
+      currentExpr = exprFor(nums);
       medianEl.textContent = number(median, 6);
       modeEl.textContent = modes.length ? modes.map((n) => number(n, 6)).join(', ') : 'none';
       sumEl.textContent = number(sum, 6);
@@ -149,8 +158,11 @@ const { storeKey } = Astro.props;
     }
 
     input.addEventListener('input', update);
-    // Commit to history when the textarea is blurred/committed.
-    input.addEventListener('change', commit);
+    // History is recorded only when the user presses Calculate.
+    wireCalculateButton(root, () => {
+      update();
+      return commit();
+    });
 
     // Restore the numbers from a previous session.
     const saved = store ? loadState<Saved>(store) : null;

@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import Agentation from '../components/Agentation.astro';
 
 interface Props {
   title: string;
@@ -9,13 +10,29 @@ interface Props {
   path?: string; // canonical path, e.g. "/finance/mortgage-calculator"
   noindex?: boolean;
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  keywords?: string[]; // page-level keyword hints
+  ogType?: string; // Open Graph type, defaults to "website"
+  ogImage?: string; // absolute or site-relative social share image
 }
 
-const { title, description, path = '', noindex = false, jsonLd } = Astro.props;
+const {
+  title,
+  description,
+  path = '',
+  noindex = false,
+  jsonLd,
+  keywords = [],
+  ogType = 'website',
+  ogImage: ogImageProp,
+} = Astro.props;
 const site = Astro.site?.toString().replace(/\/$/, '') ?? 'https://tryonlinecalculator.com';
 const canonical = `${site}${path}`;
 const fullTitle = title.includes('Try Online Calculator') ? title : `${title} | Try Online Calculator`;
-const ogImage = `${site}/favicon.svg`;
+// Use a raster PNG for social previews — most platforms don't render SVG.
+const ogImage = ogImageProp
+  ? (ogImageProp.startsWith('http') ? ogImageProp : `${site}${ogImageProp}`)
+  : `${site}/web-app-manifest-512x512.png`;
+const keywordsContent = keywords.length ? keywords.join(', ') : undefined;
 const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 ---
 
@@ -49,23 +66,33 @@ const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    {keywordsContent && <meta name="keywords" content={keywordsContent} />}
+    <meta name="author" content="Try Online Calculator" />
     <link rel="canonical" href={canonical} />
-    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {noindex
+      ? <meta name="robots" content="noindex, nofollow" />
+      : <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />}
     <meta name="theme-color" content="#000000" />
 
     <!-- Open Graph -->
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:site_name" content="Try Online Calculator" />
+    <meta property="og:locale" content="en_US" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
+    <meta property="og:image:alt" content="Try Online Calculator — free online calculators" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content="Try Online Calculator — free online calculators" />
 
     {schemas.map((s) => (
       <script type="application/ld+json" set:html={JSON.stringify(s)} />
@@ -78,6 +105,7 @@ const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
       <slot />
     </main>
     <Footer />
+    <Agentation />
   </body>
 </html>
 
