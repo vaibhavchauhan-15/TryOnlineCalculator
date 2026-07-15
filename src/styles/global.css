@@ -1100,3 +1100,129 @@ html[data-theme='dark'] {
     white-space: nowrap;
   }
 }
+
+/* ============================================================
+   Custom dropdown (themeable <select> replacement)
+   Progressive enhancement: src/lib/dropdown.ts hides the native
+   <select> and mounts this UI on top. Because every colour reads
+   from the theme tokens, the dropdown follows dark/light exactly —
+   unlike a native <option> popup, which the OS renders.
+   ============================================================ */
+@layer components {
+  .cs { position: relative; width: 100%; min-width: 0; }
+
+  /* Native <select> kept for form semantics but hidden from view + AT. */
+  .cs-native {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Trigger — mirrors the .field / .uc-select look it replaces. */
+  .cs-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    width: 100%;
+    height: 40px;
+    padding-inline: 0.75rem;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    text-align: left;
+    color: var(--color-ink);
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .cs-trigger:hover { border-color: var(--color-hairline-strong); }
+  .cs-trigger:focus-visible,
+  .cs.is-open .cs-trigger {
+    outline: none;
+    border-color: var(--color-link);
+    box-shadow: 0 0 0 3px var(--color-link-soft);
+  }
+  .cs-value {
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .cs-arrow {
+    flex: 0 0 auto;
+    color: var(--color-mute);
+    transition: transform 0.18s ease;
+  }
+  .cs.is-open .cs-arrow { transform: rotate(180deg); }
+
+  /* Variant: unit-converter selects sit a touch taller. */
+  .cs--uc .cs-trigger { height: 44px; }
+
+  /* Popup listbox */
+  .cs-panel {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    z-index: 50;
+    width: 100%;
+    max-height: 280px;
+    margin: 0;
+    padding: 4px;
+    list-style: none;
+    overflow-y: auto;
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-float);
+    overscroll-behavior: contain;
+  }
+  .cs-panel[hidden] { display: none; }
+  .cs-panel:focus-visible { outline: none; }
+
+  .cs-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.5rem 0.625rem;
+    font-size: 14px;
+    line-height: 1.3;
+    color: var(--color-body);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.1s ease, color 0.1s ease;
+  }
+  .cs-option.is-active {
+    background-color: var(--color-canvas-soft-2);
+    color: var(--color-ink);
+  }
+  .cs-option[aria-selected='true'] {
+    background-color: var(--color-link);
+    color: #ffffff;
+    font-weight: 500;
+  }
+  .cs-option[aria-selected='true'].is-active {
+    background-color: var(--color-link-deep);
+  }
+  .cs-option[aria-disabled='true'] {
+    color: var(--color-mute);
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  /* Match the phone-friendly sizing the native .field uses. */
+  @media (max-width: 640px) {
+    .cs--field .cs-trigger { height: 46px; font-size: 16px; }
+    .cs-option { padding: 0.625rem 0.75rem; font-size: 15px; }
+  }
+}

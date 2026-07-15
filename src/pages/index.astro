@@ -5,9 +5,7 @@ import CategoryCard from '../components/CategoryCard.astro';
 import CalculatorCard from '../components/CalculatorCard.astro';
 import { categories } from '../lib/categories';
 import { allCalculators, popularCalculators, calculatorsByCategory } from '../lib/calculators';
-import { websiteSchema, organizationSchema, itemListSchema, faqPageSchema } from '../lib/seo';
-import HomeFaq from '../components/HomeFaq.astro';
-import { homeFaqItems } from '../lib/faq';
+import { websiteSchema, organizationSchema, itemListSchema } from '../lib/seo';
 
 const popular = popularCalculators(8);
 const total = allCalculators.length;
@@ -49,7 +47,7 @@ const popularListSchema = itemListSchema(
   description={`Free online calculator hub with ${total}+ fast, accurate tools: mortgage, loan/EMI, SIP, BMI, calorie, percentage, scientific, GPA, age and compound interest calculators. No sign-up required.`}
   path="/"
   keywords={homeKeywords}
-  jsonLd={[websiteSchema(), organizationSchema(), popularListSchema, faqPageSchema(homeFaqItems)]}
+  jsonLd={[websiteSchema(), organizationSchema(), popularListSchema]}
 >
   <!-- Hero -->
   <section class="hero">
@@ -143,38 +141,6 @@ const popularListSchema = itemListSchema(
     </div>
   </section>
 
-  <!-- Site pages — About, Contact, Privacy, Terms -->
-  <section class="container-page section">
-    <div class="section-head">
-      <div>
-        <span class="eyebrow">More</span>
-        <h2 class="section-title">About this site</h2>
-      </div>
-    </div>
-    <div class="grid-pages">
-      <a href="/about" class="page-card">
-        <span class="page-card-title">About us</span>
-        <span class="page-card-desc">Who we are and how our {total}+ free calculators work.</span>
-        <span class="page-card-arrow" aria-hidden="true">→</span>
-      </a>
-      <a href="/contact" class="page-card">
-        <span class="page-card-title">Contact us</span>
-        <span class="page-card-desc">Report a bug or request a calculator you need.</span>
-        <span class="page-card-arrow" aria-hidden="true">→</span>
-      </a>
-      <a href="/privacy" class="page-card">
-        <span class="page-card-title">Privacy Policy</span>
-        <span class="page-card-desc">Your calculator inputs never leave your device.</span>
-        <span class="page-card-arrow" aria-hidden="true">→</span>
-      </a>
-      <a href="/terms" class="page-card">
-        <span class="page-card-title">Terms &amp; Conditions</span>
-        <span class="page-card-desc">The terms for using our free online tools.</span>
-        <span class="page-card-arrow" aria-hidden="true">→</span>
-      </a>
-    </div>
-  </section>
-
   <!-- SEO content — long-form, keyword-rich copy about the tool -->
   <section class="container-page section">
     <div class="seo-prose">
@@ -241,9 +207,9 @@ const popularListSchema = itemListSchema(
         professionals use the <a href="/salary/salary-calculator">salary calculator</a> and
         <a href="/salary/paycheck-calculator">paycheck calculator</a> to convert between hourly,
         weekly, monthly and annual pay and estimate take-home earnings, while shopping tools handle
-        discounts, tips and sales tax. Need to switch units instead? The all-in-one
+        discounts, tips and sales tax. Need to switch units? The
         <a href="/unit-converter">unit converter</a> handles length, weight, temperature, speed,
-        volume, area, currency and BMI in one place.
+        volume, area and currency conversions in one place.
       </p>
 
       <p>
@@ -253,9 +219,6 @@ const popularListSchema = itemListSchema(
       </p>
     </div>
   </section>
-
-  <!-- FAQ — SEO-friendly, JSON-LD FAQPage schema injected via Layout -->
-  <HomeFaq />
 </Layout>
 
 <style>
@@ -461,30 +424,6 @@ const popularListSchema = itemListSchema(
   .trust-item h3 { font-size: 16px; margin: 0 0 0.375rem; }
   .trust-item p { margin: 0; font-size: 14px; line-height: 1.6; color: var(--color-mute); }
 
-  /* ---------- Site pages grid ---------- */
-  .grid-pages { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
-  .page-card {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 0.375rem;
-    padding: 1.25rem;
-    background-color: var(--color-canvas);
-    box-shadow: var(--shadow-card);
-    border-radius: var(--radius-md);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-  }
-  .page-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-soft); }
-  .page-card-title { font-size: 15px; font-weight: 600; color: var(--color-ink); letter-spacing: -0.01em; }
-  .page-card-desc { font-size: 13px; line-height: 1.5; color: var(--color-mute); }
-  .page-card-arrow {
-    margin-top: 0.25rem;
-    font-size: 15px;
-    color: var(--color-mute);
-    transition: transform 0.15s ease, color 0.15s ease;
-  }
-  .page-card:hover .page-card-arrow { color: var(--color-ink); transform: translateX(3px); }
-
   /* ---------- Long-form SEO copy ---------- */
   .seo-prose { max-width: 72ch; }
   .seo-prose h2 {
@@ -509,7 +448,6 @@ const popularListSchema = itemListSchema(
   @media (max-width: 960px) {
     .grid-cards { grid-template-columns: repeat(2, 1fr); }
     .grid-categories { grid-template-columns: repeat(2, 1fr); }
-    .grid-pages { grid-template-columns: repeat(2, 1fr); }
   }
   @media (max-width: 720px) {
     .trust { grid-template-columns: 1fr; gap: 1.5rem; }
@@ -517,6 +455,5 @@ const popularListSchema = itemListSchema(
   @media (max-width: 460px) {
     .grid-cards { grid-template-columns: 1fr; }
     .grid-categories { grid-template-columns: 1fr; }
-    .grid-pages { grid-template-columns: 1fr; }
   }
 </style>

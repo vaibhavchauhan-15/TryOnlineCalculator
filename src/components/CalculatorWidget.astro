@@ -91,7 +91,7 @@ const isVisible = (f: InputField) =>
             )}
 
             {(f.type === 'number' || f.type === 'text' || f.type === 'date') && (
-              <div class={`field-wrap ${f.prefix ? 'has-prefix' : ''} ${f.suffix ? 'has-suffix' : ''}`}>
+              <div class={`field-wrap ${f.prefix ? 'has-prefix' : ''} ${f.suffix ? 'has-suffix' : ''} ${f.type === 'number' ? 'has-stepper' : ''}`}>
                 {f.prefix && <span class="field-affix field-prefix">{f.prefix}</span>}
                 <input
                   id={`f-${calculator.slug}-${f.name}`}
@@ -107,6 +107,20 @@ const isVisible = (f: InputField) =>
                   disabled={!isVisible(f)}
                 />
                 {f.suffix && <span class="field-affix field-suffix">{f.suffix}</span>}
+                {f.type === 'number' && (
+                  <div class="field-stepper">
+                    <button type="button" class="field-step" data-step-up tabindex="-1" aria-label={`Increase ${f.label}`}>
+                      <svg width="9" height="9" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M2 6.5 5 3.5l3 3" />
+                      </svg>
+                    </button>
+                    <button type="button" class="field-step" data-step-down tabindex="-1" aria-label={`Decrease ${f.label}`}>
+                      <svg width="9" height="9" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M2 3.5 5 6.5l3-3" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 
@@ -174,6 +188,54 @@ const isVisible = (f: InputField) =>
   .field-suffix { right: 0.75rem; }
   .has-prefix .field { padding-left: 1.75rem; }
   .has-suffix .field { padding-right: 3rem; }
+
+  /* Custom themed stepper for number fields. Replaces the browser's native
+     up/down spinners so the control matches the design system and flips with
+     the dark/light theme (all colours read from CSS variables). */
+  .has-stepper .field { padding-right: 2.25rem; }
+  .has-stepper.has-suffix .field { padding-right: 4rem; }
+  .has-stepper.has-suffix .field-suffix { right: 2.5rem; }
+
+  /* Hide native number spinners so only our custom control shows. */
+  .field-wrap :global(input[type='number']::-webkit-outer-spin-button),
+  .field-wrap :global(input[type='number']::-webkit-inner-spin-button) {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .field-wrap :global(input[type='number']) { -moz-appearance: textfield; appearance: textfield; }
+
+  .field-stepper {
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    bottom: 1px;
+    width: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid var(--color-hairline);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    overflow: hidden;
+  }
+  .field-step {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    background-color: var(--color-canvas);
+    color: var(--color-mute);
+    cursor: pointer;
+    transition: background-color 0.12s ease, color 0.12s ease;
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: none;
+  }
+  .field-step + .field-step { border-top: 1px solid var(--color-hairline); }
+  .field-step:hover { background-color: var(--color-canvas-soft-2); color: var(--color-ink); }
+  .field-step:active { background-color: var(--color-hairline); color: var(--color-ink); }
+  .field-step svg { display: block; }
+  .field:disabled ~ .field-stepper { opacity: 0.5; pointer-events: none; }
   .field-textarea { height: auto; padding: 0.625rem 0.75rem; line-height: 1.5; resize: vertical; font-family: var(--font-mono); font-size: 13px; }
 
   .radio-group { display: flex; gap: 0.375rem; flex-wrap: wrap; }

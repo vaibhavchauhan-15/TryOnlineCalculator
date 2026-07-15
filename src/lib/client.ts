@@ -37,6 +37,14 @@ function restore(form: HTMLFormElement, state: Record<string, string>): void {
   });
 }
 
+// After a programmatic value change (restore / reset), tell each custom
+// dropdown to relabel its trigger from the native <select> it mirrors.
+function syncDropdowns(form: HTMLFormElement): void {
+  form.querySelectorAll('select').forEach((el) => {
+    el.dispatchEvent(new Event('cs:sync', { bubbles: true }));
+  });
+}
+
 function collect(form: HTMLFormElement): Values {
   const values: Values = {};
   const data = new FormData(form);
@@ -89,6 +97,53 @@ function applyVisibility(root: HTMLElement, values: Values): void {
   });
 }
 
+// Nudge a number input by one step (respecting min/max/step) and fire an
+// `input` event so the live calculation re-runs. Empty inputs seed from their
+// placeholder (the example value) so the first click lands somewhere sensible.
+function stepInput(input: HTMLInputElement, dir: 1 | -1): void {
+  const step = Number(input.step) || 1;
+  const min = input.min !== '' ? Number(input.min) : -Infinity;
+  const max = input.max !== '' ? Number(input.max) : Infinity;
+  const seed = input.value !== '' ? Number(input.value) : Number(input.placeholder);
+  const base = Number.isFinite(seed) ? seed : 0;
+  let next = base + dir * step;
+  next = Math.min(max, Math.max(min, next));
+  // Trim floating-point noise to the step's own precision (e.g. 0.01 rate).
+  const decimals = (String(step).split('.')[1] || '').length;
+  input.value = decimals ? next.toFixed(decimals) : String(Math.round(next));
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+}
+
+// Wire the custom +/- steppers on number fields, including press-and-hold to
+// repeat. Delegated on the form so it survives conditional field toggling.
+function wireSteppers(form: HTMLFormElement): void {
+  let holdTimer: ReturnType<typeof setTimeout> | undefined;
+  let repeatTimer: ReturnType<typeof setInterval> | undefined;
+
+  const stop = () => {
+    if (holdTimer) clearTimeout(holdTimer);
+    if (repeatTimer) clearInterval(repeatTimer);
+    holdTimer = repeatTimer = undefined;
+  };
+
+  form.addEventListener('pointerdown', (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLElement>('[data-step-up],[data-step-down]');
+    if (!btn) return;
+    e.preventDefault(); // keep focus on the field, avoid text selection
+    const input = btn.closest('.field-wrap')?.querySelector<HTMLInputElement>('input[type="number"]');
+    if (!input || input.disabled) return;
+    const dir: 1 | -1 = btn.hasAttribute('data-step-up') ? 1 : -1;
+    stepInput(input, dir);
+    holdTimer = setTimeout(() => {
+      repeatTimer = setInterval(() => stepInput(input, dir), 70);
+    }, 350);
+  });
+
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach((ev) =>
+    form.addEventListener(ev, stop),
+  );
+}
+
 function mount(root: HTMLElement): void {
   const slug = root.dataset.calculator!;
   const calc = getCalculator(slug);
@@ -100,7 +155,10 @@ function mount(root: HTMLElement): void {
 
   // Restore saved values before the first render so the result reflects them.
   const saved = loadState<Record<string, string>>(storeKey);
-  if (saved) restore(form, saved);
+  if (saved) {
+    restore(form, saved);
+    syncDropdowns(form);
+  }
 
   // History panel (mounted below the result). record() is called on `change`
   // (i.e. when a field is committed / blurred) so we log meaningful results
@@ -125,6 +183,7 @@ function mount(root: HTMLElement): void {
   };
 
   form.addEventListener('input', update);
+  wireSteppers(form);
 
   // History is recorded only when the user presses Calculate — the expression
   // captures every visible input so multi-field runs stay meaningful later.
@@ -151,6 +210,7 @@ function mount(root: HTMLElement): void {
   const resetBtn = root.querySelector<HTMLButtonElement>('[data-calc-reset]');
   resetBtn?.addEventListener('click', () => {
     form.reset();
+    syncDropdowns(form);
     update();
     // Drop the just-persisted defaults so a refresh starts genuinely empty.
     clearState(storeKey);
