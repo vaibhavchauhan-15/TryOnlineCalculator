@@ -59,6 +59,16 @@ export interface LineSeries {
   color?: string;
 }
 
+/** One bar on a horizontal bar chart (a labelled value comparison). */
+export interface BarDatum {
+  label: string;
+  value: number;
+  /** Pre-formatted value shown at the end of the bar (defaults to a compact number). */
+  display?: string;
+  /** Explicit colour; falls back to the shared chart palette. */
+  color?: string;
+}
+
 /** One coloured band on a gauge chart (e.g. a BMI category range). */
 export interface GaugeSegment {
   /** Range start on the gauge scale (inclusive). */
@@ -75,12 +85,14 @@ export interface GaugeSegment {
  * SVG in the shared result pipeline, so any calculator can attach one.
  */
 export interface ChartSpec {
-  type: 'pie' | 'line' | 'gauge';
+  type: 'pie' | 'line' | 'gauge' | 'bar';
   title?: string;
   /** How to format numeric axis / legend values. */
   format?: 'currency' | 'number';
   /** Pie/donut slices. */
   slices?: PieSlice[];
+  /** Horizontal bar-chart data. */
+  bars?: BarDatum[];
   /** Line-chart series. */
   series?: LineSeries[];
   /** X-axis tick labels for a line chart (aligned to each series point). */
@@ -146,6 +158,13 @@ export interface Calculator {
    * and inputs are still used for SEO / no-JS fallback and related content.
    */
   visual?: 'basic' | 'scientific' | 'fraction' | 'percentage' | 'average';
+  /**
+   * When set, the page renders a dedicated guided calculator component (with a
+   * friendly, low-typing input UI) in place of the generic form widget, while
+   * keeping the surrounding page content (intro, how-to, formula, FAQ). The
+   * compute() function is still the single source of truth for the result.
+   */
+  widget?: 'gpa' | 'grade' | 'final-grade' | 'average-grade';
   inputs: InputField[];
   compute: ComputeFn;
   formulaIntro?: string;

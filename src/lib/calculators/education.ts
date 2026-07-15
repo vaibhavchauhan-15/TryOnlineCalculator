@@ -1,4 +1,4 @@
-import type { Calculator } from '../types';
+import type { Calculator, ChartSpec } from '../types';
 import { num, fixed, percent, number } from '../format';
 
 const GRADE_POINTS: Record<string, number> = {
@@ -23,6 +23,44 @@ function letterFromPercent(p: number): string {
   if (p >= 63) return 'D';
   if (p >= 60) return 'D-';
   return 'F';
+}
+
+// A 0–100 gauge with the standard letter-grade bands, needle at `grade`.
+function gradeGauge(grade: number, title = 'Grade on the letter scale'): ChartSpec {
+  return {
+    type: 'gauge',
+    title,
+    value: grade,
+    valueLabel: `${fixed(grade, 1)}%`,
+    valueCaption: letterFromPercent(grade),
+    min: 0,
+    max: 100,
+    segments: [
+      { from: 0, to: 60, label: 'F', color: '#ee0000' },
+      { from: 60, to: 70, label: 'D', color: '#f5a623' },
+      { from: 70, to: 80, label: 'C', color: '#f8d347' },
+      { from: 80, to: 90, label: 'B', color: '#7ed321' },
+      { from: 90, to: 100, label: 'A', color: '#50e3c2' },
+    ],
+  };
+}
+
+// A 0–4.0 GPA gauge with rough standing bands.
+function gpaGauge(gpa: number): ChartSpec {
+  return {
+    type: 'gauge',
+    title: 'GPA on the 4.0 scale',
+    value: gpa,
+    valueLabel: fixed(gpa, 2),
+    min: 0,
+    max: 4,
+    segments: [
+      { from: 0, to: 2, label: 'Low', color: '#ee0000' },
+      { from: 2, to: 3, label: 'Fair', color: '#f5a623' },
+      { from: 3, to: 3.5, label: 'Good', color: '#7ed321' },
+      { from: 3.5, to: 4, label: 'Great', color: '#50e3c2' },
+    ],
+  };
 }
 
 export const educationCalculators: Calculator[] = [
@@ -67,6 +105,7 @@ export const educationCalculators: Calculator[] = [
           { label: 'Quality points', value: fixed(totalPoints, 1) },
         ],
         breakdown: rows,
+        charts: [gpaGauge(gpa)],
       };
     },
     formulaItems: [{ name: 'Weighted GPA', expr: 'GPA = Σ(grade points × credits) / Σ credits' }],
@@ -115,6 +154,7 @@ export const educationCalculators: Calculator[] = [
           { label: 'Letter grade', value: letterFromPercent(grade) },
           { label: 'Total weight entered', value: percent(totalWeight, 0), tone: totalWeight === 100 ? 'success' : 'warning' },
         ],
+        charts: [gradeGauge(grade)],
       };
     },
     formulaItems: [{ name: 'Weighted grade', expr: 'Grade = Σ(score × weight) / Σ weight' }],
@@ -146,6 +186,7 @@ export const educationCalculators: Calculator[] = [
       const needed = (desired - current * (1 - w)) / w;
       const tone = needed > 100 ? 'error' : needed <= 0 ? 'success' : 'default';
       const hint = needed > 100 ? 'Not reachable with this final alone' : needed <= 0 ? 'Already secured!' : undefined;
+      const caption = needed > 100 ? 'Out of reach' : needed <= 0 ? 'Already secured' : 'Achievable';
       return {
         results: [
           { label: 'Score needed on final', value: percent(needed, 1), primary: true, tone, hint },
@@ -153,6 +194,22 @@ export const educationCalculators: Calculator[] = [
         breakdown: [
           { label: 'Grade from other work', value: percent(current * (1 - w), 1) },
           { label: 'Final contributes up to', value: percent(w * 100, 1) },
+        ],
+        charts: [
+          {
+            type: 'gauge',
+            title: 'Score needed on the final',
+            value: needed,
+            valueLabel: `${fixed(Math.max(needed, 0), 1)}%`,
+            valueCaption: caption,
+            min: 0,
+            max: 100,
+            segments: [
+              { from: 0, to: 60, label: 'Easy', color: '#50e3c2' },
+              { from: 60, to: 80, label: 'Doable', color: '#7ed321' },
+              { from: 80, to: 100, label: 'Hard', color: '#f5a623' },
+            ],
+          },
         ],
       };
     },
@@ -184,12 +241,28 @@ export const educationCalculators: Calculator[] = [
       if (!nums.length) return { results: [], error: 'Enter at least one score.' };
       const sum = nums.reduce((a, b) => a + b, 0);
       const avg = sum / nums.length;
+      const charts: ChartSpec[] = [gradeGauge(avg, 'Average on the letter scale')];
+      // Show each individual score as a bar when the list is small enough to read.
+      if (nums.length <= 12) {
+        charts.push({
+          type: 'bar',
+          title: 'Your scores',
+          format: 'number',
+          bars: nums.map((n, i) => ({
+            label: `#${i + 1}`,
+            value: n,
+            display: number(n, 2),
+            color: n >= avg ? '#50e3c2' : '#f5a623',
+          })),
+        });
+      }
       return {
         results: [
           { label: 'Average', value: fixed(avg, 2), primary: true, hint: `Letter: ${letterFromPercent(avg)}` },
           { label: 'Number of scores', value: number(nums.length, 0) },
           { label: 'Highest / lowest', value: `${number(Math.max(...nums), 2)} / ${number(Math.min(...nums), 2)}` },
         ],
+        charts,
       };
     },
     faq: [

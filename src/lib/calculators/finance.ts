@@ -148,11 +148,52 @@ export const financeCalculators: Calculator[] = [
       if (p <= 0 || n <= 0) return { results: [], error: 'Enter a loan amount and term greater than zero.' };
       const m = pmt(r, n, p);
       const total = m * n;
+
+      // Yearly balance / cumulative interest for the payoff line chart.
+      const yearLabels: string[] = ['0'];
+      const balancePts: number[] = [p];
+      const interestPts: number[] = [0];
+      let bal = p;
+      let cumInterest = 0;
+      for (let k = 1; k <= n; k++) {
+        const interest = bal * r;
+        bal = Math.max(bal - (m - interest), 0);
+        cumInterest += interest;
+        if (k % 12 === 0 || k === n) {
+          yearLabels.push(String(Math.round(k / 12)));
+          balancePts.push(bal);
+          interestPts.push(cumInterest);
+        }
+      }
+
       return {
         results: [
           { label: 'Monthly payment', value: currency(m), primary: true },
           { label: 'Total interest', value: currency(total - p), tone: 'warning' },
           { label: 'Total paid', value: currency(total) },
+        ],
+        charts: [
+          {
+            type: 'pie',
+            title: 'Principal vs interest',
+            format: 'currency',
+            slices: [
+              { label: 'Principal', value: p, color: '#0070f3' },
+              { label: 'Interest', value: total - p, color: '#f5a623' },
+            ],
+          },
+          ...(balancePts.length > 2
+            ? [{
+                type: 'line' as const,
+                title: 'Balance & interest over time',
+                format: 'currency' as const,
+                labels: yearLabels,
+                series: [
+                  { label: 'Balance', points: balancePts, color: '#0070f3' },
+                  { label: 'Total interest', points: interestPts, color: '#f5a623' },
+                ],
+              }]
+            : []),
         ],
       };
     },
@@ -192,13 +233,27 @@ export const financeCalculators: Calculator[] = [
       const n = num(v.term, 0);
       if (principal <= 0 || n <= 0) return { results: [], error: 'Enter values that leave a positive amount to finance.' };
       const m = pmt(r, n, principal);
+      const interest = m * n - principal;
+      const upfront = down + trade;
       return {
         results: [
           { label: 'Monthly payment', value: currency(m), primary: true },
           { label: 'Amount financed', value: currency(principal) },
           { label: 'Sales tax', value: currency(taxAmt) },
-          { label: 'Total interest', value: currency(m * n - principal), tone: 'warning' },
-          { label: 'Total cost', value: currency(m * n + down + trade) },
+          { label: 'Total interest', value: currency(interest), tone: 'warning' },
+          { label: 'Total cost', value: currency(m * n + upfront) },
+        ],
+        charts: [
+          {
+            type: 'pie',
+            title: 'Total cost breakdown',
+            format: 'currency',
+            slices: [
+              { label: 'Amount financed', value: principal, color: '#0070f3' },
+              { label: 'Interest', value: interest, color: '#f5a623' },
+              ...(upfront > 0 ? [{ label: 'Down + trade-in', value: upfront, color: '#7928ca' }] : []),
+            ],
+          },
         ],
       };
     },
@@ -235,6 +290,17 @@ export const financeCalculators: Calculator[] = [
           { label: 'Total interest', value: currency(m * n - p), tone: 'warning' },
           { label: 'Total paid', value: currency(m * n) },
         ],
+        charts: [
+          {
+            type: 'pie',
+            title: 'Principal vs interest',
+            format: 'currency',
+            slices: [
+              { label: 'Principal', value: p, color: '#0070f3' },
+              { label: 'Interest', value: m * n - p, color: '#f5a623' },
+            ],
+          },
+        ],
       };
     },
     faq: [
@@ -266,6 +332,21 @@ export const financeCalculators: Calculator[] = [
       if (n <= 0) return { results: [], error: 'Enter a number of years greater than zero.' };
       const fv = futureValue(r, n, c, pv);
       const contributed = pv + c * n;
+
+      // Year-by-year balance vs money contributed for the growth chart.
+      const yearLabels: string[] = ['0'];
+      const balancePts: number[] = [pv];
+      const contribPts: number[] = [pv];
+      let bal = pv;
+      for (let k = 1; k <= n; k++) {
+        bal = bal * (1 + r) + c;
+        if (k % 12 === 0 || k === n) {
+          yearLabels.push(String(Math.round(k / 12)));
+          balancePts.push(bal);
+          contribPts.push(pv + c * k);
+        }
+      }
+
       return {
         results: [
           { label: 'Future value', value: currency(fv), primary: true },
@@ -274,6 +355,27 @@ export const financeCalculators: Calculator[] = [
         ],
         breakdown: [
           { label: 'Growth multiple', value: `${number(contributed ? fv / contributed : 0, 2)}×` },
+        ],
+        charts: [
+          {
+            type: 'pie',
+            title: 'Contributions vs growth',
+            format: 'currency',
+            slices: [
+              { label: 'Contributed', value: contributed, color: '#0070f3' },
+              { label: 'Growth', value: Math.max(fv - contributed, 0), color: '#50e3c2' },
+            ],
+          },
+          {
+            type: 'line',
+            title: 'Projected growth',
+            format: 'currency',
+            labels: yearLabels,
+            series: [
+              { label: 'Balance', points: balancePts, color: '#0070f3' },
+              { label: 'Contributed', points: contribPts, color: '#7928ca' },
+            ],
+          },
         ],
       };
     },
@@ -324,11 +426,52 @@ export const financeCalculators: Calculator[] = [
       const n = k * t;
       const fv = futureValue(r, n, c, p);
       const contributed = p + c * n;
+
+      // Sample the balance at each whole year for the growth line chart.
+      const wholeYears = Math.floor(t);
+      const yearLabels: string[] = ['0'];
+      const balancePts: number[] = [p];
+      const depositPts: number[] = [p];
+      let bal = p;
+      let period = 0;
+      for (let y = 1; y <= wholeYears; y++) {
+        for (let j = 0; j < k; j++) {
+          bal = bal * (1 + r) + c;
+          period++;
+        }
+        yearLabels.push(String(y));
+        balancePts.push(bal);
+        depositPts.push(p + c * period);
+      }
+
       return {
         results: [
           { label: 'Future balance', value: currency(fv), primary: true },
           { label: 'Total deposited', value: currency(contributed) },
           { label: 'Interest earned', value: currency(fv - contributed), tone: 'success' },
+        ],
+        charts: [
+          {
+            type: 'pie',
+            title: 'Deposits vs interest',
+            format: 'currency',
+            slices: [
+              { label: 'Deposited', value: contributed, color: '#0070f3' },
+              { label: 'Interest', value: Math.max(fv - contributed, 0), color: '#50e3c2' },
+            ],
+          },
+          ...(balancePts.length > 2
+            ? [{
+                type: 'line' as const,
+                title: 'Balance growth',
+                format: 'currency' as const,
+                labels: yearLabels,
+                series: [
+                  { label: 'Balance', points: balancePts, color: '#0070f3' },
+                  { label: 'Deposited', points: depositPts, color: '#7928ca' },
+                ],
+              }]
+            : []),
         ],
       };
     },
@@ -364,11 +507,48 @@ export const financeCalculators: Calculator[] = [
       if (n <= 0) return { results: [], error: 'Enter a positive number of years.' };
       const fv = futureValue(r, n, c, pv);
       const contributed = pv + c * n;
+
+      const yearLabels: string[] = ['0'];
+      const balancePts: number[] = [pv];
+      const depositPts: number[] = [pv];
+      let bal = pv;
+      for (let k = 1; k <= n; k++) {
+        bal = bal * (1 + r) + c;
+        if (k % 12 === 0 || k === n) {
+          yearLabels.push(String(Math.round(k / 12)));
+          balancePts.push(bal);
+          depositPts.push(pv + c * k);
+        }
+      }
+
       return {
         results: [
           { label: 'Final balance', value: currency(fv), primary: true },
           { label: 'Total deposited', value: currency(contributed) },
           { label: 'Interest earned', value: currency(fv - contributed), tone: 'success' },
+        ],
+        charts: [
+          {
+            type: 'pie',
+            title: 'Deposits vs interest',
+            format: 'currency',
+            slices: [
+              { label: 'Deposited', value: contributed, color: '#0070f3' },
+              { label: 'Interest', value: Math.max(fv - contributed, 0), color: '#50e3c2' },
+            ],
+          },
+          ...(balancePts.length > 2
+            ? [{
+                type: 'line' as const,
+                title: 'Savings growth',
+                format: 'currency' as const,
+                labels: yearLabels,
+                series: [
+                  { label: 'Balance', points: balancePts, color: '#0070f3' },
+                  { label: 'Deposited', points: depositPts, color: '#7928ca' },
+                ],
+              }]
+            : []),
         ],
       };
     },
@@ -402,12 +582,25 @@ export const financeCalculators: Calculator[] = [
       const net = amount - fees; // borrower actually receives this
       const monthlyApr = solveRate(n, payment, net);
       const apr = monthlyApr * 12 * 100;
+      const totalInterest = payment * n - amount;
       return {
         results: [
           { label: 'APR', value: percent(apr, 3), primary: true },
           { label: 'Monthly payment', value: currency(payment) },
           { label: 'Nominal rate', value: percent(num(v.rate, 0), 2) },
           { label: 'Total fees', value: currency(fees) },
+        ],
+        charts: [
+          {
+            type: 'pie',
+            title: 'What the loan really costs',
+            format: 'currency',
+            slices: [
+              { label: 'Amount borrowed', value: amount, color: '#0070f3' },
+              { label: 'Interest', value: Math.max(totalInterest, 0), color: '#f5a623' },
+              ...(fees > 0 ? [{ label: 'Fees', value: fees, color: '#ff0080' }] : []),
+            ],
+          },
         ],
       };
     },
@@ -455,6 +648,17 @@ export const financeCalculators: Calculator[] = [
           { label: 'Final balance', value: currency(p + interest) },
           { label: 'Principal', value: currency(p) },
         ],
+        charts: p > 0
+          ? [{
+              type: 'pie',
+              title: 'Principal vs interest',
+              format: 'currency',
+              slices: [
+                { label: 'Principal', value: p, color: '#0070f3' },
+                { label: 'Interest', value: Math.max(interest, 0), color: '#50e3c2' },
+              ],
+            }]
+          : undefined,
       };
     },
     formulaItems: [
@@ -493,12 +697,50 @@ export const financeCalculators: Calculator[] = [
       const n = years * 12;
       const fv = futureValue(r, n, c, pv);
       const contributed = pv + c * n;
+
+      // Balance vs contributed at each age from now to retirement.
+      const ageLabels: string[] = [String(age)];
+      const balancePts: number[] = [pv];
+      const contribPts: number[] = [pv];
+      let bal = pv;
+      for (let k = 1; k <= n; k++) {
+        bal = bal * (1 + r) + c;
+        if (k % 12 === 0 || k === n) {
+          ageLabels.push(String(age + Math.round(k / 12)));
+          balancePts.push(bal);
+          contribPts.push(pv + c * k);
+        }
+      }
+
       return {
         results: [
           { label: 'Balance at retirement', value: currency(fv), primary: true, hint: `In ${number(years, 0)} years` },
           { label: 'Total contributed', value: currency(contributed) },
           { label: 'Investment growth', value: currency(fv - contributed), tone: 'success' },
           { label: 'Est. monthly income (4% rule)', value: currency((fv * 0.04) / 12) },
+        ],
+        charts: [
+          {
+            type: 'pie',
+            title: 'Contributions vs growth',
+            format: 'currency',
+            slices: [
+              { label: 'Contributed', value: contributed, color: '#0070f3' },
+              { label: 'Growth', value: Math.max(fv - contributed, 0), color: '#50e3c2' },
+            ],
+          },
+          ...(balancePts.length > 2
+            ? [{
+                type: 'line' as const,
+                title: 'Nest egg growth by age',
+                format: 'currency' as const,
+                labels: ageLabels,
+                series: [
+                  { label: 'Balance', points: balancePts, color: '#0070f3' },
+                  { label: 'Contributed', points: contribPts, color: '#7928ca' },
+                ],
+              }]
+            : []),
         ],
       };
     },

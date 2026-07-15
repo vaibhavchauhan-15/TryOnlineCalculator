@@ -64,20 +64,24 @@ export function renderResultsHTML(out: ComputeOutput): string {
     main += `</dl></div>`;
   }
 
-  // --- Visuals group: charts and any reference/info block. ---
-  let visuals = renderCharts(out.charts);
-
+  // Reference/info block (e.g. "Latest mortgage rates") reads as supporting
+  // data for the numbers, so it lives with the summary. Keeping it here also
+  // balances the summary column against the (often taller) charts column so
+  // the side-by-side layout has no awkward gap under the shorter side.
   if (out.info && out.info.items.length) {
-    visuals += `<div class="result-info">`;
-    visuals += `<span class="eyebrow">${esc(out.info.title)}</span>`;
-    visuals += `<div class="result-info-grid">`;
+    main += `<div class="result-info">`;
+    main += `<span class="eyebrow">${esc(out.info.title)}</span>`;
+    main += `<div class="result-info-grid">`;
     for (const item of out.info.items) {
-      visuals += `<div class="result-info-item"><span class="result-info-label">${esc(item.label)}</span><span class="result-info-value">${esc(item.value)}</span></div>`;
+      main += `<div class="result-info-item"><span class="result-info-label">${esc(item.label)}</span><span class="result-info-value">${esc(item.value)}</span></div>`;
     }
-    visuals += `</div>`;
-    if (out.info.note) visuals += `<span class="result-info-note">${esc(out.info.note)}</span>`;
-    visuals += `</div>`;
+    main += `</div>`;
+    if (out.info.note) main += `<span class="result-info-note">${esc(out.info.note)}</span>`;
+    main += `</div>`;
   }
+
+  // --- Visuals group: charts only. ---
+  const visuals = renderCharts(out.charts);
 
   // No charts/info: keep the flat summary flow (unchanged for most calculators).
   if (!visuals) return `<div class="result-shell">${main}</div>`;

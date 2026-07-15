@@ -9,7 +9,7 @@ const { storeKey } = Astro.props;
 ---
 
 <div class="calc-device is-wide pct" data-percentage data-store={storeKey ? `percentage:${storeKey}` : undefined}>
-  <div class="pct-modes" role="radiogroup" aria-label="Percentage mode">
+  <div class="pct-modes" role="group" aria-label="Percentage mode">
     <button type="button" class="pct-mode is-active" data-mode="percentOf" aria-pressed="true">X% of Y</button>
     <button type="button" class="pct-mode" data-mode="whatPercent" aria-pressed="false">X is what % of Y</button>
     <button type="button" class="pct-mode" data-mode="change" aria-pressed="false">% change X&#8594;Y</button>

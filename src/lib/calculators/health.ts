@@ -176,6 +176,14 @@ export const healthCalculators: Calculator[] = [
     compute: (v) => {
       const bmr = mifflinBmr(v);
       if (!Number.isFinite(bmr) || bmr <= 0) return { results: [], error: 'Enter valid age, height and weight.' };
+      const levels: { label: string; factor: number }[] = [
+        { label: 'Resting (BMR)', factor: 1 },
+        { label: 'Sedentary', factor: 1.2 },
+        { label: 'Light', factor: 1.375 },
+        { label: 'Moderate', factor: 1.55 },
+        { label: 'Very active', factor: 1.725 },
+        { label: 'Extra active', factor: 1.9 },
+      ];
       return {
         results: [
           { label: 'BMR', value: `${number(bmr, 0)} cal/day`, primary: true, hint: 'Calories burned at rest' },
@@ -184,6 +192,19 @@ export const healthCalculators: Calculator[] = [
           { label: 'Sedentary (×1.2)', value: `${number(bmr * 1.2, 0)} cal/day` },
           { label: 'Moderately active (×1.55)', value: `${number(bmr * 1.55, 0)} cal/day` },
           { label: 'Very active (×1.725)', value: `${number(bmr * 1.725, 0)} cal/day` },
+        ],
+        charts: [
+          {
+            type: 'bar',
+            title: 'Daily calories by activity level',
+            format: 'number',
+            bars: levels.map((l, i) => ({
+              label: l.label,
+              value: Math.round(bmr * l.factor),
+              display: `${number(bmr * l.factor, 0)}`,
+              color: i === 0 ? '#7928ca' : '#0070f3',
+            })),
+          },
         ],
       };
     },
@@ -221,6 +242,29 @@ export const healthCalculators: Calculator[] = [
           { label: 'Mild weight loss (−0.25 kg/wk)', value: `${number(tdee - 250, 0)} cal/day` },
           { label: 'Weight loss (−0.5 kg/wk)', value: `${number(tdee - 500, 0)} cal/day` },
           { label: 'Weight gain (+0.5 kg/wk)', value: `${number(tdee + 500, 0)} cal/day` },
+        ],
+        charts: [
+          {
+            type: 'pie',
+            title: 'What makes up your TDEE',
+            format: 'number',
+            slices: [
+              { label: 'Resting (BMR)', value: Math.round(bmr), color: '#7928ca' },
+              { label: 'Activity', value: Math.max(Math.round(tdee - bmr), 0), color: '#f5a623' },
+            ],
+          },
+          {
+            type: 'bar',
+            title: 'Calories by goal',
+            format: 'number',
+            bars: [
+              { label: 'Lose 0.5 kg/wk', value: Math.max(Math.round(tdee - 500), 0), display: `${number(tdee - 500, 0)}`, color: '#ff0080' },
+              { label: 'Mild loss', value: Math.max(Math.round(tdee - 250), 0), display: `${number(tdee - 250, 0)}`, color: '#f5a623' },
+              { label: 'Maintain', value: Math.round(tdee), display: `${number(tdee, 0)}`, color: '#0070f3' },
+              { label: 'Mild gain', value: Math.round(tdee + 250), display: `${number(tdee + 250, 0)}`, color: '#50e3c2' },
+              { label: 'Gain 0.5 kg/wk', value: Math.round(tdee + 500), display: `${number(tdee + 500, 0)}`, color: '#00dfd8' },
+            ],
+          },
         ],
       };
     },
@@ -260,11 +304,35 @@ export const healthCalculators: Calculator[] = [
       if (!Number.isFinite(tdee) || tdee <= 0) return { results: [], error: 'Enter valid age, height and weight.' };
       const adj: Record<string, number> = { lose: -500, mildlose: -250, maintain: 0, mildgain: 250, gain: 500 };
       const target = tdee + (adj[v.goal] ?? 0);
+      const goals: { key: string; label: string }[] = [
+        { key: 'lose', label: 'Lose weight' },
+        { key: 'mildlose', label: 'Mild loss' },
+        { key: 'maintain', label: 'Maintain' },
+        { key: 'mildgain', label: 'Mild gain' },
+        { key: 'gain', label: 'Gain weight' },
+      ];
       return {
         results: [
           { label: 'Daily calorie target', value: `${number(target, 0)} cal`, primary: true },
           { label: 'Maintenance (TDEE)', value: `${number(tdee, 0)} cal` },
           { label: 'Weekly target', value: `${number(target * 7, 0)} cal` },
+        ],
+        charts: [
+          {
+            type: 'bar',
+            title: 'Daily calories by goal',
+            format: 'number',
+            bars: goals.map((g) => {
+              const cals = tdee + (adj[g.key] ?? 0);
+              const selected = g.key === v.goal;
+              return {
+                label: g.label,
+                value: Math.max(Math.round(cals), 0),
+                display: `${number(cals, 0)}`,
+                color: selected ? '#0070f3' : '#c7d2e0',
+              };
+            }),
+          },
         ],
       };
     },
@@ -310,6 +378,28 @@ export const healthCalculators: Calculator[] = [
           { label: 'Carbohydrates', value: `${number((cal * c) / 4, 0)} g`, hint: `${Math.round(c * 100)}% of calories` },
           { label: 'Fat', value: `${number((cal * f) / 9, 0)} g`, hint: `${Math.round(f * 100)}% of calories` },
         ],
+        charts: [
+          {
+            type: 'pie',
+            title: 'Calorie split by macro',
+            format: 'number',
+            slices: [
+              { label: 'Protein', value: Math.round(cal * p), color: '#0070f3' },
+              { label: 'Carbs', value: Math.round(cal * c), color: '#f5a623' },
+              { label: 'Fat', value: Math.round(cal * f), color: '#50e3c2' },
+            ],
+          },
+          {
+            type: 'bar',
+            title: 'Grams per day',
+            format: 'number',
+            bars: [
+              { label: 'Protein', value: Math.round((cal * p) / 4), display: `${number((cal * p) / 4, 0)} g`, color: '#0070f3' },
+              { label: 'Carbs', value: Math.round((cal * c) / 4), display: `${number((cal * c) / 4, 0)} g`, color: '#f5a623' },
+              { label: 'Fat', value: Math.round((cal * f) / 9), display: `${number((cal * f) / 9, 0)} g`, color: '#50e3c2' },
+            ],
+          },
+        ],
       };
     },
     formulaItems: [
@@ -347,6 +437,17 @@ export const healthCalculators: Calculator[] = [
           { label: 'In cups (240 ml)', value: `${number(ml / 240, 0)} cups` },
           { label: 'In US fl oz', value: `${number(ml / 29.5735, 0)} oz` },
         ],
+        charts: exercise > 0
+          ? [{
+              type: 'pie',
+              title: 'Where your target comes from',
+              format: 'number',
+              slices: [
+                { label: 'Body weight need', value: Math.round(base), color: '#0070f3' },
+                { label: 'Exercise top-up', value: Math.round(exercise), color: '#00dfd8' },
+              ],
+            }]
+          : undefined,
       };
     },
     faq: [

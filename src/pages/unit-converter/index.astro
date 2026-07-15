@@ -4,6 +4,7 @@ import { converters } from '../../lib/converters';
 import { breadcrumbSchema, itemListSchema, faqPageSchema } from '../../lib/seo';
 import { unitConverterFaqs } from '../../lib/faq';
 import FaqAccordion from '../../components/FaqAccordion.astro';
+import LinkCard from '../../components/LinkCard.astro';
 
 const crumbs = [
   { name: 'Home', path: '/' },
@@ -56,15 +57,12 @@ const keywords = [
 
     <div class="hub-grid">
       {converters.map((c) => (
-        <a href={`/unit-converter/${c.slug}`} class="hub-card">
-          <span class="hub-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d={icons[c.slug]}></path>
-            </svg>
-          </span>
-          <span class="hub-card-title">{c.title}</span>
-          <span class="hub-card-desc">{c.description}</span>
-        </a>
+        <LinkCard
+          href={`/unit-converter/${c.slug}`}
+          title={c.title}
+          desc={c.description}
+          icon={icons[c.slug]}
+        />
       ))}
     </div>
 
@@ -104,30 +102,6 @@ const keywords = [
     grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
   }
-  .hub-card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    padding: 1.25rem;
-    background-color: var(--color-canvas);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-card);
-    transition: box-shadow 0.15s ease, transform 0.15s ease;
-  }
-  .hub-card:hover { box-shadow: var(--shadow-soft); transform: translateY(-2px); }
-  .hub-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    color: var(--color-ink);
-    background-color: var(--color-canvas-soft-2);
-    border-radius: var(--radius-md);
-    box-shadow: inset 0 0 0 1px var(--color-hairline);
-  }
-  .hub-card-title { font-size: 16px; font-weight: 600; margin-top: 0.25rem; }
-  .hub-card-desc { font-size: 13px; line-height: 1.55; color: var(--color-mute); }
 
   .hub-prose { max-width: 72ch; margin: 3.5rem 0 2rem; }
   .hub-prose h2 { font-size: clamp(1.375rem, 3vw, 1.75rem); letter-spacing: -0.02em; margin: 0 0 1rem; }

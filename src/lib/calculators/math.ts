@@ -29,7 +29,7 @@ export const mathCalculators: Calculator[] = [
     },
     howto: ['Type numbers and operators, e.g. 45 * 3 + 10.', 'Use parentheses to control the order of operations.', 'Supports +, −, *, /, % and ^ for powers.'],
     faq: [
-      { q: 'What operators can I use?', a: 'Addition (+), subtraction (−), multiplication (*), division (/), remainder (%) and powers (^), along with parentheses.' },
+      { q: 'What operators can I use?', a: 'Addition (+), subtraction (−), multiplication (×), division (÷) and powers (^), along with parentheses. The percent key (%) turns the number before it into a percentage, so 50% becomes 0.5.' },
       { q: 'Does it follow order of operations?', a: 'Yes. It respects standard PEMDAS/BODMAS precedence, so multiplication and division happen before addition and subtraction.' },
     ],
     related: ['scientific-calculator', 'percentage-calculator', 'fraction-calculator', 'average-calculator'],

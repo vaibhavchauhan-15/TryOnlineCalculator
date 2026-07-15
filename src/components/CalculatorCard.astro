@@ -1,44 +1,16 @@
 ---
 import type { Calculator } from '../lib/types';
+import { getCategory } from '../lib/categories';
+import { calculatorIcon } from '../lib/icons';
+import LinkCard from './LinkCard.astro';
 
 interface Props {
   calculator: Calculator;
 }
 const { calculator } = Astro.props;
 const href = `/${calculator.category}/${calculator.slug}`;
+// Prefer the tool-specific icon; fall back to the category icon if unmapped.
+const icon = calculatorIcon(calculator.slug) ?? getCategory(calculator.category)?.icon;
 ---
 
-<a href={href} class="calc-card">
-  <span class="calc-card-title">{calculator.title}</span>
-  <span class="calc-card-desc">{calculator.description}</span>
-  <span class="calc-card-cta" aria-hidden="true">Open
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
-  </span>
-</a>
-
-<style>
-  .calc-card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.375rem;
-    padding: 1.25rem;
-    background-color: var(--color-canvas);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-card);
-    transition: box-shadow 0.18s ease, transform 0.18s ease;
-  }
-  .calc-card:hover { box-shadow: var(--shadow-soft); transform: translateY(-2px); }
-  .calc-card-title { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
-  .calc-card-desc { font-size: 13px; line-height: 1.5; color: var(--color-mute); flex: 1; }
-  .calc-card-cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    margin-top: 0.5rem;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--color-link);
-  }
-  .calc-card:hover .calc-card-cta svg { transform: translateX(2px); }
-  .calc-card-cta svg { transition: transform 0.18s ease; }
-</style>
+<LinkCard href={href} title={calculator.title} desc={calculator.description} icon={icon} />

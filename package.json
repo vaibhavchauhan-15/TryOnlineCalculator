@@ -11,7 +11,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "generate-types": "wrangler types",
-    "deploy": "astro build && wrangler pages deploy ./dist"
+    "deploy": "astro build && wrangler pages deploy dist/client --branch main --commit-dirty=true"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.1.3",

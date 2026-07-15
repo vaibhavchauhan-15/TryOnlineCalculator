@@ -1,0 +1,97 @@
+---
+// Reusable navigation card: icon + title + description + "enter" arrow.
+// Used across the site (categories, calculators, converters) so every
+// browse surface shares one consistent, accessible card treatment.
+interface Props {
+  /** Destination the whole card links to. */
+  href: string;
+  /** Card heading. */
+  title: string;
+  /** One-line supporting description. */
+  desc: string;
+  /** Optional lucide-style 24x24 stroke path data for the leading icon. */
+  icon?: string;
+  /** Trailing call-to-action label shown next to the arrow. */
+  cta?: string;
+  /** Optional trailing badge (e.g. a count) shown top-right of the card. */
+  badge?: string | number;
+}
+const { href, title, desc, icon, cta = 'Open', badge } = Astro.props;
+---
+
+<a href={href} class="link-card">
+  {(icon || badge !== undefined) && (
+    <span class="link-card-top">
+      {icon && (
+        <span class="link-card-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d={icon}></path>
+          </svg>
+        </span>
+      )}
+      {badge !== undefined && <span class="link-card-badge">{badge}</span>}
+    </span>
+  )}
+  <span class="link-card-title">{title}</span>
+  <span class="link-card-desc">{desc}</span>
+  <span class="link-card-cta" aria-hidden="true">
+    {cta}
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+  </span>
+</a>
+
+<style>
+  .link-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.25rem;
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+  }
+  .link-card:hover { box-shadow: var(--shadow-soft); transform: translateY(-2px); }
+
+  .link-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  .link-card-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    color: var(--color-ink);
+    background-color: var(--color-canvas-soft-2);
+    border-radius: var(--radius-md);
+    box-shadow: inset 0 0 0 1px var(--color-hairline);
+  }
+  .link-card-badge {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--color-mute);
+    background-color: var(--color-canvas-soft-2);
+    border-radius: var(--radius-pill);
+    padding: 2px 8px;
+  }
+
+  .link-card-title { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; margin-top: 0.25rem; }
+  .link-card-desc { font-size: 13px; line-height: 1.55; color: var(--color-mute); flex: 1; }
+
+  .link-card-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-top: 0.5rem;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-link);
+  }
+  .link-card-cta svg { transition: transform 0.18s ease; }
+  .link-card:hover .link-card-cta svg { transform: translateX(2px); }
+</style>

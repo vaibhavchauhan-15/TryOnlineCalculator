@@ -1,4 +1,4 @@
-import type { Calculator } from '../types';
+import type { Calculator, ChartSpec } from '../types';
 import { num, currency, percent, number } from '../format';
 
 export const shoppingCalculators: Calculator[] = [
@@ -30,6 +30,17 @@ export const shoppingCalculators: Calculator[] = [
           { label: 'You save', value: currency(saved), tone: 'success', hint: percent(price ? (saved / price) * 100 : 0, 1) },
         ],
         breakdown: d2 > 0 ? [{ label: 'After first discount', value: currency(afterFirst) }] : undefined,
+        charts: price > 0 && saved > 0
+          ? [{
+              type: 'pie',
+              title: 'Final price vs savings',
+              format: 'currency',
+              slices: [
+                { label: 'You pay', value: final, color: '#0070f3' },
+                { label: 'You save', value: saved, color: '#50e3c2' },
+              ],
+            }]
+          : undefined,
       };
     },
     formulaItems: [{ name: 'Sale price', expr: 'final = price × (1 − discount)' }],
@@ -67,6 +78,17 @@ export const shoppingCalculators: Calculator[] = [
           { label: `Each person pays`, value: currency(total / people), hint: `Split ${people} ways` },
         ],
         breakdown: [{ label: 'Tip per person', value: currency(tipAmt / people) }],
+        charts: bill > 0
+          ? [{
+              type: 'pie',
+              title: 'Bill vs tip',
+              format: 'currency',
+              slices: [
+                { label: 'Bill', value: bill, color: '#0070f3' },
+                { label: 'Tip', value: Math.max(tipAmt, 0), color: '#f5a623' },
+              ],
+            }]
+          : undefined,
       };
     },
     faq: [
@@ -99,6 +121,18 @@ export const shoppingCalculators: Calculator[] = [
       const amount = num(v.price, 0);
       const rate = num(v.rate, 0) / 100;
       if (amount < 0) return { results: [], error: 'Enter a valid amount.' };
+      const taxPie = (net: number, tax: number): ChartSpec[] =>
+        net > 0 || tax > 0
+          ? [{
+              type: 'pie',
+              title: 'Pre-tax price vs tax',
+              format: 'currency',
+              slices: [
+                { label: 'Pre-tax price', value: Math.max(net, 0), color: '#0070f3' },
+                { label: 'Sales tax', value: Math.max(tax, 0), color: '#f5a623' },
+              ],
+            }]
+          : [];
       if (v.mode === 'gross') {
         const net = amount / (1 + rate);
         const tax = amount - net;
@@ -108,6 +142,7 @@ export const shoppingCalculators: Calculator[] = [
             { label: 'Tax portion', value: currency(tax) },
             { label: 'Total', value: currency(amount) },
           ],
+          charts: taxPie(net, tax),
         };
       }
       const tax = amount * rate;
@@ -117,6 +152,7 @@ export const shoppingCalculators: Calculator[] = [
           { label: 'Tax amount', value: currency(tax) },
           { label: 'Pre-tax price', value: currency(amount) },
         ],
+        charts: taxPie(amount, tax),
       };
     },
     faq: [

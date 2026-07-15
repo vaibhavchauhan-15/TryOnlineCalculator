@@ -183,11 +183,13 @@ export function createHistoryUI(opts: { key: string; mount: HTMLElement }): Hist
         (e) => `
       <li class="calc-history-item">
         <div class="calc-history-info">
-          ${e.expr ? `<span class="calc-history-expr">${esc(e.expr)}</span>` : ''}
           <span class="calc-history-value">${esc(e.value)}</span>
+          ${e.expr ? `<span class="calc-history-expr">${esc(e.expr)}</span>` : ''}
         </div>
-        <span class="calc-history-time">${relTime(e.ts)}</span>
-        <button type="button" class="icon-copy-btn calc-history-copy" data-copy="${esc(e.value)}" aria-label="Copy ${esc(e.value)}" title="Copy">${COPY_ICON}</button>
+        <div class="calc-history-meta">
+          <span class="calc-history-time">${relTime(e.ts)}</span>
+          <button type="button" class="icon-copy-btn calc-history-copy" data-copy="${esc(e.value)}" aria-label="Copy ${esc(e.value)}" title="Copy">${COPY_ICON}</button>
+        </div>
       </li>`,
       )
       .join('');

@@ -14,6 +14,16 @@ function today(): Date {
 
 const DAY = 86400000;
 
+/** Format a Date as YYYY-MM-DD using its LOCAL components. Using toISOString()
+ *  here would shift to UTC and print the previous day for users in positive
+ *  timezone offsets, contradicting the local "Result date" shown above it. */
+function isoLocal(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
 function ymdDiff(from: Date, to: Date) {
   let a = from, b = to;
   const sign = a > b ? -1 : 1;
@@ -144,12 +154,27 @@ export const dateTimeCalculators: Calculator[] = [
       const holidays = Math.max(Math.floor(num(v.holidays, 0)), 0);
       const business = Math.max(weekdays - holidays, 0);
       const totalDays = Math.abs(Math.round((end.getTime() - start.getTime()) / DAY)) + 1;
+      const weekendDays = totalDays - weekdays;
       return {
         results: [
           { label: 'Business days', value: number(business, 0), primary: true, hint: 'Mon–Fri, minus holidays' },
           { label: 'Weekdays', value: number(weekdays, 0) },
-          { label: 'Weekend days', value: number(totalDays - weekdays, 0) },
+          { label: 'Weekend days', value: number(weekendDays, 0) },
         ],
+        charts: totalDays > 0
+          ? [{
+              type: 'pie',
+              title: 'How the days break down',
+              format: 'number',
+              // Business + holidays make up the weekdays, so these three slices
+              // are non-overlapping and sum to the total span.
+              slices: [
+                { label: 'Business days', value: Math.max(business, 0), color: '#0070f3' },
+                ...(holidays > 0 ? [{ label: 'Holidays', value: Math.min(holidays, weekdays), color: '#ff0080' }] : []),
+                { label: 'Weekend', value: Math.max(weekendDays, 0), color: '#f5a623' },
+              ],
+            }]
+          : undefined,
       };
     },
     faq: [
@@ -187,7 +212,7 @@ export const dateTimeCalculators: Calculator[] = [
       return {
         results: [
           { label: 'Result date', value: fmt, primary: true },
-          { label: 'ISO date', value: cur.toISOString().slice(0, 10) },
+          { label: 'ISO date', value: isoLocal(cur) },
         ],
       };
     },

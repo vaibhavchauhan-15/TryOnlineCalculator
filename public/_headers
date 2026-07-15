@@ -1,2 +1,13 @@
 https://tryonlinecalculator.pages.dev/*
   X-Robots-Tag: noindex
+
+# Baseline security headers for every response. Deliberately conservative:
+# no strict Content-Security-Policy, because the site relies on small inline
+# scripts (theme-before-paint, JSON-LD, Google Analytics) that a strict CSP
+# would block. These headers harden the site without breaking that.
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Strict-Transport-Security: max-age=31536000
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), interest-cohort=()

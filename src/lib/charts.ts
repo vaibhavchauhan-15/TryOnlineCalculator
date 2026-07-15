@@ -6,7 +6,7 @@
 // the charts follow the light / dark theme automatically. Series colours come
 // from an explicit value or the shared palette below.
 
-import type { ChartSpec, GaugeSegment, LineSeries, PieSlice } from './types';
+import type { BarDatum, ChartSpec, GaugeSegment, LineSeries, PieSlice } from './types';
 
 /** Shared, theme-agnostic series palette (also used by legends). */
 export const CHART_PALETTE = ['#0070f3', '#7928ca', '#f5a623', '#50e3c2', '#ff0080', '#00dfd8'];
@@ -188,6 +188,48 @@ function renderLine(spec: ChartSpec): string {
   );
 }
 
+/* ------------------------------------------------------------- Horizontal bars */
+
+// A CSS-driven horizontal bar chart. Bars are plain elements (not SVG) so the
+// labels stay crisp at any size and the layout reflows naturally on mobile.
+function renderBar(spec: ChartSpec): string {
+  const bars = (spec.bars ?? []).filter((b) => Number.isFinite(b.value));
+  if (!bars.length) return '';
+
+  // Scale to the largest magnitude so every bar shares one axis. Negative
+  // values are supported (drawn from a centre baseline).
+  const hasNeg = bars.some((b) => b.value < 0);
+  const max = Math.max(0, ...bars.map((b) => Math.abs(b.value)));
+  if (!(max > 0)) return '';
+
+  let rows = '';
+  bars.forEach((b: BarDatum, i) => {
+    const c = color(b.color, i);
+    const pct = (Math.abs(b.value) / max) * 100;
+    const val = b.display ?? compact(b.value, spec.format);
+    if (hasNeg) {
+      // Diverging layout: negative bars grow left of centre, positive right.
+      const side = b.value < 0 ? 'is-neg' : 'is-pos';
+      rows +=
+        `<li class="bar-row bar-diverge ${side}">` +
+        `<span class="bar-label">${esc(b.label)}</span>` +
+        `<span class="bar-track"><span class="bar-fill" style="width:${fmt(pct / 2)}%;background:${c}"></span></span>` +
+        `<span class="bar-value">${esc(val)}</span>` +
+        `</li>`;
+    } else {
+      rows +=
+        `<li class="bar-row">` +
+        `<span class="bar-label">${esc(b.label)}</span>` +
+        `<span class="bar-track"><span class="bar-fill" style="width:${fmt(pct)}%;background:${c}"></span></span>` +
+        `<span class="bar-value">${esc(val)}</span>` +
+        `</li>`;
+    }
+  });
+
+  const title = spec.title ? `<figcaption class="chart-title">${esc(spec.title)}</figcaption>` : '';
+  return `<figure class="chart chart-bar">${title}<ul class="bar-list">${rows}</ul></figure>`;
+}
+
 /* ----------------------------------------------------------------- Gauge chart */
 
 function renderGauge(spec: ChartSpec): string {
@@ -301,6 +343,7 @@ export function renderChart(spec: ChartSpec): string {
   if (spec.type === 'pie') return renderPie(spec);
   if (spec.type === 'line') return renderLine(spec);
   if (spec.type === 'gauge') return renderGauge(spec);
+  if (spec.type === 'bar') return renderBar(spec);
   return '';
 }
 

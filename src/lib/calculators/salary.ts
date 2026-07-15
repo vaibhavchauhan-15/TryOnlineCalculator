@@ -181,6 +181,20 @@ export const salaryCalculators: Calculator[] = [
           { label: 'Medicare (1.45%)', value: currency(medicare) },
           { label: 'State tax', value: currency(stateTax) },
         ],
+        charts: [
+          {
+            type: 'pie',
+            title: 'Where your salary goes',
+            format: 'currency',
+            slices: [
+              { label: 'Take-home', value: Math.max(net, 0), color: '#50e3c2' },
+              { label: 'Federal tax', value: Math.max(federal, 0), color: '#0070f3' },
+              { label: 'Social Security', value: Math.max(ss, 0), color: '#7928ca' },
+              { label: 'Medicare', value: Math.max(medicare, 0), color: '#f5a623' },
+              ...(stateTax > 0 ? [{ label: 'State tax', value: stateTax, color: '#ff0080' }] : []),
+            ],
+          },
+        ],
       };
     },
     faq: [

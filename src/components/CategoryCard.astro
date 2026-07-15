@@ -1,5 +1,6 @@
 ---
 import type { Category } from '../lib/types';
+import LinkCard from './LinkCard.astro';
 
 interface Props {
   category: Category;
@@ -8,51 +9,11 @@ interface Props {
 const { category, count } = Astro.props;
 ---
 
-<a href={category.path} class="cat-card">
-  <span class="cat-icon" aria-hidden="true">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-      <path d={category.icon}></path>
-    </svg>
-  </span>
-  <span class="cat-body">
-    <span class="cat-name">{category.name}</span>
-    <span class="cat-tagline">{category.tagline}</span>
-  </span>
-  {count !== undefined && <span class="cat-count">{count}</span>}
-</a>
-
-<style>
-  .cat-card {
-    display: flex;
-    align-items: center;
-    gap: 0.875rem;
-    padding: 1rem 1.125rem;
-    background-color: var(--color-canvas);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-card);
-    transition: box-shadow 0.18s ease, transform 0.18s ease;
-  }
-  .cat-card:hover { box-shadow: var(--shadow-soft); transform: translateY(-2px); }
-  .cat-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    flex-shrink: 0;
-    border-radius: var(--radius-sm);
-    background-color: var(--color-canvas-soft-2);
-    color: var(--color-ink);
-  }
-  .cat-body { display: flex; flex-direction: column; gap: 1px; flex: 1; min-width: 0; }
-  .cat-name { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
-  .cat-tagline { font-size: 12px; color: var(--color-mute); }
-  .cat-count {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    color: var(--color-mute);
-    background-color: var(--color-canvas-soft-2);
-    border-radius: var(--radius-pill);
-    padding: 2px 8px;
-  }
-</style>
+<LinkCard
+  href={category.path}
+  title={category.name}
+  desc={category.tagline}
+  icon={category.icon}
+  cta="Explore"
+  badge={count}
+/>
