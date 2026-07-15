@@ -1,6 +1,44 @@
-@import '@fontsource-variable/geist';
-@import '@fontsource-variable/geist-mono';
 @import 'tailwindcss';
+
+/* ============================================================
+   Self-hosted Geist — declared with `font-display: optional` and
+   preloaded in Layout.astro so the browser has the font ready for
+   the first paint. `optional` means the font is never swapped in
+   after paint, which eliminates the layout reflow ("shake") that
+   `swap` causes on page load/refresh.
+   ============================================================ */
+@font-face {
+  font-family: 'Geist Variable';
+  font-style: normal;
+  font-display: optional;
+  font-weight: 100 900;
+  src: url('/fonts/geist-latin.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face {
+  font-family: 'Geist Variable';
+  font-style: normal;
+  font-display: optional;
+  font-weight: 100 900;
+  src: url('/fonts/geist-latin-ext.woff2') format('woff2-variations');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Geist Mono Variable';
+  font-style: normal;
+  font-display: optional;
+  font-weight: 100 900;
+  src: url('/fonts/geist-mono-latin.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face {
+  font-family: 'Geist Mono Variable';
+  font-style: normal;
+  font-display: optional;
+  font-weight: 100 900;
+  src: url('/fonts/geist-mono-latin-ext.woff2') format('woff2-variations');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
 
 /* ============================================================
    Try Online Calculator — Design System
@@ -70,11 +108,53 @@
   --breakpoint-2xl: 1400px;
 }
 
+/* ============================================================
+   Dark theme — polarity-flipped surfaces + inverted CTA.
+   Applied via html[data-theme="dark"] (default; see Layout.astro).
+   Every component reads these tokens, so the whole UI flips here.
+   ============================================================ */
+html[data-theme='dark'] {
+  /* Surfaces & text (cards sit brighter than the page body) */
+  --color-ink: #ededed;
+  --color-primary: #ededed;        /* inverted CTA: light pill on dark UI */
+  --color-on-primary: #0a0a0a;     /* dark text on the inverted CTA */
+  --color-body: #a1a1a1;
+  --color-mute: #7a7a7a;
+  --color-hairline: #2a2a2a;
+  --color-hairline-strong: #4a4a4a;
+  --color-canvas: #0f0f0f;         /* card surface */
+  --color-canvas-soft: #000000;    /* page body */
+  --color-canvas-soft-2: #1c1c1c;  /* insets / hover */
+
+  /* Semantic — brightened for contrast on dark surfaces */
+  --color-link: #47a3ff;
+  --color-link-deep: #6cb6ff;
+  --color-link-soft: #10305c;
+  --color-success: #47a3ff;
+  --color-success-soft: #10305c;
+  --color-error: #ff6166;
+  --color-error-soft: #3a1416;
+  --color-error-deep: #ff8f92;
+  --color-warning: #f7b955;
+  --color-warning-soft: #3a2c10;
+  --color-warning-deep: #f5a623;
+
+  /* Stacked elevation — deeper offsets + light inset hairline on dark */
+  --shadow-hairline: inset 0 0 0 1px #ffffff14;
+  --shadow-card: 0px 1px 1px #00000040, 0px 2px 2px #00000040, inset 0 0 0 1px #ffffff12;
+  --shadow-soft: 0px 2px 4px #00000059, 0px 8px 16px -8px #00000073, inset 0 0 0 1px #ffffff12;
+  --shadow-float: 0px 2px 4px #00000059, 0px 8px 24px -4px #00000080, inset 0 0 0 1px #ffffff12;
+  --shadow-modal: 0px 1px 1px #00000040, 0px 8px 16px -4px #00000080, 0px 24px 32px -8px #00000099, inset 0 0 0 1px #ffffff12;
+}
+
 /* ---------- Base ---------- */
 @layer base {
   html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+    /* Always reserve the scrollbar track so content never shifts
+       sideways when a scrollbar appears on load. */
+    scrollbar-gutter: stable;
   }
 
   body {
@@ -84,11 +164,14 @@
     font-feature-settings: 'ss01', 'ss02', 'cv01', 'cv11';
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    /* No color transition here: the theme flip is applied instantly and the
+       animated feel comes from the circular View Transition (see below).
+       Transitioning the whole body would stretch out the expensive repaint. */
   }
 
   ::selection {
     background: var(--color-ink);
-    color: #f2f2f2;
+    color: var(--color-canvas);
   }
 
   /* Visible focus for keyboard users */
@@ -135,30 +218,22 @@
   .container-page { padding-inline: 1.5rem; }
 }
 
-/* The brand mesh gradient — hero scale only */
+/* The brand mesh gradient as a text fill — the page's single hero accent.
+   Sentence-fragment scale only; never miniaturised to an icon. */
 @utility mesh-text {
   background-image: linear-gradient(
-    90deg,
-    var(--color-grad-develop-start),
-    var(--color-grad-develop-end) 25%,
-    var(--color-grad-preview-start) 50%,
-    var(--color-grad-preview-end) 75%,
-    var(--color-grad-ship-end)
+    100deg,
+    var(--color-grad-develop-start) 0%,
+    var(--color-grad-develop-end) 22%,
+    var(--color-grad-preview-start) 46%,
+    var(--color-grad-preview-end) 70%,
+    var(--color-grad-ship-start) 86%,
+    var(--color-grad-ship-end) 100%
   );
   background-clip: text;
   -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   color: transparent;
-}
-
-/* Atmospheric mesh backdrop for hero band */
-@utility mesh-bg {
-  background-color: var(--color-canvas);
-  background-image:
-    radial-gradient(60% 60% at 15% 10%, color-mix(in oklab, var(--color-grad-develop-start) 42%, transparent), transparent 70%),
-    radial-gradient(55% 55% at 85% 5%, color-mix(in oklab, var(--color-grad-preview-end) 40%, transparent), transparent 70%),
-    radial-gradient(65% 55% at 50% 0%, color-mix(in oklab, var(--color-grad-preview-start) 32%, transparent), transparent 75%),
-    radial-gradient(70% 60% at 95% 35%, color-mix(in oklab, var(--color-grad-ship-end) 30%, transparent), transparent 70%),
-    radial-gradient(60% 60% at 5% 40%, color-mix(in oklab, var(--color-cyan) 30%, transparent), transparent 70%);
 }
 
 /* ---------- Small, stable component classes ---------- */
@@ -183,7 +258,7 @@
     background-color: var(--color-primary);
     color: var(--color-on-primary);
   }
-  .btn-primary:hover { background-color: #383838; }
+  .btn-primary:hover { background-color: color-mix(in srgb, var(--color-primary) 82%, var(--color-canvas-soft)); }
   .btn-secondary {
     background-color: var(--color-canvas);
     color: var(--color-ink);
@@ -250,5 +325,734 @@
     border-radius: var(--radius-pill);
     font-size: 12px;
     line-height: 16px;
+  }
+}
+
+/* ---------- Calculator results (dynamically injected → must be global) ---------- */
+@layer components {
+  .result-primary {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 1.25rem 1.5rem;
+    /* Fixed dark "spotlight" surface in both themes so the light-gray
+       labels below always keep contrast; hairline separates it on dark. */
+    background-color: #171717;
+    color: #ffffff;
+    border-radius: var(--radius-lg);
+    box-shadow: inset 0 0 0 1px var(--color-hairline);
+  }
+  .result-primary-label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #a1a1a1;
+  }
+  .result-primary-value {
+    font-size: 40px;
+    line-height: 1.1;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    word-break: break-word;
+  }
+  .result-primary-hint { font-size: 13px; color: #d4d4d4; margin-top: 2px; }
+  .result-primary.is-success .result-primary-value { color: var(--color-cyan); }
+  .result-primary.is-warning .result-primary-value { color: var(--color-warning); }
+  .result-primary.is-error .result-primary-value { color: #ff6b6b; }
+
+  .result-list {
+    display: flex;
+    flex-direction: column;
+    margin-top: 0.75rem;
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+  .result-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    background-color: var(--color-canvas);
+  }
+  .result-row + .result-row { border-top: 1px solid var(--color-hairline); }
+  .result-label {
+    font-size: 14px;
+    color: var(--color-body);
+    display: flex;
+    flex-direction: column;
+  }
+  .result-hint { font-size: 12px; color: var(--color-mute); }
+  .result-value {
+    font-size: 15px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    color: var(--color-ink);
+  }
+  .result-row.is-success .result-value { color: var(--color-success); }
+  .result-row.is-warning .result-value { color: var(--color-warning-deep); }
+  .result-row.is-error .result-value { color: var(--color-error); }
+
+  .result-breakdown { margin-top: 1rem; }
+  .breakdown-list {
+    margin: 0.5rem 0 0;
+    display: grid;
+    gap: 0;
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+  .breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.5rem 0.875rem;
+    font-size: 13px;
+    background-color: var(--color-canvas-soft);
+  }
+  .breakdown-row + .breakdown-row { border-top: 1px solid var(--color-hairline); }
+  .breakdown-row dt { color: var(--color-mute); margin: 0; }
+  .breakdown-row dd { color: var(--color-body); margin: 0; font-variant-numeric: tabular-nums; font-weight: 500; }
+
+  .calc-error {
+    padding: 0.875rem 1rem;
+    font-size: 14px;
+    color: var(--color-body);
+    background-color: var(--color-canvas-soft);
+    border: 1px dashed var(--color-hairline-strong);
+    border-radius: var(--radius-md);
+  }
+
+  /* ---- Result layout shell: splits a rich result into a summary column and
+     a visuals column so they sit side by side on wide screens. ---- */
+  .result-shell { min-width: 0; }
+  .result-main,
+  .result-visuals { min-width: 0; }
+  /* Stacked (mobile) mode: separate the visuals from the summary above them,
+     but don't let the first chart's own top margin double that gap. */
+  .result-visuals { margin-top: 1rem; }
+  .result-visuals > :first-child { margin-top: 0; }
+
+  @media (min-width: 1024px) {
+    .result-shell.has-visuals {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 1.75rem;
+      align-items: start;
+    }
+    /* Side-by-side: align the visuals column flush with the summary top. */
+    .result-shell.has-visuals .result-visuals { margin-top: 0; }
+  }
+
+  /* ---- Reusable charts (dynamically injected → global) ---- */
+  /* Adaptive grid: charts sit side by side whenever their container is wide
+     enough, and collapse to a single column in a narrow results column. */
+  .chart-stack {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  .chart {
+    margin: 0;
+    padding: 1rem 1.125rem 1.125rem;
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
+    background-color: var(--color-canvas);
+  }
+  .chart-title {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-ink);
+    margin-bottom: 0.75rem;
+  }
+  .chart-svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .chart-svg-pie { max-width: 168px; flex: 0 0 auto; }
+  .chart-svg-line { width: 100%; }
+
+  .chart-pie-body { display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap; }
+
+  .chart-grid { stroke: var(--color-hairline); stroke-width: 1; }
+  .chart-axis-label {
+    fill: var(--color-mute);
+    font-family: var(--font-mono);
+    font-size: 9px;
+  }
+
+  .chart-legend {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+  .chart-line .chart-legend {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.375rem 1rem;
+    margin-bottom: 0.75rem;
+  }
+  .chart-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 13px;
+    color: var(--color-body);
+  }
+  .chart-pie .chart-legend-item { flex: 1 1 auto; }
+  .chart-swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    flex: 0 0 auto;
+  }
+  .chart-legend-label { color: var(--color-body); }
+  .chart-legend-val {
+    margin-left: auto;
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+    color: var(--color-ink);
+  }
+
+  @media (max-width: 380px) {
+    .chart-pie-body { flex-direction: column; align-items: stretch; }
+    .chart-svg-pie { max-width: 140px; margin-inline: auto; }
+    .chart-pie .chart-legend { width: 100%; }
+  }
+
+  /* ---- Gauge chart (e.g. BMI on a scale) ---- */
+  .chart-gauge { text-align: center; }
+  .gauge-value {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    margin-bottom: 0.5rem;
+    font-size: 34px;
+    line-height: 1.05;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    color: var(--color-ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .gauge-value-caption {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--color-mute);
+  }
+  .chart-svg-gauge { width: 100%; }
+  .gauge-seg-label {
+    fill: var(--color-mute);
+    font-family: var(--font-sans);
+    font-size: 9px;
+    font-weight: 500;
+  }
+  .gauge-tick { stroke: var(--color-hairline-strong); stroke-width: 1; }
+  .gauge-tick-label {
+    fill: var(--color-mute);
+    font-family: var(--font-mono);
+    font-size: 9px;
+  }
+  .gauge-needle {
+    stroke: var(--color-ink);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+  }
+  .gauge-needle-dot {
+    fill: var(--color-ink);
+    stroke: var(--color-canvas);
+    stroke-width: 2;
+  }
+
+  /* ---- Reference / info block (e.g. latest mortgage rates) ---- */
+  .result-info {
+    margin-top: 1rem;
+    padding: 1rem 1.125rem;
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
+    background-color: var(--color-canvas-soft);
+  }
+  .result-info-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+  .result-info-item {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-canvas);
+    box-shadow: var(--shadow-hairline);
+  }
+  .result-info-label {
+    font-size: 12px;
+    color: var(--color-mute);
+  }
+  .result-info-value {
+    font-size: 16px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-link);
+  }
+  .result-info-note {
+    display: block;
+    margin-top: 0.625rem;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--color-mute);
+  }
+}
+
+/* ---------- Prose (static content pages) ---------- */
+@layer components {
+  .prose {
+    max-width: 68ch;
+    padding: 2.5rem 1rem 1rem;
+  }
+  @media (min-width: 768px) { .prose { padding-inline: 1.5rem; } }
+  .prose h1 { font-size: clamp(1.875rem, 4vw, 2.5rem); letter-spacing: -0.03em; margin: 0 0 0.5rem; }
+  .prose h2 { font-size: 1.25rem; letter-spacing: -0.02em; margin: 2rem 0 0.5rem; }
+  .prose p { font-size: 16px; line-height: 1.7; color: var(--color-body); margin: 0.5rem 0; }
+  .prose-meta { font-size: 13px; color: var(--color-mute); margin-bottom: 1rem; }
+}
+
+/* ============================================================
+   Visual calculator keypad — reusable button UI
+   Shared by the scientific, basic, fraction, percentage and
+   average calculators so every key looks and feels the same.
+   ============================================================ */
+@layer components {
+  /* Device shell that frames a visual calculator */
+  .calc-device {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 480px;
+    margin-inline: auto;
+    padding: 1.25rem;
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-float);
+  }
+  .calc-device.is-wide { max-width: 620px; }
+
+  /* Read-out screen */
+  .calc-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0.25rem;
+    min-height: 104px;
+    padding: 0.875rem 1rem;
+    background-color: #0f1729;
+    border-radius: var(--radius-md);
+    box-shadow: inset 0 0 0 1px #ffffff14, inset 0 2px 8px #00000040;
+    overflow: hidden;
+  }
+  .calc-screen-expr {
+    width: 100%;
+    font-family: var(--font-mono);
+    font-size: 15px;
+    line-height: 1.4;
+    color: #9fb3d1;
+    text-align: right;
+    word-break: break-all;
+    min-height: 21px;
+  }
+  .calc-screen-result {
+    width: 100%;
+    font-family: var(--font-mono);
+    font-size: clamp(1.75rem, 7vw, 2.5rem);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+    text-align: right;
+    word-break: break-all;
+  }
+  .calc-screen-result.is-error { color: #ff8f92; font-size: 1.125rem; }
+
+  /* Editable expression: tap a value to select (highlight) and edit it. */
+  .calc-screen-expr.is-editable { cursor: text; }
+  .calc-screen-expr .tok { border-radius: 3px; }
+  .calc-screen-expr .tok.is-sel {
+    background-color: color-mix(in srgb, var(--color-cyan) 40%, transparent);
+    color: #ffffff;
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-cyan) 60%, transparent);
+  }
+  .calc-caret {
+    display: inline-block;
+    width: 2px;
+    height: 1.05em;
+    margin: 0 -1px;
+    vertical-align: -0.15em;
+    background-color: var(--color-cyan);
+    animation: calc-caret-blink 1.05s step-end infinite;
+  }
+  @keyframes calc-caret-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .calc-caret { animation: none; }
+  }
+
+  /* Status chips (angle mode, shift, memory) */
+  .calc-status {
+    display: flex;
+    gap: 0.375rem;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  .calc-chip {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #6b7f9e;
+    padding: 1px 6px;
+    border-radius: var(--radius-xs);
+    box-shadow: inset 0 0 0 1px #ffffff12;
+  }
+  .calc-chip.is-active { color: #0f1729; background-color: var(--color-cyan); box-shadow: none; }
+
+  /* Keypad grids */
+  .calc-keys {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+  }
+  .calc-keys.cols-5 { grid-template-columns: repeat(5, 1fr); }
+
+  /* Base key */
+  .calc-key {
+    -webkit-appearance: none;
+    appearance: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 52px;
+    padding: 0.5rem 0.25rem;
+    font-family: var(--font-sans);
+    font-size: clamp(15px, 3.6vw, 18px);
+    font-weight: 500;
+    line-height: 1;
+    color: var(--color-ink);
+    background-color: var(--color-canvas-soft-2);
+    border: none;
+    border-radius: var(--radius-md);
+    box-shadow: inset 0 0 0 1px var(--color-hairline);
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: transform 0.06s ease, background-color 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+  }
+  .calc-key:hover { background-color: color-mix(in srgb, var(--color-canvas-soft-2) 60%, var(--color-hairline-strong)); }
+  /* Tactile press feedback (mouse + touch) */
+  .calc-key:active { transform: translateY(1px) scale(0.97); filter: brightness(0.94); }
+  .calc-key.is-press { transform: translateY(1px) scale(0.97); filter: brightness(0.9); }
+  .calc-key:focus-visible { outline: 2px solid var(--color-link); outline-offset: 2px; }
+
+  /* Secondary label above a key (Casio-style shifted function) */
+  .calc-key { position: relative; }
+  .calc-key[data-2nd]::before {
+    content: attr(data-2nd);
+    position: absolute;
+    top: 4px;
+    left: 0;
+    right: 0;
+    font-size: 9px;
+    font-weight: 500;
+    color: var(--color-warning-deep);
+    text-align: center;
+    pointer-events: none;
+  }
+
+  /* Function keys (sin, cos, log, sqrt…) */
+  .calc-key.key-fn {
+    background-color: var(--color-canvas-soft);
+    font-size: clamp(12px, 3vw, 15px);
+    font-family: var(--font-mono);
+    color: var(--color-body);
+  }
+  /* Operator keys (+ − × ÷) */
+  .calc-key.key-op {
+    background-color: color-mix(in srgb, var(--color-link) 14%, var(--color-canvas));
+    color: var(--color-link-deep);
+    font-size: clamp(18px, 4.5vw, 22px);
+    font-weight: 600;
+  }
+  .calc-key.key-op:hover { background-color: color-mix(in srgb, var(--color-link) 24%, var(--color-canvas)); }
+
+  /* Danger keys — DEL & AC in red */
+  .calc-key.key-danger {
+    background-color: var(--color-error);
+    color: #ffffff;
+    font-weight: 600;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-error) 60%, #000);
+  }
+  .calc-key.key-danger:hover { background-color: var(--color-error-deep); }
+
+  /* Equals — brand accent, full-height on its column */
+  .calc-key.key-equal {
+    background-color: var(--color-ink);
+    color: var(--color-on-primary);
+    font-size: clamp(20px, 5vw, 24px);
+    font-weight: 600;
+  }
+  .calc-key.key-equal:hover { background-color: color-mix(in srgb, var(--color-ink) 82%, var(--color-canvas-soft)); }
+
+  /* Toggle keys (DEG/RAD, Shift) */
+  .calc-key.key-toggle { background-color: var(--color-canvas-soft); font-size: 12px; font-family: var(--font-mono); color: var(--color-mute); }
+  .calc-key.key-toggle.is-active { background-color: var(--color-cyan); color: #0f1729; box-shadow: none; }
+
+  /* Span helpers */
+  .calc-key.span-2 { grid-column: span 2; }
+  .calc-key.row-2 { grid-row: span 2; }
+
+  @media (max-width: 420px) {
+    .calc-device { padding: 0.875rem; border-radius: var(--radius-lg); }
+    .calc-keys { gap: 0.375rem; }
+    .calc-key { min-height: 46px; border-radius: var(--radius-sm); }
+  }
+}
+
+/* ============================================================
+   Theme switch — circular reveal via the View Transitions API.
+   The switch itself is instant (data-theme flips synchronously);
+   these rules just drive the expanding-circle animation of the
+   NEW theme snapshot over the OLD one. JS sets the origin + radius
+   and runs the keyframes (see Header.astro). We disable the default
+   cross-fade so the clip-path circle is the only visible motion.
+   ============================================================ */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+/* New theme is revealed on top of the outgoing one. */
+::view-transition-new(root) {
+  z-index: 1;
+}
+::view-transition-old(root) {
+  z-index: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
+}
+
+/* ============================================================
+   Calculation history + copy controls
+   Shared by the generic form widget and every visual calculator.
+   Dynamically injected in places, so declared globally.
+   ============================================================ */
+@layer components {
+  /* ---- Small icon copy button (light surfaces: history rows) ---- */
+  .icon-copy-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    color: var(--color-mute);
+    background-color: var(--color-canvas);
+    border: none;
+    border-radius: var(--radius-sm);
+    box-shadow: inset 0 0 0 1px var(--color-hairline);
+    cursor: pointer;
+    transition: color 0.15s ease, background-color 0.15s ease, transform 0.06s ease;
+  }
+  .icon-copy-btn:hover { color: var(--color-ink); background-color: var(--color-canvas-soft-2); }
+  .icon-copy-btn:active { transform: scale(0.92); }
+  .icon-copy-btn.is-copied { color: var(--color-success); box-shadow: inset 0 0 0 1px var(--color-success); }
+
+  /* ---- Copy icon on the dark headline result (form calculators) ---- */
+  .result-primary { position: relative; }
+  .result-copy {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    color: #d4d4d4;
+    background-color: #ffffff1a;
+    border: none;
+    border-radius: var(--radius-sm);
+    box-shadow: inset 0 0 0 1px #ffffff24;
+    cursor: pointer;
+    transition: color 0.15s ease, background-color 0.15s ease, transform 0.06s ease;
+  }
+  .result-copy:hover { color: #ffffff; background-color: #ffffff2e; }
+  .result-copy:active { transform: scale(0.92); }
+  .result-copy.is-copied { color: var(--color-cyan); }
+  .result-primary-label,
+  .result-primary-value,
+  .result-primary-hint { padding-right: 2.5rem; }
+
+  /* ---- "Copy result" action button (visual calculators) ----
+     Sits in its own right-aligned row directly below the read-out screen,
+     so it never overlaps the numbers and its label makes the purpose clear.
+     Styled as a pill to match the History control. ---- */
+  .calc-copy-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: -0.25rem;
+  }
+  .calc-copy-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.85rem;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-body);
+    background-color: var(--color-canvas-soft-2);
+    border: none;
+    border-radius: var(--radius-pill);
+    box-shadow: inset 0 0 0 1px var(--color-hairline);
+    cursor: pointer;
+    transition: color 0.15s ease, background-color 0.15s ease, transform 0.06s ease;
+  }
+  .calc-copy-action:hover { color: var(--color-ink); background-color: var(--color-canvas-soft); }
+  .calc-copy-action:active { transform: scale(0.97); }
+  .calc-copy-action.is-copied { color: var(--color-success); box-shadow: inset 0 0 0 1px var(--color-success); }
+  .calc-copy-action svg { display: block; }
+
+  /* ---- History panel ---- */
+  .calc-history { display: none; margin-top: 0.25rem; }
+  .calc-history.has-entries { display: block; }
+
+  .calc-history-head {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .calc-history-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.75rem;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-body);
+    background-color: var(--color-canvas-soft-2);
+    border: none;
+    border-radius: var(--radius-pill);
+    box-shadow: inset 0 0 0 1px var(--color-hairline);
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+  .calc-history-toggle:hover { color: var(--color-ink); background-color: var(--color-canvas-soft); }
+  .calc-history-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding-inline: 5px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-on-primary);
+    background-color: var(--color-primary);
+    border-radius: var(--radius-pill);
+  }
+  .calc-history-caret { transition: transform 0.18s ease; }
+  .calc-history.is-open .calc-history-caret { transform: rotate(180deg); }
+
+  .calc-history-clear {
+    margin-left: auto;
+    padding: 0.4rem 0.625rem;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-mute);
+    background: none;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: color 0.15s ease, background-color 0.15s ease;
+  }
+  .calc-history-clear:hover { color: var(--color-error); background-color: var(--color-canvas-soft-2); }
+
+  .calc-history-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: none;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+  .calc-history.is-open .calc-history-list {
+    display: flex;
+    margin-top: 0.625rem;
+    /* Cap the height so long histories scroll instead of pushing the page. */
+    max-height: 260px;
+    overflow-y: auto;
+  }
+  .calc-history-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0.625rem 0.5rem 0.75rem;
+    background-color: var(--color-canvas-soft);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-hairline);
+  }
+  .calc-history-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+  .calc-history-expr {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--color-mute);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .calc-history-value {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .calc-history-time {
+    flex: 0 0 auto;
+    font-size: 11px;
+    color: var(--color-mute);
+    white-space: nowrap;
   }
 }

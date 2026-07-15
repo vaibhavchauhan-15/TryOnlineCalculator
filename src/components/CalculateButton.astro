@@ -1,0 +1,29 @@
+---
+// Reusable primary "Calculate" action shared by every calculator. Clicking it
+// commits the current result to the calculator's history (see wireCalculateButton
+// in ../lib/history). The read-out above still previews live as the user types;
+// this button is the explicit "compute + save" affordance.
+interface Props {
+  label?: string;
+}
+const { label = 'Calculate' } = Astro.props;
+---
+
+<div class="calc-calculate-row">
+  <button type="button" class="calc-calculate" data-calc-btn>
+    <span class="calc-calculate-ico" data-calc-ico aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="4" y="2" width="16" height="20" rx="2"></rect>
+        <line x1="8" y1="6" x2="16" y2="6"></line>
+        <line x1="8" y1="11" x2="8" y2="11"></line>
+        <line x1="12" y1="11" x2="12" y2="11"></line>
+        <line x1="16" y1="11" x2="16" y2="11"></line>
+        <line x1="8" y1="15" x2="8" y2="15"></line>
+        <line x1="12" y1="15" x2="12" y2="15"></line>
+        <line x1="16" y1="15" x2="16" y2="18"></line>
+        <line x1="8" y1="18" x2="12" y2="18"></line>
+      </svg>
+    </span>
+    <span class="calc-calculate-txt" data-calc-txt>{label}</span>
+  </button>
+</div>

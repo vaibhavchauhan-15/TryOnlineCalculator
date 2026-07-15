@@ -1,0 +1,22 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { allCalculators } from '../lib/calculators';
+const total = allCalculators.length;
+---
+
+<Layout title="About" description="About Try Online Calculator — free, fast, privacy-friendly calculators for everyday life." path="/about">
+  <div class="container-page prose">
+    <h1>About Try Online Calculator</h1>
+    <p>Try Online Calculator is a growing collection of {total}+ free calculators covering finance, health, education, math, salary, shopping, dates and travel. Our goal is simple: give you an accurate answer in the fewest possible clicks.</p>
+
+    <h2>What makes it different</h2>
+    <p>Every calculator runs entirely in your browser, so results appear instantly as you type and your inputs never leave your device. There is no account to create and nothing to install.</p>
+    <p>Each tool shows the formula it uses along with plain-language explanations, worked examples and answers to common questions, so you can trust and understand the result — not just read a number.</p>
+
+    <h2>Accuracy &amp; disclaimer</h2>
+    <p>We work hard to keep our formulas correct and up to date. Even so, these tools provide estimates for general information only and are not a substitute for professional financial, medical, tax or legal advice. Always confirm important decisions with a qualified professional.</p>
+
+    <h2>Feedback</h2>
+    <p>Spotted a bug or want a calculator we do not have yet? We would love to hear from you on our <a class="link" href="/contact">contact page</a>.</p>
+  </div>
+</Layout>

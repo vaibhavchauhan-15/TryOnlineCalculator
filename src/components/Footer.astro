@@ -1,0 +1,91 @@
+---
+import { categories } from '../lib/categories';
+import { calculatorsByCategory } from '../lib/calculators';
+
+const year = new Date().getFullYear();
+const cols = categories.slice(0, 4).map((c) => ({
+  cat: c,
+  items: calculatorsByCategory(c.id).slice(0, 5),
+}));
+---
+
+<footer class="site-footer">
+  <div class="container-page footer-inner">
+    <div class="footer-brand">
+      <span class="footer-logo">Try Online Calculator</span>
+      <p class="footer-tagline">Fast, free, privacy-friendly calculators for finance, health, math and everyday life. No sign-up, no tracking of your inputs.</p>
+    </div>
+
+    {cols.map((col) => (
+      <nav class="footer-col" aria-label={col.cat.name}>
+        <span class="footer-heading">{col.cat.name}</span>
+        <ul>
+          {col.items.map((calc) => (
+            <li><a href={`/${calc.category}/${calc.slug}`}>{calc.title.replace(' Calculator', '')}</a></li>
+          ))}
+          <li><a href={col.cat.path} class="footer-all">All {col.cat.name.toLowerCase()} →</a></li>
+        </ul>
+      </nav>
+    ))}
+
+    <nav class="footer-col" aria-label="Company">
+      <span class="footer-heading">Site</span>
+      <ul>
+        <li><a href="/about">About</a></li>
+        <li><a href="/contact">Contact</a></li>
+        <li><a href="/privacy">Privacy</a></li>
+        <li><a href="/terms">Terms</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="container-page footer-bottom">
+    <span>© {year} Try Online Calculator</span>
+    <span class="footer-note">Estimates only — not financial, medical or tax advice.</span>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background-color: var(--color-canvas);
+    border-top: 1px solid var(--color-hairline);
+    margin-top: 4rem;
+    padding: 4rem 0 2rem;
+  }
+  .footer-inner {
+    display: grid;
+    grid-template-columns: 1.6fr repeat(5, 1fr);
+    gap: 2rem;
+  }
+  .footer-logo { font-weight: 600; letter-spacing: -0.02em; }
+  .footer-tagline { margin-top: 0.75rem; font-size: 13px; line-height: 1.6; color: var(--color-mute); max-width: 30ch; }
+  .footer-heading {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-mute);
+  }
+  .footer-col ul { list-style: none; margin: 0.875rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+  .footer-col a { font-size: 14px; color: var(--color-body); }
+  .footer-col a:hover { color: var(--color-ink); }
+  .footer-all { color: var(--color-mute) !important; font-size: 13px !important; }
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-hairline);
+    font-size: 12px;
+    color: var(--color-mute);
+  }
+  @media (max-width: 900px) {
+    .footer-inner { grid-template-columns: repeat(3, 1fr); }
+    .footer-brand { grid-column: 1 / -1; }
+  }
+  @media (max-width: 560px) {
+    .footer-inner { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>

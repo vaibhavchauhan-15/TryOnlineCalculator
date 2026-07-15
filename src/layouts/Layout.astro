@@ -1,23 +1,97 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  path?: string; // canonical path, e.g. "/finance/mortgage-calculator"
+  noindex?: boolean;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const { title, description, path = '', noindex = false, jsonLd } = Astro.props;
+const site = Astro.site?.toString().replace(/\/$/, '') ?? 'https://tryonlinecalculator.com';
+const canonical = `${site}${path}`;
+const fullTitle = title.includes('Try Online Calculator') ? title : `${title} | Try Online Calculator`;
+const ogImage = `${site}/favicon.svg`;
+const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+---
+
 <!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
-	</head>
-	<body>
-		<slot />
-	</body>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Set theme before paint to avoid a flash. Defaults to dark. -->
+    <script is:inline>
+      (function () {
+        try {
+          var stored = localStorage.getItem('theme');
+          var theme = stored === 'light' || stored === 'dark' ? stored : 'dark';
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
+    <!-- Preload the primary font subsets so they're ready for the first
+         paint. Paired with `font-display: optional` this removes the
+         font-swap reflow that made text/components shake on refresh. -->
+    <link rel="preload" href="/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/geist-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="theme-color" content="#000000" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Try Online Calculator" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    {schemas.map((s) => (
+      <script type="application/ld+json" set:html={JSON.stringify(s)} />
+    ))}
+  </head>
+  <body>
+    <a href="#main" class="skip-link">Skip to content</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
 </html>
 
 <style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 100;
+    padding: 0.5rem 1rem;
+    background: var(--color-ink);
+    color: var(--color-on-primary);
+    border-radius: 0 0 var(--radius-sm) 0;
+  }
+  .skip-link:focus { left: 0; }
+  main { min-height: 60vh; }
 </style>

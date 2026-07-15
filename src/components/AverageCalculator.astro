@@ -1,0 +1,224 @@
+---
+// Visual average / statistics calculator. Type numbers and the stat cards
+// (mean, median, mode, sum, range…) update live.
+import CalculateButton from './CalculateButton.astro';
+
+interface Props {
+  storeKey?: string;
+}
+const { storeKey } = Astro.props;
+---
+
+<div class="calc-device is-wide avg" data-average data-store={storeKey ? `average:${storeKey}` : undefined}>
+  <label class="avg-field">
+    <span class="avg-label">Your numbers</span>
+    <textarea class="avg-input" data-values rows="3" placeholder="e.g. 12, 7, 19, 23, 15"></textarea>
+    <span class="avg-hint" data-count>0 numbers</span>
+  </label>
+
+  <div class="avg-primary calc-screen">
+    <div class="calc-screen-expr">Mean (average)</div>
+    <div class="calc-screen-result" data-mean>&#8212;</div>
+  </div>
+
+  <div class="calc-copy-row">
+    <button type="button" class="calc-copy-action" data-copy-btn aria-label="Copy mean" title="Copy mean">
+      <span data-copy-ico><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></span>
+      <span data-copy-txt>Copy mean</span>
+    </button>
+  </div>
+
+  <div class="avg-grid">
+    <div class="avg-stat"><span class="eyebrow">Median</span><span data-median>&#8212;</span></div>
+    <div class="avg-stat"><span class="eyebrow">Mode</span><span data-mode>&#8212;</span></div>
+    <div class="avg-stat"><span class="eyebrow">Sum</span><span data-sum>&#8212;</span></div>
+    <div class="avg-stat"><span class="eyebrow">Range</span><span data-range>&#8212;</span></div>
+    <div class="avg-stat"><span class="eyebrow">Min</span><span data-min>&#8212;</span></div>
+    <div class="avg-stat"><span class="eyebrow">Max</span><span data-max>&#8212;</span></div>
+  </div>
+
+  <p class="frac-error" data-avg-error hidden></p>
+
+  <CalculateButton />
+
+  <div data-history-mount></div>
+</div>
+
+<script>
+  import { num, number } from '../lib/format';
+  import { loadState, saveState } from '../lib/storage';
+  import { createHistoryUI, copyWithFeedback } from '../lib/history';
+
+  type Saved = { values: string };
+
+  function mount(root: HTMLElement): void {
+    const q = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
+    const input = q<HTMLTextAreaElement>('[data-values]');
+    const store = root.dataset.store;
+    const meanEl = q('[data-mean]');
+    const medianEl = q('[data-median]');
+    const modeEl = q('[data-mode]');
+    const sumEl = q('[data-sum]');
+    const rangeEl = q('[data-range]');
+    const minEl = q('[data-min]');
+    const maxEl = q('[data-max]');
+    const countEl = q('[data-count]');
+    const errEl = q('[data-avg-error]');
+
+    // History panel + copy control.
+    const historyMount = root.querySelector<HTMLElement>('[data-history-mount]');
+    const history = historyMount && store ? createHistoryUI({ key: store, mount: historyMount }) : null;
+    const copyBtn = root.querySelector<HTMLElement>('[data-copy-btn]');
+    let currentMean = '';
+    let currentCount = 0;
+    copyBtn?.addEventListener('click', () => copyWithFeedback(copyBtn, currentMean));
+    const commit = () => {
+      if (currentMean) history?.record(`Mean of ${currentCount} number${currentCount === 1 ? '' : 's'}`, currentMean);
+    };
+
+    const clearStats = () =>
+      [meanEl, medianEl, modeEl, sumEl, rangeEl, minEl, maxEl].forEach((el) => (el.textContent = '\u2014'));
+
+    function update(): void {
+      if (store) saveState(store, { values: input.value } satisfies Saved);
+      const tokens = input.value
+        .split(/[,\s\n]+/)
+        .map((s) => s.trim())
+        .filter(Boolean);
+
+      // Keep the numbers we can read; count the ones we can't so the user
+      // knows something was skipped rather than silently dropped.
+      const nums: number[] = [];
+      let invalid = 0;
+      for (const t of tokens) {
+        const v = num(t, NaN);
+        if (Number.isFinite(v)) nums.push(v);
+        else invalid++;
+      }
+
+      countEl.textContent = `${nums.length} number${nums.length === 1 ? '' : 's'}`;
+
+      if (!tokens.length) {
+        currentMean = '';
+        errEl.hidden = false;
+        errEl.classList.remove('is-note');
+        errEl.textContent = 'Enter at least one number.';
+        clearStats();
+        return;
+      }
+      if (!nums.length) {
+        currentMean = '';
+        errEl.hidden = false;
+        errEl.classList.remove('is-note');
+        errEl.textContent = 'No valid numbers found \u2014 try values like 12, 7, 19.';
+        clearStats();
+        return;
+      }
+
+      const sum = nums.reduce((a, b) => a + b, 0);
+      const mean = sum / nums.length;
+      const sorted = [...nums].sort((a, b) => a - b);
+      const mid = Math.floor(sorted.length / 2);
+      const median = sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+
+      const counts = new Map<number, number>();
+      nums.forEach((n) => counts.set(n, (counts.get(n) || 0) + 1));
+      let maxCount = 0;
+      counts.forEach((c) => (maxCount = Math.max(maxCount, c)));
+      const modes = maxCount > 1 ? [...counts.entries()].filter(([, c]) => c === maxCount).map(([n]) => n) : [];
+
+      meanEl.textContent = number(mean, 6);
+      currentMean = number(mean, 6);
+      currentCount = nums.length;
+      medianEl.textContent = number(median, 6);
+      modeEl.textContent = modes.length ? modes.map((n) => number(n, 6)).join(', ') : 'none';
+      sumEl.textContent = number(sum, 6);
+      rangeEl.textContent = number(sorted[sorted.length - 1] - sorted[0], 6);
+      minEl.textContent = number(sorted[0], 6);
+      maxEl.textContent = number(sorted[sorted.length - 1], 6);
+
+      // Non-blocking notice: stats are valid, we just skipped unreadable bits.
+      if (invalid) {
+        errEl.hidden = false;
+        errEl.classList.add('is-note');
+        errEl.textContent = `Ignored ${invalid} invalid ${invalid === 1 ? 'entry' : 'entries'}.`;
+      } else {
+        errEl.hidden = true;
+        errEl.classList.remove('is-note');
+      }
+    }
+
+    input.addEventListener('input', update);
+    // Commit to history when the textarea is blurred/committed.
+    input.addEventListener('change', commit);
+
+    // Restore the numbers from a previous session.
+    const saved = store ? loadState<Saved>(store) : null;
+    if (saved && typeof saved.values === 'string') input.value = saved.values;
+    update();
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-average]').forEach(mount);
+</script>
+
+<style>
+  .avg { gap: 1.25rem; }
+  .avg-field { display: flex; flex-direction: column; gap: 0.375rem; }
+  .avg-label { font-size: 13px; color: var(--color-body); font-weight: 500; }
+  .avg-input {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    font-family: var(--font-mono);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--color-ink);
+    background-color: var(--color-canvas-soft-2);
+    border: none;
+    border-radius: var(--radius-md);
+    box-shadow: inset 0 0 0 1px var(--color-hairline);
+    resize: vertical;
+  }
+  .avg-input:focus { outline: none; box-shadow: inset 0 0 0 2px var(--color-link); }
+  .avg-hint { font-size: 12px; color: var(--color-mute); font-family: var(--font-mono); }
+
+  .avg-primary { min-height: 88px; }
+
+  .frac-error {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    font-size: 14px;
+    color: var(--color-error);
+    background-color: var(--color-error-soft);
+    border-radius: var(--radius-md);
+    text-align: center;
+  }
+
+  /* Soft, non-blocking notice (e.g. "ignored 2 invalid entries"). */
+  .frac-error.is-note {
+    color: var(--color-warning-deep);
+    background-color: transparent;
+    box-shadow: inset 0 0 0 1px var(--color-hairline);
+  }
+
+  .avg-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
+  .avg-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 0.75rem 1rem;
+    background-color: var(--color-canvas-soft);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+  }
+  .avg-stat span:last-child {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-ink);
+    word-break: break-all;
+  }
+
+  @media (max-width: 520px) {
+    .avg-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>

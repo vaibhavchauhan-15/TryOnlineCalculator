@@ -1,0 +1,25 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Privacy Policy" description="How Try Online Calculator handles your data. Short version: your calculator inputs stay on your device." path="/privacy">
+  <div class="container-page prose">
+    <h1>Privacy Policy</h1>
+    <p class="prose-meta">Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+
+    <h2>Your calculations stay on your device</h2>
+    <p>All calculators run locally in your browser. The numbers you enter are processed on your device and are never sent to or stored on our servers.</p>
+
+    <h2>Analytics</h2>
+    <p>We may use privacy-respecting, aggregate analytics to understand which calculators are popular and how the site performs. This data is anonymised and never tied to the values you type into a calculator.</p>
+
+    <h2>Cookies &amp; local storage</h2>
+    <p>We use local storage only to remember preferences such as your unit choices. We do not sell your data or use it for advertising profiles.</p>
+
+    <h2>Third-party links</h2>
+    <p>Some pages may link to external sites. We are not responsible for the privacy practices of those sites.</p>
+
+    <h2>Contact</h2>
+    <p>Questions about privacy? Reach us through the <a class="link" href="/contact">contact page</a>.</p>
+  </div>
+</Layout>

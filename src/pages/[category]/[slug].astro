@@ -1,0 +1,321 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CalculatorWidget from '../../components/CalculatorWidget.astro';
+import KeypadCalculator from '../../components/KeypadCalculator.astro';
+import FractionCalculator from '../../components/FractionCalculator.astro';
+import PercentageCalculator from '../../components/PercentageCalculator.astro';
+import AverageCalculator from '../../components/AverageCalculator.astro';
+import CalculatorCard from '../../components/CalculatorCard.astro';
+import { allCalculators, getCalculator } from '../../lib/calculators';
+import { getCategory } from '../../lib/categories';
+import { calculatorPageSchemas } from '../../lib/seo';
+
+export function getStaticPaths() {
+  return allCalculators.map((c) => ({
+    params: { category: c.category, slug: c.slug },
+    props: { calc: c },
+  }));
+}
+
+const { calc } = Astro.props;
+const category = getCategory(calc.category)!;
+const related = (calc.related ?? [])
+  .map((slug) => getCalculator(slug))
+  .filter((c): c is NonNullable<typeof c> => Boolean(c));
+const schemas = calculatorPageSchemas(calc);
+const isVisual = Boolean(calc.visual);
+---
+
+<Layout
+  title={calc.title}
+  description={calc.description}
+  path={`/${calc.category}/${calc.slug}`}
+  jsonLd={schemas}
+>
+  <div class="container-page">
+    {isVisual ? (
+      <section class="calc-stage">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href="/">Home</a><span aria-hidden="true">/</span>
+          <a href={category.path}>{category.name}</a><span aria-hidden="true">/</span>
+          <span>{calc.title}</span>
+        </nav>
+
+        <div class="calc-hero">
+          <div class="calc-hero-text">
+            <span class="eyebrow">{category.name}</span>
+            <h1 class="calc-title">{calc.title}</h1>
+            <p class="calc-desc">{calc.description}</p>
+            {calc.intro && <p class="calc-intro">{calc.intro}</p>}
+          </div>
+
+          <div class="calc-hero-device">
+            {calc.visual === 'scientific' && <KeypadCalculator calculator={calc} variant="scientific" />}
+            {calc.visual === 'basic' && <KeypadCalculator calculator={calc} variant="basic" />}
+            {calc.visual === 'fraction' && <FractionCalculator storeKey={`${calc.category}/${calc.slug}`} />}
+            {calc.visual === 'percentage' && <PercentageCalculator storeKey={`${calc.category}/${calc.slug}`} />}
+            {calc.visual === 'average' && <AverageCalculator storeKey={`${calc.category}/${calc.slug}`} />}
+          </div>
+        </div>
+      </section>
+    ) : (
+      <Fragment>
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href="/">Home</a><span aria-hidden="true">/</span>
+          <a href={category.path}>{category.name}</a><span aria-hidden="true">/</span>
+          <span>{calc.title}</span>
+        </nav>
+
+        <header class="calc-header">
+          <h1 class="calc-title">{calc.title}</h1>
+          <p class="calc-desc">{calc.description}</p>
+        </header>
+
+        {calc.intro && <p class="calc-intro">{calc.intro}</p>}
+
+        <CalculatorWidget calculator={calc} />
+      </Fragment>
+    )}
+
+    <div class="calc-body">
+      <div class="calc-content">
+        {calc.howto && calc.howto.length > 0 && (
+          <section class="prose-section">
+            <h2>How to use</h2>
+            <ol class="howto">
+              {calc.howto.map((step) => <li>{step}</li>)}
+            </ol>
+          </section>
+        )}
+
+        {calc.formulaItems && calc.formulaItems.length > 0 && (
+          <section class="prose-section">
+            <h2>Formula</h2>
+            {calc.formulaIntro && <p>{calc.formulaIntro}</p>}
+            <div class="formula-list">
+              {calc.formulaItems.map((f) => (
+                <div class="formula">
+                  <span class="formula-name">{f.name}</span>
+                  <code class="formula-expr">{f.expr}</code>
+                  {f.desc && <span class="formula-desc">{f.desc}</span>}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {calc.examples && calc.examples.length > 0 && (
+          <section class="prose-section">
+            <h2>Worked examples</h2>
+            {calc.examples.map((ex) => (
+              <div class="example">
+                <h3>{ex.title}</h3>
+                <p>{ex.body}</p>
+              </div>
+            ))}
+          </section>
+        )}
+
+        {calc.faq.length > 0 && (
+          <section class="prose-section">
+            <h2>Frequently asked questions</h2>
+            <div class="faq">
+              {calc.faq.map((f) => (
+                <details class="faq-item">
+                  <summary>{f.q}</summary>
+                  <p>{f.a}</p>
+                </details>
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
+
+      <aside class="calc-aside">
+        {related.length > 0 && (
+          <div class="aside-block">
+            <span class="eyebrow">Related calculators</span>
+            <ul class="related-list">
+              {related.map((r) => (
+                <li><a href={`/${r.category}/${r.slug}`}>{r.title}</a></li>
+              ))}
+            </ul>
+          </div>
+        )}
+        <div class="aside-block">
+          <span class="eyebrow">More in {category.name}</span>
+          <a href={category.path} class="btn btn-secondary btn-sm aside-cta">All {category.name.toLowerCase()} calculators</a>
+        </div>
+      </aside>
+    </div>
+
+    <section class="related-grid">
+      <span class="eyebrow">Keep calculating</span>
+      <div class="grid-cards">
+        {related.slice(0, 4).map((r) => <CalculatorCard calculator={r} />)}
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .breadcrumb { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-top: 1.5rem; font-size: 13px; color: var(--color-mute); }
+  .breadcrumb a { color: var(--color-body); }
+  .breadcrumb a:hover { color: var(--color-ink); }
+
+  .calc-header { padding: 1.5rem 0 0; }
+  .calc-title { margin: 0; font-size: clamp(1.75rem, 4vw, 2.5rem); letter-spacing: -0.03em; }
+  .calc-desc { margin: 0.625rem 0 0; font-size: 17px; line-height: 1.6; color: var(--color-body); max-width: 62ch; }
+  .calc-intro { margin: 1rem 0 1.5rem; font-size: 15px; line-height: 1.6; color: var(--color-mute); max-width: 68ch; }
+
+  /* ---- Visual calculator hero: fills the viewport so the keypad is usable
+     without scrolling. Text sits left, the device sits right. ---- */
+  .calc-stage {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100svh - 64px);
+  }
+  .calc-stage .breadcrumb { flex: 0 0 auto; }
+
+  .calc-hero {
+    flex: 1 1 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 440px);
+    gap: clamp(1.5rem, 5vw, 4rem);
+    align-items: center;
+    padding-block: clamp(1rem, 3vh, 2.5rem);
+  }
+  .calc-hero-text { max-width: 56ch; }
+  .calc-hero-text .calc-title {
+    margin: 0.5rem 0 0;
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    line-height: 1.05;
+  }
+  .calc-hero-text .calc-desc { margin: 1rem 0 0; font-size: clamp(15px, 2vw, 18px); }
+  .calc-hero-text .calc-intro { margin: 1rem 0 0; }
+
+  .calc-hero-device { display: flex; justify-content: center; width: 100%; }
+  .calc-hero-device :global(.calc-device) {
+    width: 100%;
+    margin-inline: 0;
+    gap: clamp(0.5rem, 1.4vh, 1rem);
+  }
+  /* Scale the screen + keys to the available viewport height so the whole
+     device stays on screen without scrolling, on any monitor. */
+  .calc-hero-device :global(.calc-screen) {
+    min-height: clamp(72px, 12vh, 116px);
+  }
+  .calc-hero-device :global(.calc-keys) {
+    gap: clamp(0.35rem, 0.9vh, 0.5rem);
+  }
+  .calc-hero-device :global(.calc-key) {
+    min-height: clamp(40px, 6vh, 54px);
+  }
+
+  @media (max-width: 900px) {
+    .calc-stage { min-height: 0; }
+    .calc-hero {
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+      padding-block: 1rem 0.5rem;
+    }
+    /* Calculator first so it's on-screen and usable without scrolling. */
+    .calc-hero-device { order: -1; }
+    .calc-hero-text { max-width: none; }
+    .calc-hero-text .calc-title { font-size: clamp(1.6rem, 6vw, 2.25rem); }
+    .calc-hero-text .calc-desc { font-size: 15px; }
+    .calc-hero-device :global(.calc-device) { max-width: 460px; margin-inline: auto; }
+    /* Size keys by touch comfort on mobile rather than viewport height. */
+    .calc-hero-device :global(.calc-key) { min-height: 50px; }
+    .calc-hero-device :global(.calc-screen) { min-height: 88px; }
+  }
+
+  /* Phones: tighten the shell, keep keys tappable, avoid horizontal overflow. */
+  @media (max-width: 480px) {
+    .calc-hero { gap: 1rem; padding-block: 0.75rem 0.25rem; }
+    .calc-hero-text .calc-desc { margin-top: 0.75rem; }
+    .calc-hero-text .calc-intro { display: none; }
+    .calc-hero-device :global(.calc-device) { max-width: 100%; }
+    .calc-hero-device :global(.calc-key) { min-height: 48px; font-size: 16px; }
+    .calc-hero-device :global(.calc-key.key-fn) { font-size: 13px; }
+  }
+
+  @media (max-width: 360px) {
+    .calc-hero-device :global(.calc-key) { min-height: 44px; }
+    .calc-hero-device :global(.calc-keys) { gap: 0.3rem; }
+  }
+
+  .calc-body { display: grid; grid-template-columns: 1fr 280px; gap: 2.5rem; margin-top: 3rem; }
+  .calc-content { min-width: 0; }
+  .prose-section { margin-bottom: 2.5rem; }
+  .prose-section h2 { font-size: 1.375rem; letter-spacing: -0.02em; margin: 0 0 1rem; }
+  .prose-section p { font-size: 15px; line-height: 1.7; color: var(--color-body); }
+
+  .howto { margin: 0; padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem; }
+  .howto li { font-size: 15px; line-height: 1.6; color: var(--color-body); }
+
+  .formula-list { display: flex; flex-direction: column; gap: 0.75rem; }
+  .formula {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    padding: 1rem 1.125rem;
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+  }
+  .formula-name { font-size: 13px; font-weight: 600; }
+  .formula-expr {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--color-ink);
+    background-color: var(--color-canvas-soft-2);
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-sm);
+    overflow-x: auto;
+  }
+  .formula-desc { font-size: 13px; color: var(--color-mute); }
+
+  .example { margin-bottom: 1.25rem; }
+  .example h3 { font-size: 15px; margin: 0 0 0.375rem; }
+  .example p { margin: 0; }
+
+  .faq { display: flex; flex-direction: column; gap: 0.5rem; }
+  .faq-item {
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
+    background-color: var(--color-canvas);
+    overflow: hidden;
+  }
+  .faq-item summary {
+    cursor: pointer;
+    padding: 0.875rem 1rem;
+    font-size: 15px;
+    font-weight: 500;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary::after { content: '+'; color: var(--color-mute); font-size: 18px; }
+  .faq-item[open] summary::after { content: '−'; }
+  .faq-item p { margin: 0; padding: 0 1rem 1rem; font-size: 14px; line-height: 1.65; color: var(--color-body); }
+
+  .calc-aside { display: flex; flex-direction: column; gap: 1.5rem; position: sticky; top: 80px; align-self: start; }
+  .aside-block { display: flex; flex-direction: column; }
+  .related-list { list-style: none; margin: 0.75rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+  .related-list a { font-size: 14px; color: var(--color-link); }
+  .related-list a:hover { text-decoration: underline; }
+  .aside-cta { margin-top: 0.75rem; width: 100%; }
+
+  .related-grid { margin: 1rem 0 2rem; }
+  .grid-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 0.875rem; }
+
+  @media (max-width: 900px) {
+    .calc-body { grid-template-columns: 1fr; gap: 1.5rem; }
+    .calc-aside { position: static; }
+    .grid-cards { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 460px) { .grid-cards { grid-template-columns: 1fr; } }
+</style>

@@ -1,0 +1,206 @@
+---
+import type { Calculator, InputField, Values } from '../lib/types';
+import { renderResultsHTML } from '../lib/render';
+
+interface Props {
+  calculator: Calculator;
+}
+const { calculator } = Astro.props;
+const inputs = calculator.inputs;
+
+// Choice controls (select / radio) always resolve to a value, so they keep
+// their default. Free-text inputs (number / text / date / textarea) start
+// empty and surface their example value as a placeholder instead.
+const isChoice = (f: InputField) => f.type === 'select' || f.type === 'radio';
+
+// Values used to compute the initial (empty) result on the server (SEO + no-JS).
+const defaults: Values = {};
+for (const f of inputs) defaults[f.name] = isChoice(f) && f.default !== undefined ? String(f.default) : '';
+const initial = renderResultsHTML(calculator.compute(defaults));
+
+// Whether this calculator produces charts / a reference block. Free-text
+// fields start empty (so the empty state renders a prompt), so we probe with
+// each field's example value to learn the calculator's *capability*. Rich
+// calculators get a wider results area that splits into a summary + visuals
+// grid, keeping the form a compact sidebar so everything fits with far less
+// scrolling on desktop.
+const example: Values = {};
+for (const f of inputs) example[f.name] = f.default !== undefined ? String(f.default) : '';
+const exampleOut = calculator.compute(example);
+const hasVisuals = Boolean(
+  (exampleOut.charts && exampleOut.charts.length) || (exampleOut.info && exampleOut.info.items.length),
+);
+
+// Placeholder shown in an empty field: explicit placeholder wins, otherwise
+// fall back to the example (former default) value.
+const placeholderFor = (f: InputField) =>
+  f.placeholder ?? (f.default !== undefined ? String(f.default) : undefined);
+
+const isVisible = (f: InputField) =>
+  !f.showWhen || f.showWhen.equals.includes(defaults[f.showWhen.field]);
+---
+
+<div class={`calc card-lg ${hasVisuals ? 'has-visuals' : ''}`} data-calculator={calculator.slug}>
+  <div class="calc-grid">
+    <form class="calc-form" data-calc-form autocomplete="off" novalidate>
+      <div class="field-grid">
+        {inputs.map((f) => (
+          <div
+            class={`field-group ${f.span === 2 ? 'span-2' : ''}`}
+            hidden={!isVisible(f)}
+            data-show-field={f.showWhen?.field}
+            data-show-values={f.showWhen?.equals.join('|')}
+          >
+            <label class="field-label" for={`f-${calculator.slug}-${f.name}`}>{f.label}</label>
+
+            {f.type === 'select' && (
+              <select id={`f-${calculator.slug}-${f.name}`} name={f.name} class="field" disabled={!isVisible(f)}>
+                {f.options?.map((o) => (
+                  <option value={o.value} selected={String(f.default) === o.value}>{o.label}</option>
+                ))}
+              </select>
+            )}
+
+            {f.type === 'radio' && (
+              <div class="radio-group" role="radiogroup" aria-label={f.label}>
+                {f.options?.map((o, i) => (
+                  <label class="radio-pill">
+                    <input
+                      type="radio"
+                      name={f.name}
+                      value={o.value}
+                      checked={f.default !== undefined ? String(f.default) === o.value : i === 0}
+                      disabled={!isVisible(f)}
+                    />
+                    <span>{o.label}</span>
+                  </label>
+                ))}
+              </div>
+            )}
+
+            {f.type === 'textarea' && (
+              <textarea
+                id={`f-${calculator.slug}-${f.name}`}
+                name={f.name}
+                class="field field-textarea"
+                rows="4"
+                placeholder={placeholderFor(f)}
+                disabled={!isVisible(f)}
+              ></textarea>
+            )}
+
+            {(f.type === 'number' || f.type === 'text' || f.type === 'date') && (
+              <div class={`field-wrap ${f.prefix ? 'has-prefix' : ''} ${f.suffix ? 'has-suffix' : ''}`}>
+                {f.prefix && <span class="field-affix field-prefix">{f.prefix}</span>}
+                <input
+                  id={`f-${calculator.slug}-${f.name}`}
+                  name={f.name}
+                  class="field"
+                  type={f.type}
+                  value=""
+                  placeholder={placeholderFor(f)}
+                  min={f.min}
+                  max={f.max}
+                  step={f.step}
+                  inputmode={f.type === 'number' ? 'decimal' : undefined}
+                  disabled={!isVisible(f)}
+                />
+                {f.suffix && <span class="field-affix field-suffix">{f.suffix}</span>}
+              </div>
+            )}
+
+            {f.help && <span class="field-help">{f.help}</span>}
+          </div>
+        ))}
+      </div>
+
+      <div class="calc-actions">
+        <button type="button" class="btn btn-secondary btn-sm" data-calc-reset>Reset</button>
+        <button type="button" class="btn btn-secondary btn-sm" data-calc-copy>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          <span data-copy-label>Copy</span>
+        </button>
+      </div>
+    </form>
+
+    <div class="calc-output">
+      <span class="eyebrow">Result</span>
+      <div class="calc-output-body" data-calc-output aria-live="polite">
+        <Fragment set:html={initial} />
+      </div>
+      <div data-history-mount></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import '../lib/client';
+</script>
+
+<style>
+  .calc { padding: 1.5rem; }
+  .calc-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 2rem; }
+
+  /* Rich calculators: keep the form a compact sidebar and give the results
+     the extra room they need for a side-by-side summary + charts layout. */
+  @media (min-width: 1024px) {
+    .calc.has-visuals .calc-grid { grid-template-columns: minmax(300px, 340px) minmax(0, 1fr); gap: 2.5rem; }
+  }
+  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .field-group { display: flex; flex-direction: column; gap: 0.375rem; min-width: 0; }
+  .field-group.span-2 { grid-column: 1 / -1; }
+  .field-label { font-size: 13px; font-weight: 500; color: var(--color-body); }
+  .field-help { font-size: 12px; color: var(--color-mute); }
+
+  .field-wrap { position: relative; display: flex; align-items: center; }
+  .field-affix {
+    position: absolute;
+    font-size: 13px;
+    color: var(--color-mute);
+    pointer-events: none;
+  }
+  .field-prefix { left: 0.75rem; }
+  .field-suffix { right: 0.75rem; }
+  .has-prefix .field { padding-left: 1.75rem; }
+  .has-suffix .field { padding-right: 3rem; }
+  .field-textarea { height: auto; padding: 0.625rem 0.75rem; line-height: 1.5; resize: vertical; font-family: var(--font-mono); font-size: 13px; }
+
+  .radio-group { display: flex; gap: 0.375rem; flex-wrap: wrap; }
+  .radio-pill { position: relative; flex: 1; min-width: fit-content; }
+  .radio-pill input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+  .radio-pill span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 0.625rem;
+    font-size: 13px;
+    text-align: center;
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-sm);
+    color: var(--color-body);
+    transition: all 0.15s ease;
+    white-space: nowrap;
+  }
+  .radio-pill input:checked + span {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-on-primary);
+  }
+  .radio-pill input:focus-visible + span { box-shadow: 0 0 0 3px var(--color-link-soft); }
+
+  .calc-actions { display: flex; gap: 0.5rem; margin-top: 1.25rem; }
+
+  .calc-output { display: flex; flex-direction: column; gap: 0.625rem; }
+  .calc-output-body { position: sticky; top: 80px; }
+
+  @media (max-width: 860px) {
+    .calc-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+    .calc-output-body { position: static; }
+  }
+  @media (max-width: 420px) {
+    .calc { padding: 1.125rem; }
+    .field-grid { grid-template-columns: 1fr; }
+  }
+</style>

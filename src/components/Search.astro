@@ -1,0 +1,334 @@
+---
+import { searchIndex } from '../lib/calculators';
+import { categories } from '../lib/categories';
+
+interface Props {
+  variant?: 'bar' | 'hero';
+  placeholder?: string;
+}
+const { variant = 'bar', placeholder = 'Search calculators…' } = Astro.props;
+
+const catNames = Object.fromEntries(categories.map((c) => [c.id, c.name]));
+const index = searchIndex().map((e) => ({ ...e, cat: catNames[e.category] }));
+
+// Unique id per instance so the combobox → listbox association (aria-controls
+// and aria-activedescendant) stays valid when the component renders more than
+// once on a page (header bar + hero).
+const listboxId = `search-list-${Math.random().toString(36).slice(2, 10)}`;
+---
+
+<div class={`search search-${variant}`} data-search>
+  <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+    <circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path>
+  </svg>
+  <input
+    type="search"
+    class="search-input"
+    placeholder={placeholder}
+    role="combobox"
+    aria-expanded="false"
+    aria-autocomplete="list"
+    aria-controls={listboxId}
+    aria-label="Search calculators"
+    autocomplete="off"
+    spellcheck="false"
+    data-search-input
+  />
+  <button class="search-clear" type="button" aria-label="Clear search" tabindex="-1" hidden data-search-clear>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+      <path d="M18 6 6 18"></path><path d="m6 6 12 12"></path>
+    </svg>
+  </button>
+  <div class="search-results" id={listboxId} data-search-results role="listbox" hidden></div>
+  <script type="application/json" data-search-index set:html={JSON.stringify(index)}></script>
+</div>
+
+<script>
+  interface Entry { slug: string; title: string; path: string; keywords: string; cat: string; }
+  interface Indexed extends Entry { hay: string; titleLower: string; }
+
+  const escapeHtml = (s: string) =>
+    s.replace(/[&<>"']/g, (c) =>
+      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] as string
+    );
+
+  // Wrap the matched tokens inside the (already escaped) title with <mark>.
+  const highlight = (title: string, tokens: string[]) => {
+    const escaped = escapeHtml(title);
+    if (!tokens.length) return escaped;
+    const pattern = tokens
+      .filter(Boolean)
+      .map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+      .sort((a, b) => b.length - a.length)
+      .join('|');
+    if (!pattern) return escaped;
+    try {
+      return escaped.replace(new RegExp(`(${pattern})`, 'gi'), '<mark>$1</mark>');
+    } catch {
+      return escaped;
+    }
+  };
+
+  function setup(root: HTMLElement) {
+    const input = root.querySelector<HTMLInputElement>('[data-search-input]')!;
+    const results = root.querySelector<HTMLElement>('[data-search-results]')!;
+    const clearBtn = root.querySelector<HTMLButtonElement>('[data-search-clear]')!;
+    const raw = root.querySelector<HTMLScriptElement>('[data-search-index]')!.textContent || '[]';
+
+    // Pre-compute lowercase haystacks once so each keystroke only does cheap
+    // substring checks instead of rebuilding + lowercasing strings.
+    const index: Indexed[] = (JSON.parse(raw) as Entry[]).map((e) => ({
+      ...e,
+      titleLower: e.title.toLowerCase(),
+      hay: `${e.title} ${e.keywords} ${e.cat}`.toLowerCase(),
+    }));
+
+    const optId = (i: number) => `${results.id}-opt-${i}`;
+    let active = -1;
+    let current: Entry[] = [];
+    let tokens: string[] = [];
+    let frame = 0;
+
+    const close = () => {
+      results.hidden = true;
+      input.setAttribute('aria-expanded', 'false');
+      input.removeAttribute('aria-activedescendant');
+      active = -1;
+    };
+
+    const render = (list: Entry[]) => {
+      current = list;
+      active = -1;
+      if (!list.length) {
+        results.innerHTML = `<p class="search-empty">No calculators match your search.</p>`;
+      } else {
+        results.innerHTML = list
+          .map(
+            (e, i) =>
+              `<a class="search-item" role="option" id="${optId(i)}" href="${e.path}" aria-selected="false">` +
+                `<svg class="search-item-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>` +
+                `<span class="search-item-title">${highlight(e.title, tokens)}</span>` +
+                `<span class="search-cat">${escapeHtml(e.cat)}</span>` +
+              `</a>`
+          )
+          .join('');
+      }
+      results.hidden = false;
+      input.setAttribute('aria-expanded', 'true');
+    };
+
+    const query = (q: string) => {
+      const term = q.trim().toLowerCase();
+      if (!term) { close(); return; }
+      tokens = term.split(/\s+/);
+      const scored: { e: Indexed; score: number }[] = [];
+      for (const e of index) {
+        let score = 0;
+        let matchedAll = true;
+        for (const t of tokens) {
+          if (e.hay.indexOf(t) === -1) { matchedAll = false; break; }
+          score += e.titleLower.includes(t) ? 10 : 1;
+          if (e.titleLower.startsWith(t)) score += 5;
+        }
+        if (matchedAll) scored.push({ e, score });
+      }
+      scored.sort((a, b) => b.score - a.score);
+      render(scored.slice(0, 8).map((x) => x.e));
+    };
+
+    // Coalesce rapid keystrokes into a single render per animation frame.
+    const scheduleQuery = () => {
+      if (frame) cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => { frame = 0; query(input.value); });
+    };
+
+    const highlightActive = () => {
+      const items = results.querySelectorAll<HTMLElement>('.search-item');
+      items.forEach((el, i) => el.setAttribute('aria-selected', String(i === active)));
+      if (active >= 0 && items[active]) {
+        input.setAttribute('aria-activedescendant', optId(active));
+        items[active].scrollIntoView({ block: 'nearest' });
+      } else {
+        input.removeAttribute('aria-activedescendant');
+      }
+    };
+
+    const syncClear = () => { clearBtn.hidden = input.value.length === 0; };
+
+    input.addEventListener('input', () => { syncClear(); scheduleQuery(); });
+    input.addEventListener('focus', () => { if (input.value.trim()) query(input.value); });
+    clearBtn.addEventListener('click', () => {
+      input.value = '';
+      syncClear();
+      close();
+      input.focus();
+    });
+    input.addEventListener('keydown', (e) => {
+      if (results.hidden) return;
+      if (e.key === 'ArrowDown') { e.preventDefault(); active = Math.min(active + 1, current.length - 1); highlightActive(); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); active = Math.max(active - 1, 0); highlightActive(); }
+      else if (e.key === 'Enter') {
+        const target = current[active] ?? current[0];
+        if (target) { e.preventDefault(); window.location.href = target.path; }
+      } else if (e.key === 'Escape') { close(); input.blur(); }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!root.contains(e.target as Node)) close();
+    });
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-search]').forEach(setup);
+
+  // "/" keyboard shortcut focuses the first search bar.
+  document.addEventListener('keydown', (e) => {
+    if (e.key === '/' && !/input|textarea|select/i.test((e.target as HTMLElement)?.tagName)) {
+      const first = document.querySelector<HTMLInputElement>('[data-search-input]');
+      if (first) { e.preventDefault(); first.focus(); }
+    }
+  });
+</script>
+
+<style>
+  .search { position: relative; width: 100%; }
+
+  .search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-mute);
+    pointer-events: none;
+    transition: color 0.15s ease;
+  }
+  .search:focus-within .search-icon { color: var(--color-link); }
+
+  .search-input {
+    width: 100%;
+    height: 40px;
+    padding: 0 2.25rem 0 2.25rem;
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-full, 9999px);
+    font-size: 14px;
+    color: var(--color-ink);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+  }
+  .search-input::placeholder { color: var(--color-mute); }
+  .search-input:hover { border-color: var(--color-hairline-strong); }
+  .search-input:focus {
+    outline: none;
+    border-color: var(--color-link);
+    box-shadow: 0 0 0 3px var(--color-link-soft);
+  }
+  /* Hide the native clear/decoration so our custom button is the only one. */
+  .search-input::-webkit-search-decoration,
+  .search-input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+
+  .search-clear {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: none;
+    border-radius: var(--radius-full, 9999px);
+    background: transparent;
+    color: var(--color-mute);
+    cursor: pointer;
+    transition: color 0.15s ease, background-color 0.15s ease;
+  }
+  .search-clear:hover { color: var(--color-ink); background-color: var(--color-canvas-soft-2); }
+
+  .search-hero .search-input {
+    height: 54px;
+    font-size: 16px;
+    border-radius: var(--radius-full, 9999px);
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+  .search-hero .search-icon { left: 1.125rem; width: 18px; height: 18px; }
+  .search-hero .search-clear { right: 0.75rem; width: 30px; height: 30px; }
+
+  .search-results {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    z-index: 40;
+    max-height: min(60vh, 380px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-modal);
+    padding: 6px;
+    animation: search-pop 0.14s ease;
+  }
+  @keyframes search-pop {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Items + inner markup are injected via JS, so they never receive Astro's
+     scoped class attribute. Reaching them through the scoped .search-results
+     parent with :global() keeps the styles scoped to this component while
+     still matching the runtime-generated nodes. */
+  .search-results :global(.search-item) {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    width: 100%;
+    padding: 0.625rem 0.75rem;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    line-height: 1.3;
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+  .search-results :global(.search-item + .search-item) { margin-top: 2px; }
+  .search-results :global(.search-item:hover),
+  .search-results :global(.search-item[aria-selected='true']) {
+    background-color: var(--color-canvas-soft-2);
+  }
+  .search-results :global(.search-item-icon) { color: var(--color-mute); flex-shrink: 0; }
+  .search-results :global(.search-item[aria-selected='true'] .search-item-icon) { color: var(--color-link); }
+  .search-results :global(.search-item-title) {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+  }
+  .search-results :global(.search-item-title mark) {
+    background: transparent;
+    color: var(--color-link);
+    font-weight: 700;
+  }
+  .search-results :global(.search-cat) {
+    flex-shrink: 0;
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--color-mute);
+    font-family: var(--font-mono);
+    padding: 2px 8px;
+    border-radius: var(--radius-full, 9999px);
+    background-color: var(--color-canvas-soft);
+    box-shadow: inset 0 0 0 1px var(--color-hairline);
+  }
+  .search-results :global(.search-empty) {
+    margin: 0;
+    padding: 0.875rem 0.75rem;
+    font-size: 14px;
+    color: var(--color-mute);
+    text-align: center;
+  }
+</style>
