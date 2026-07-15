@@ -73,6 +73,7 @@ export const educationCalculators: Calculator[] = [
     intro: 'Enter one course per line as "grade, credits" — for example "A, 3". Letter grades from A+ to F are supported.',
     keywords: ['gpa calculator', 'grade point average', 'college gpa'],
     popular: true,
+    widget: 'gpa',
     inputs: [
       {
         name: 'courses', label: 'Courses (grade, credits per line)', type: 'textarea', span: 2,
@@ -126,6 +127,7 @@ export const educationCalculators: Calculator[] = [
     intro: 'Enter each assignment as "score, weight" per line. Scores and weights are percentages.',
     keywords: ['grade calculator', 'weighted grade', 'course grade'],
     popular: true,
+    widget: 'grade',
     inputs: [
       {
         name: 'items', label: 'Assignments (score %, weight %)', type: 'textarea', span: 2,
@@ -173,6 +175,7 @@ export const educationCalculators: Calculator[] = [
     intro: 'Enter your current grade, the grade you want, and how much the final is worth.',
     keywords: ['final grade calculator', 'final exam grade', 'grade needed'],
     popular: true,
+    widget: 'final-grade',
     inputs: [
       { name: 'current', label: 'Current grade', type: 'number', suffix: '%', default: 84, min: 0, max: 200, step: 0.1 },
       { name: 'desired', label: 'Desired final grade', type: 'number', suffix: '%', default: 90, min: 0, max: 200, step: 0.1 },
@@ -228,6 +231,7 @@ export const educationCalculators: Calculator[] = [
     description: 'Average a list of grades or test scores, with optional weights.',
     intro: 'Enter your scores separated by commas or new lines to get the mean.',
     keywords: ['average grade calculator', 'average score', 'mean grade'],
+    widget: 'average-grade',
     inputs: [
       { name: 'scores', label: 'Scores', type: 'textarea', span: 2, default: '88, 92, 79, 95, 84', placeholder: '88, 92, 79' },
     ],

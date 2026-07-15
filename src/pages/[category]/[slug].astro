@@ -5,6 +5,10 @@ import KeypadCalculator from '../../components/KeypadCalculator.astro';
 import FractionCalculator from '../../components/FractionCalculator.astro';
 import PercentageCalculator from '../../components/PercentageCalculator.astro';
 import AverageCalculator from '../../components/AverageCalculator.astro';
+import GpaCalculator from '../../components/GpaCalculator.astro';
+import GradeCalculator from '../../components/GradeCalculator.astro';
+import FinalGradeCalculator from '../../components/FinalGradeCalculator.astro';
+import AverageGradeCalculator from '../../components/AverageGradeCalculator.astro';
 import CalculatorCard from '../../components/CalculatorCard.astro';
 import { allCalculators, getCalculator } from '../../lib/calculators';
 import { getCategory } from '../../lib/categories';
@@ -24,6 +28,7 @@ const related = (calc.related ?? [])
   .filter((c): c is NonNullable<typeof c> => Boolean(c));
 const schemas = calculatorPageSchemas(calc);
 const isVisual = Boolean(calc.visual);
+const storeKey = `${calc.category}/${calc.slug}`;
 ---
 
 <Layout
@@ -75,7 +80,11 @@ const isVisual = Boolean(calc.visual);
 
         {calc.intro && <p class="calc-intro">{calc.intro}</p>}
 
-        <CalculatorWidget calculator={calc} />
+        {calc.widget === 'gpa' && <GpaCalculator storeKey={storeKey} />}
+        {calc.widget === 'grade' && <GradeCalculator storeKey={storeKey} />}
+        {calc.widget === 'final-grade' && <FinalGradeCalculator storeKey={storeKey} />}
+        {calc.widget === 'average-grade' && <AverageGradeCalculator storeKey={storeKey} />}
+        {!calc.widget && <CalculatorWidget calculator={calc} />}
       </Fragment>
     )}
 
