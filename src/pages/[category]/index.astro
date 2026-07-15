@@ -1,9 +1,11 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import CalculatorCard from '../../components/CalculatorCard.astro';
+import FaqAccordion from '../../components/FaqAccordion.astro';
 import { categories } from '../../lib/categories';
 import { calculatorsByCategory } from '../../lib/calculators';
-import { breadcrumbSchema } from '../../lib/seo';
+import { breadcrumbSchema, faqPageSchema } from '../../lib/seo';
+import { categoryFaqs } from '../../lib/faq';
 
 export function getStaticPaths() {
   return categories.map((c) => ({ params: { category: c.id }, props: { category: c } }));
@@ -16,6 +18,11 @@ const crumbs = [
   { name: 'Home', path: '/' },
   { name: category.name, path: category.path },
 ];
+
+const faqs = categoryFaqs[category.id] ?? [];
+const schemas = faqs.length
+  ? [breadcrumbSchema(crumbs), faqPageSchema(faqs)]
+  : [breadcrumbSchema(crumbs)];
 
 // Build a keyword list from the calculators in this category (deduped).
 const catKeywords = Array.from(
@@ -32,7 +39,7 @@ const catKeywords = Array.from(
   description={category.description}
   path={category.path}
   keywords={catKeywords}
-  jsonLd={breadcrumbSchema(crumbs)}
+  jsonLd={schemas}
 >
   <div class="container-page">
     <nav class="breadcrumb" aria-label="Breadcrumb">
@@ -48,6 +55,8 @@ const catKeywords = Array.from(
     <div class="grid-cards">
       {calcs.map((c) => <CalculatorCard calculator={c} />)}
     </div>
+
+    <FaqAccordion items={faqs} title={`${category.name} calculator FAQs`} />
 
     <section class="other">
       <span class="eyebrow">Other categories</span>

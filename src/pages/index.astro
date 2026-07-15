@@ -3,9 +3,11 @@ import Layout from '../layouts/Layout.astro';
 import Search from '../components/Search.astro';
 import CategoryCard from '../components/CategoryCard.astro';
 import CalculatorCard from '../components/CalculatorCard.astro';
+import HomeFaq from '../components/HomeFaq.astro';
 import { categories } from '../lib/categories';
 import { allCalculators, popularCalculators, calculatorsByCategory } from '../lib/calculators';
-import { websiteSchema, organizationSchema, itemListSchema } from '../lib/seo';
+import { websiteSchema, organizationSchema, itemListSchema, faqPageSchema } from '../lib/seo';
+import { homeFaqItems } from '../lib/faq';
 
 const popular = popularCalculators(8);
 const total = allCalculators.length;
@@ -47,7 +49,7 @@ const popularListSchema = itemListSchema(
   description={`Free online calculator hub with ${total}+ fast, accurate tools: mortgage, loan/EMI, SIP, BMI, calorie, percentage, scientific, GPA, age and compound interest calculators. No sign-up required.`}
   path="/"
   keywords={homeKeywords}
-  jsonLd={[websiteSchema(), organizationSchema(), popularListSchema]}
+  jsonLd={[websiteSchema(), organizationSchema(), popularListSchema, faqPageSchema(homeFaqItems)]}
 >
   <!-- Hero -->
   <section class="hero">
@@ -219,6 +221,9 @@ const popularListSchema = itemListSchema(
       </p>
     </div>
   </section>
+
+  <!-- FAQ — long-tail / People Also Ask coverage, marked up with FAQPage schema -->
+  <HomeFaq />
 </Layout>
 
 <style>

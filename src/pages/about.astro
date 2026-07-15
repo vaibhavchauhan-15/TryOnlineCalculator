@@ -1,10 +1,50 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import FaqAccordion from '../components/FaqAccordion.astro';
 import { allCalculators } from '../lib/calculators';
+import { faqPageSchema } from '../lib/seo';
+import type { FaqItem } from '../lib/types';
 const total = allCalculators.length;
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Is Try Online Calculator free to use?',
+    a: 'Yes. Every calculator on the site is completely free, with no sign-up, no download and no limit on how often you use it.',
+  },
+  {
+    q: 'Do I need to create an account?',
+    a: 'No account is needed. All tools work instantly in your browser, so you can start calculating the moment a page loads.',
+  },
+  {
+    q: 'Are my inputs private?',
+    a: 'Yes. Every calculator runs entirely on your device, so the numbers you enter are never sent to or stored on our servers.',
+  },
+  {
+    q: 'How accurate are the calculators?',
+    a: 'Each tool uses the same standard formulas trusted by banks, clinicians, teachers and accountants, and every result page shows the formula and a worked example so you can check the math. Results are estimates for general information, not professional advice.',
+  },
+  {
+    q: 'Can I request a calculator that is not here yet?',
+    a: 'Absolutely. Tell us what you need on the <a href="/contact">contact page</a> and popular requests move to the top of our build list.',
+  },
+];
+
+const keywords = [
+  'about try online calculator',
+  'free online calculator',
+  'privacy-friendly calculator',
+  'calculator hub',
+  'online calculators',
+];
 ---
 
-<Layout title="About" description="About Try Online Calculator — free, fast, privacy-friendly calculators for everyday life." path="/about">
+<Layout
+  title="About"
+  description="About Try Online Calculator — free, fast, privacy-friendly calculators for everyday life."
+  path="/about"
+  keywords={keywords}
+  jsonLd={faqPageSchema(faqs)}
+>
   <div class="container-page prose">
     <h1>About Try Online Calculator</h1>
     <p>Try Online Calculator is a growing collection of {total}+ free calculators covering finance, health, education, math, salary, shopping, dates and travel. Our goal is simple: give you an accurate answer in the fewest possible clicks.</p>
@@ -18,5 +58,7 @@ const total = allCalculators.length;
 
     <h2>Feedback</h2>
     <p>Spotted a bug or want a calculator we do not have yet? We would love to hear from you on our <a class="link" href="/contact">contact page</a>.</p>
+
+    <FaqAccordion items={faqs} title="About & FAQ" />
   </div>
 </Layout>

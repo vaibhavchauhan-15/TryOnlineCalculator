@@ -262,6 +262,11 @@ const isVisible = (f: InputField) =>
   }
   .radio-pill input:focus-visible + span { box-shadow: 0 0 0 3px var(--color-link-soft); }
 
+  /* Give the shared Calculate CTA equal breathing room above (matching the
+     gap below it to the Reset/Copy row) so it sits evenly inside the card
+     with the same left/right inset as the fields. */
+  .calc-form :global(.calc-calculate-row) { margin-top: 1.25rem; }
+
   .calc-actions { display: flex; gap: 0.5rem; margin-top: 1.25rem; }
 
   .calc-output { display: flex; flex-direction: column; gap: 0.625rem; }

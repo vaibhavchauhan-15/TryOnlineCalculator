@@ -1,7 +1,9 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { converters } from '../../lib/converters';
-import { breadcrumbSchema, itemListSchema } from '../../lib/seo';
+import { breadcrumbSchema, itemListSchema, faqPageSchema } from '../../lib/seo';
+import { unitConverterFaqs } from '../../lib/faq';
+import FaqAccordion from '../../components/FaqAccordion.astro';
 
 const crumbs = [
   { name: 'Home', path: '/' },
@@ -36,7 +38,7 @@ const keywords = [
   description="Free unit converter and conversion calculator: length, weight, temperature, speed, volume, area and currency. Fast, accurate conversions with no sign-up."
   path="/unit-converter"
   keywords={keywords}
-  jsonLd={[breadcrumbSchema(crumbs), listSchema]}
+  jsonLd={[breadcrumbSchema(crumbs), listSchema, faqPageSchema(unitConverterFaqs)]}
 >
   <div class="container-page">
     <nav class="breadcrumb" aria-label="Breadcrumb">
@@ -83,6 +85,8 @@ const keywords = [
         ))}
       </ul>
     </section>
+
+    <FaqAccordion items={unitConverterFaqs} title="Unit converter FAQs" />
   </div>
 </Layout>
 
