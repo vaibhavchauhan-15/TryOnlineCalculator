@@ -25,6 +25,9 @@ import Search from './Search.astro';
     </div>
 
     <nav class="header-nav" aria-label="Calculator categories" data-menu>
+      <div class="nav-search">
+        <Search variant="bar" placeholder="Search calculators…" />
+      </div>
       {categories.map((c) => (
         <a href={c.path} class="nav-link">{c.name}</a>
       ))}
@@ -160,6 +163,9 @@ import Search from './Search.astro';
     gap: 0.25rem;
     margin-left: auto;
   }
+  /* Search inside the collapsible menu — only surfaced on phones where the
+     standalone header search is hidden (see the 520px breakpoint below). */
+  .nav-search { display: none; }
   .nav-link {
     padding: 0.375rem 0.625rem;
     font-size: 14px;
@@ -255,5 +261,11 @@ import Search from './Search.astro';
   @media (max-width: 520px) {
     .brand-name { display: inline; }
     .header-search { display: none; }
+    /* Bring search into the dropdown menu so phone users keep a way to search
+       from every page, not just the home/404 hero. */
+    .nav-search { display: block; padding: 0.25rem 0.25rem 0.5rem; }
+    /* Comfortable tap targets on phones. */
+    .theme-toggle { width: 40px; height: 40px; }
+    .menu-toggle { width: 42px; height: 42px; }
   }
 </style>

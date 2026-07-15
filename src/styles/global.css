@@ -62,6 +62,11 @@
   --color-canvas-soft: #fafafa;
   --color-canvas-soft-2: #f5f5f5;
 
+  /* Scrollbar (see the global custom-scrollbar section below) */
+  --scrollbar-size: 10px;
+  --scrollbar-thumb: #d4d4d4;
+  --scrollbar-thumb-hover: #b3b3b3;
+
   /* Semantic */
   --color-link: #0070f3;
   --color-link-deep: #0761d1;
@@ -125,6 +130,10 @@ html[data-theme='dark'] {
   --color-canvas: #0f0f0f;         /* card surface */
   --color-canvas-soft: #000000;    /* page body */
   --color-canvas-soft-2: #1c1c1c;  /* insets / hover */
+
+  /* Scrollbar — brighter thumb so it reads on the dark page */
+  --scrollbar-thumb: #3a3a3a;
+  --scrollbar-thumb-hover: #565656;
 
   /* Semantic — brightened for contrast on dark surfaces */
   --color-link: #47a3ff;
@@ -1224,5 +1233,77 @@ html[data-theme='dark'] {
   @media (max-width: 640px) {
     .cs--field .cs-trigger { height: 46px; font-size: 16px; }
     .cs-option { padding: 0.625rem 0.75rem; font-size: 15px; }
+  }
+}
+
+/* ============================================================
+   Custom scrollbar — one modern, theme-aware treatment applied
+   everywhere. Colours read from the --scrollbar-* tokens, so the
+   bar flips automatically with dark/light. A transparent border +
+   background-clip:padding-box gives the thumb a slim, floating,
+   fully-rounded look; the track stays invisible.
+
+   Applied globally to every scrollable element (page, dropdown
+   panels, history lists, search results, code blocks…). Use the
+   .scrollbar-custom class to opt a container in explicitly if the
+   global rule is ever scoped away.
+   ============================================================ */
+@layer base {
+  /* Firefox */
+  html,
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+  }
+
+  /* WebKit / Chromium / Edge */
+  ::-webkit-scrollbar {
+    width: var(--scrollbar-size);
+    height: var(--scrollbar-size);
+  }
+  ::-webkit-scrollbar-track,
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb);
+    border-radius: var(--radius-pill);
+    /* Transparent inset keeps the thumb slim and floating. */
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    transition: background-color 0.15s ease;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-thumb-hover);
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:active {
+    background-color: var(--scrollbar-thumb-hover);
+    background-clip: padding-box;
+  }
+}
+
+/* Reusable opt-in helper (same treatment, handy for scoped/overflow
+   containers or third-party widgets). */
+@utility scrollbar-custom {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+  &::-webkit-scrollbar {
+    width: var(--scrollbar-size);
+    height: var(--scrollbar-size);
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb);
+    border-radius: var(--radius-pill);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    transition: background-color 0.15s ease;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-thumb-hover);
+    background-clip: padding-box;
   }
 }

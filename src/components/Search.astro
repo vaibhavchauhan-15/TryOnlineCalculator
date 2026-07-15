@@ -245,6 +245,12 @@ const listboxId = `search-list-${Math.random().toString(36).slice(2, 10)}`;
   }
   .search-clear:hover { color: var(--color-ink); background-color: var(--color-canvas-soft-2); }
 
+  /* On phones, bump the bar input to 16px and a taller target so iOS doesn't
+     auto-zoom on focus and the tap area stays comfortable. */
+  @media (max-width: 640px) {
+    .search-bar .search-input { height: 46px; font-size: 16px; }
+  }
+
   .search-hero .search-input {
     height: 54px;
     font-size: 16px;
