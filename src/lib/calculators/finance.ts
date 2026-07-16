@@ -27,7 +27,10 @@ export const financeCalculators: Calculator[] = [
       const down = num(v.downPayment, 0);
       const principal = Math.max(price - down, 0);
       const r = num(v.rate, 0) / 100 / 12;
-      const n = num(v.term, 0) * 12;
+      // Cap the term so the amortization loop below can never run unbounded,
+      // even if a caller bypasses the input's max (100 years is well past any
+      // real loan and keeps the schedule to a sane 1,200 rows).
+      const n = Math.min(num(v.term, 0), 100) * 12;
       if (down >= price && price > 0) return { results: [], error: 'Your down payment is equal to or greater than the home price, so there is no loan to finance. Lower the down payment or raise the home price.' };
       if (principal <= 0 || n <= 0) return { results: [], error: 'Enter a home price, down payment and loan term that leave a loan amount greater than zero.' };
       const pi = pmt(r, n, principal);
@@ -144,7 +147,7 @@ export const financeCalculators: Calculator[] = [
     compute: (v) => {
       const p = num(v.amount, 0);
       const r = num(v.rate, 0) / 100 / 12;
-      const n = num(v.term, 0) * 12;
+      const n = Math.min(num(v.term, 0), 100) * 12; // cap term so the schedule loop stays bounded
       if (p <= 0 || n <= 0) return { results: [], error: 'Enter a loan amount and term greater than zero.' };
       const m = pmt(r, n, p);
       const total = m * n;
@@ -328,7 +331,7 @@ export const financeCalculators: Calculator[] = [
       const pv = num(v.initial, 0);
       const c = num(v.monthly, 0);
       const r = num(v.rate, 0) / 100 / 12;
-      const n = num(v.years, 0) * 12;
+      const n = Math.min(num(v.years, 0), 100) * 12; // cap horizon so the growth loop stays bounded
       if (n <= 0) return { results: [], error: 'Enter a number of years greater than zero.' };
       const fv = futureValue(r, n, c, pv);
       const contributed = pv + c * n;
@@ -418,8 +421,9 @@ export const financeCalculators: Calculator[] = [
     compute: (v) => {
       const p = num(v.principal, 0);
       const rate = num(v.rate, 0) / 100;
-      const t = num(v.years, 0);
-      const k = num(v.freq, 12);
+      // Cap years and compounds/year so the nested sampling loop stays bounded.
+      const t = Math.min(num(v.years, 0), 100);
+      const k = Math.min(num(v.freq, 12), 365);
       const c = num(v.deposit, 0);
       if (t <= 0 || k <= 0) return { results: [], error: 'Enter a positive time period.' };
       const r = rate / k;
@@ -503,7 +507,7 @@ export const financeCalculators: Calculator[] = [
       const pv = num(v.initial, 0);
       const c = num(v.monthly, 0);
       const r = num(v.rate, 0) / 100 / 12;
-      const n = num(v.years, 0) * 12;
+      const n = Math.min(num(v.years, 0), 100) * 12; // cap horizon so the growth loop stays bounded
       if (n <= 0) return { results: [], error: 'Enter a positive number of years.' };
       const fv = futureValue(r, n, c, pv);
       const contributed = pv + c * n;
@@ -689,7 +693,7 @@ export const financeCalculators: Calculator[] = [
     compute: (v) => {
       const age = num(v.age, 0);
       const retire = num(v.retireAge, 0);
-      const years = retire - age;
+      const years = Math.min(retire - age, 120); // cap span so the projection loop stays bounded
       if (years <= 0) return { results: [], error: 'Retirement age must be greater than your current age.' };
       const pv = num(v.current, 0);
       const c = num(v.monthly, 0);

@@ -43,15 +43,22 @@ function ymdDiff(from: Date, to: Date) {
   return { years, months, days, sign };
 }
 
+// Count Mon–Fri days in [start, end] inclusive. Computed in O(1) from the total
+// day span and the start weekday rather than iterating day-by-day, so a range
+// spanning centuries (which a manually entered/pasted date allows) resolves
+// instantly instead of locking the main thread in a multi-million-step loop.
 function countWeekdays(start: Date, end: Date): number {
   let a = start, b = end;
   if (a > b) [a, b] = [b, a];
-  let count = 0;
-  const cur = new Date(a);
-  while (cur <= b) {
-    const day = cur.getDay();
+  const total = Math.round((b.getTime() - a.getTime()) / DAY) + 1;
+  if (total <= 0) return 0;
+  const fullWeeks = Math.floor(total / 7);
+  let count = fullWeeks * 5;
+  const remainder = total % 7;
+  const startDay = a.getDay();
+  for (let i = 0; i < remainder; i++) {
+    const day = (startDay + i) % 7;
     if (day !== 0 && day !== 6) count++;
-    cur.setDate(cur.getDate() + 1);
   }
   return count;
 }
@@ -199,9 +206,11 @@ export const dateTimeCalculators: Calculator[] = [
     compute: (v) => {
       const start = parseDate(v.start);
       if (!start) return { results: [], error: 'Enter a valid start date.' };
+      // Cap the count so the day-stepping loop can never run unbounded even if
+      // a caller bypasses the input's ±500 max (100k business days ≈ 385 years).
       let remaining = Math.trunc(num(v.days, 0));
       const step = remaining >= 0 ? 1 : -1;
-      remaining = Math.abs(remaining);
+      remaining = Math.min(Math.abs(remaining), 100000);
       const cur = new Date(start);
       while (remaining > 0) {
         cur.setDate(cur.getDate() + step);

@@ -45,6 +45,26 @@ function syncDropdowns(form: HTMLFormElement): void {
   });
 }
 
+// Clamp every number field's value to its declared min/max before it reaches
+// compute(). Browsers do NOT enforce min/max on typed input, so without this a
+// user (or a restored localStorage value) could feed an absurd figure straight
+// into a calculator — e.g. a 999,999,999-year loan term, which drives the
+// amortization loops to build billions of rows and freezes the tab. Empty and
+// non-numeric values are left untouched so the placeholder/empty state and the
+// lenient parser in compute() still behave as before.
+function clampNumberInputs(form: HTMLFormElement, values: Values): void {
+  form.querySelectorAll<HTMLInputElement>('input[type="number"][name]').forEach((el) => {
+    const raw = values[el.name];
+    if (raw === undefined || raw.trim() === '') return;
+    const n = Number(raw);
+    if (!Number.isFinite(n)) return;
+    const min = el.min !== '' ? Number(el.min) : -Infinity;
+    const max = el.max !== '' ? Number(el.max) : Infinity;
+    const clamped = Math.min(max, Math.max(min, n));
+    if (clamped !== n) values[el.name] = String(clamped);
+  });
+}
+
 function collect(form: HTMLFormElement): Values {
   const values: Values = {};
   const data = new FormData(form);
@@ -55,6 +75,7 @@ function collect(form: HTMLFormElement): Values {
   form.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('[name]').forEach((el) => {
     if (!(el.name in values) && el.type !== 'radio') values[el.name] = el.value;
   });
+  clampNumberInputs(form, values);
   return values;
 }
 

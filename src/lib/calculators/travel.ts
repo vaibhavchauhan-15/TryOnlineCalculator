@@ -1,5 +1,5 @@
 import type { Calculator } from '../types';
-import { num, currency, number, fixed } from '../format';
+import { num, currency, fixed } from '../format';
 
 export const travelCalculators: Calculator[] = [
   /* -------------------------------------------------------------- Fuel Cost */

@@ -3,15 +3,22 @@ import Layout from '../layouts/Layout.astro';
 import Search from '../components/Search.astro';
 import CategoryCard from '../components/CategoryCard.astro';
 import CalculatorCard from '../components/CalculatorCard.astro';
+import KeypadCalculator from '../components/KeypadCalculator.astro';
 import HomeFaq from '../components/HomeFaq.astro';
 import { categories } from '../lib/categories';
-import { allCalculators, popularCalculators, calculatorsByCategory } from '../lib/calculators';
-import { websiteSchema, organizationSchema, itemListSchema, faqPageSchema } from '../lib/seo';
+import { allCalculators, popularCalculators, calculatorsByCategory, getCalculator } from '../lib/calculators';
+import { websiteSchema, organizationSchema, itemListSchema, faqPageSchema, calculatorSchema } from '../lib/seo';
 import { homeFaqItems } from '../lib/faq';
 
 const popular = popularCalculators(8);
+// A wider set of quick-access pills for the hero (10 most popular tools).
+const heroPills = popularCalculators(10);
 const total = allCalculators.length;
 const featured = ['finance', 'health', 'math'] as const;
+
+// The scientific calculator powers the interactive hero so visitors can start
+// calculating the moment they land — no navigation required.
+const heroCalc = getCalculator('scientific-calculator')!;
 
 const homeKeywords = [
   'calculator',
@@ -49,29 +56,47 @@ const popularListSchema = itemListSchema(
   description={`Free online calculator hub with ${total}+ fast, accurate tools: mortgage, loan/EMI, SIP, BMI, calorie, percentage, scientific, GPA, age and compound interest calculators. No sign-up required.`}
   path="/"
   keywords={homeKeywords}
-  jsonLd={[websiteSchema(), organizationSchema(), popularListSchema, faqPageSchema(homeFaqItems)]}
+  jsonLd={[websiteSchema(), organizationSchema(), calculatorSchema(heroCalc), popularListSchema, faqPageSchema(homeFaqItems)]}
 >
-  <!-- Hero -->
+  <!-- Hero — headline + live scientific calculator so visitors can start
+       calculating instantly on landing. -->
   <section class="hero">
     <div class="hero-glow" aria-hidden="true"></div>
     <div class="container-page hero-inner">
-      <span class="hero-badge reveal" style="--i: 0">
-        <span class="hero-dot" aria-hidden="true"></span>
-        {total}+ calculators · always free
-      </span>
-      <h1 class="hero-title reveal" style="--i: 1">Every calculation,<br /><span class="mesh-text">in one place.</span></h1>
-      <p class="hero-lead reveal" style="--i: 2">
-        Fast, accurate calculators for finance, health, education and everyday math.
-        No sign-up, no clutter — just answers.
-      </p>
-      <div class="hero-search reveal" style="--i: 3">
-        <Search variant="hero" placeholder="Search mortgage, BMI, percentage…" />
+      <div class="hero-copy">
+        <span class="hero-badge reveal" style="--i: 0">
+          <span class="hero-dot" aria-hidden="true"></span>
+          {total}+ calculators · always free
+        </span>
+        <h1 class="hero-title reveal" style="--i: 1">Every calculation,<br /><span class="mesh-text">in one place.</span></h1>
+        <p class="hero-lead reveal" style="--i: 2">
+          Start crunching numbers right away with the free scientific calculator, then
+          explore {total}+ fast, accurate tools for finance, health, education and math.
+          No sign-up, no clutter — just answers.
+        </p>
       </div>
-      <div class="hero-pills reveal" style="--i: 4">
-        <span class="hero-pills-label">Popular</span>
-        {popular.slice(0, 5).map((c) => (
-          <a href={`/${c.category}/${c.slug}`} class="hero-pill">{c.title.replace(' Calculator', '')}</a>
-        ))}
+
+      <div class="hero-calc reveal" style="--i: 3">
+        <div class="hero-calc-head">
+          <h2 class="hero-calc-title">Scientific calculator</h2>
+          <a href="/math/scientific-calculator" class="hero-calc-link">
+            Full page
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+          </a>
+        </div>
+        <KeypadCalculator calculator={heroCalc} variant="scientific" />
+      </div>
+
+      <div class="hero-tools">
+        <div class="hero-search reveal" style="--i: 4">
+          <Search variant="hero" placeholder="Search mortgage, BMI, percentage…" />
+        </div>
+        <div class="hero-pills reveal" style="--i: 5">
+          <span class="hero-pills-label">Popular</span>
+          {heroPills.slice(0, 10).map((c) => (
+            <a href={`/${c.category}/${c.slug}`} class="hero-pill">{c.title.replace(' Calculator', '')}</a>
+          ))}
+        </div>
       </div>
     </div>
   </section>
@@ -231,9 +256,16 @@ const popularListSchema = itemListSchema(
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    padding: clamp(4rem, 9vw, 7.5rem) 0 clamp(3rem, 6vw, 5rem);
+    display: flex;
+    align-items: center;
+    padding: clamp(1.75rem, 5vw, 3.25rem) 0 clamp(2rem, 5vw, 3.5rem);
     border-bottom: 1px solid var(--color-hairline);
     background-color: var(--color-canvas-soft);
+  }
+  /* Fill the first screen on desktop so the calculator is usable without
+     scrolling; the two columns sit vertically centred. */
+  @media (min-width: 900px) {
+    .hero { min-height: calc(100svh - 64px); }
   }
 
   /* Atmospheric mesh gradient — hero scale only, faded out with a radial
@@ -268,7 +300,96 @@ const popularListSchema = itemListSchema(
   }
   :global(html[data-theme='dark']) .hero { --glow-lo: 0.42; --glow-hi: 0.58; }
 
-  .hero-inner { display: flex; flex-direction: column; align-items: center; text-align: center; }
+  /* Mobile-first: single column, headline → calculator → search/pills, so a
+     visitor can start calculating with almost no scrolling. */
+  .hero-inner {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'copy'
+      'calc'
+      'tools';
+    gap: clamp(1.5rem, 5vw, 2.5rem);
+    align-items: center;
+  }
+  .hero-copy { grid-area: copy; display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .hero-calc { grid-area: calc; width: 100%; display: flex; flex-direction: column; gap: 0.625rem; }
+  .hero-tools { grid-area: tools; display: flex; flex-direction: column; align-items: center; }
+
+  /* Desktop: headline + search on the left, live calculator on the right.
+     Row gap is collapsed so the search + popular pills sit directly under the
+     lead as one block; the wide column gap separates copy from the calculator. */
+  @media (min-width: 900px) {
+    .hero-inner {
+      grid-template-columns: minmax(0, 1fr) minmax(400px, 520px);
+      grid-template-areas:
+        'copy calc'
+        'tools calc';
+      column-gap: clamp(2rem, 5vw, 4rem);
+      row-gap: 0;
+      align-content: center;
+    }
+    .hero-copy { align-items: flex-start; text-align: left; }
+    .hero-tools { align-items: flex-start; margin-top: 1.5rem; }
+    .hero-calc { align-self: center; }
+  }
+
+  /* ---- Hero calculator framing ---- */
+  .hero-calc-head { display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem; }
+  .hero-calc-title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--color-body);
+  }
+  .hero-calc-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 13px;
+    color: var(--color-link);
+    white-space: nowrap;
+  }
+  .hero-calc-link:hover { text-decoration: underline; }
+  .hero-calc-link svg { transition: transform 0.15s ease; }
+  .hero-calc-link:hover svg { transform: translateX(2px); }
+
+  /* Size the device to the available viewport height on desktop so the whole
+     keypad stays on screen without scrolling, and give it comfortable touch
+     targets on smaller screens. */
+  .hero-calc :global(.calc-device) {
+    width: 100%;
+    max-width: 500px;
+    margin-inline: auto;
+    gap: clamp(0.5rem, 1.4vh, 1rem);
+  }
+  @media (min-width: 900px) {
+    /* Fill the wider column and scale the shell to the viewport height so the
+       whole keypad stays on screen without scrolling. */
+    .hero-calc :global(.calc-device) { margin-inline: 0; max-width: 520px; }
+    .hero-calc :global(.calc-screen) { min-height: clamp(72px, 12vh, 112px); }
+    .hero-calc :global(.calc-keys) { gap: clamp(0.35rem, 0.9vh, 0.5rem); }
+    .hero-calc :global(.calc-key) { min-height: clamp(40px, 6vh, 52px); }
+  }
+  /* Tablet / phone: tighten the shell so the calculator sits within the first
+     screen and a visitor can start calculating without scrolling. */
+  @media (max-width: 899px) {
+    .hero-calc :global(.calc-device) { max-width: 480px; padding: 1rem; gap: 0.625rem; }
+    .hero-calc :global(.calc-screen) { min-height: 84px; }
+    .hero-calc :global(.calc-keys) { gap: 0.4rem; }
+    .hero-calc :global(.calc-key) { min-height: 46px; }
+  }
+  @media (max-width: 480px) {
+    .hero-calc :global(.calc-device) { max-width: 100%; }
+    .hero-calc :global(.calc-key) { min-height: 46px; font-size: 16px; }
+    .hero-calc :global(.calc-key.key-fn) { font-size: 13px; }
+  }
+  @media (max-width: 360px) {
+    .hero-calc :global(.calc-key) { min-height: 42px; }
+    .hero-calc :global(.calc-keys) { gap: 0.3rem; }
+  }
 
   /* Staggered entrance for hero content. Falls back to fully-visible
      final state under prefers-reduced-motion (global rule zeroes the
@@ -337,11 +458,20 @@ const popularListSchema = itemListSchema(
     max-width: 48ch;
   }
 
+  /* Phone/tablet: compress the copy above the calculator so the keypad is
+     reachable on landing. */
+  @media (max-width: 899px) {
+    .hero { padding-top: clamp(1rem, 4vw, 1.75rem); }
+    .hero-inner { gap: 1.25rem; }
+    .hero-title { margin-top: 1rem; }
+    .hero-lead { margin-top: 0.75rem; font-size: 15px; line-height: 1.5; }
+  }
+
   .hero-search {
     position: relative;
     width: 100%;
     max-width: 560px;
-    margin-top: 2.25rem;
+    margin-top: 0;
   }
   /* Soft animated gradient halo that blooms in when the search is focused. */
   .hero-search::before {
@@ -372,7 +502,11 @@ const popularListSchema = itemListSchema(
     align-items: center;
     gap: 0.5rem;
     justify-content: center;
-    margin-top: 1.5rem;
+    margin-top: 1.25rem;
+    width: 100%;
+  }
+  @media (min-width: 900px) {
+    .hero-pills { justify-content: flex-start; }
   }
   .hero-pills-label {
     font-family: var(--font-mono);

@@ -1,5 +1,5 @@
 import type { Calculator, ChartSpec } from '../types';
-import { num, currency, percent, number } from '../format';
+import { num, currency, percent } from '../format';
 
 export const shoppingCalculators: Calculator[] = [
   /* ---------------------------------------------------------------- Discount */

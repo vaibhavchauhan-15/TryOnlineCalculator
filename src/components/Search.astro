@@ -301,6 +301,18 @@ const listboxId = `search-list-${Math.random().toString(36).slice(2, 10)}`;
     to { opacity: 1; transform: translateY(0); }
   }
 
+  /* The header (bar) search input is deliberately narrow so it doesn't crowd
+     the nav, which squeezed the result titles into an ellipsis. Let the
+     dropdown grow past the input to fit the full calculator name: anchor it to
+     the left, size it to its content, but never shrink below the input width
+     and never overflow the viewport. */
+  .search-bar .search-results {
+    right: auto;
+    width: max-content;
+    min-width: 100%;
+    max-width: min(28rem, calc(100vw - 2rem));
+  }
+
   /* Items + inner markup are injected via JS, so they never receive Astro's
      scoped class attribute. Reaching them through the scoped .search-results
      parent with :global() keeps the styles scoped to this component while

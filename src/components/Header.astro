@@ -99,7 +99,8 @@ import Search from './Search.astro';
   };
 
   searchToggle?.addEventListener('click', () => {
-    setSearchOpen(searchPanel?.hidden ?? true);
+    // `.hidden` is typed boolean | "until-found"; coerce to a plain boolean.
+    setSearchOpen(Boolean(searchPanel?.hidden ?? true));
   });
 
   document.addEventListener('keydown', (e) => {

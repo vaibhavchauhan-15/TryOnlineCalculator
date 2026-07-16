@@ -1,7 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import UnitConverter from '../../components/UnitConverter.astro';
-import { converters, getConverter, converterPageSchemas } from '../../lib/converters';
+import { converters, converterPageSchemas } from '../../lib/converters';
 
 export function getStaticPaths() {
   return converters.map((c) => ({ params: { type: c.slug }, props: { cfg: c } }));

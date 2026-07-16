@@ -1,5 +1,5 @@
 import type { Calculator } from '../types';
-import { num, number, fixed, percent } from '../format';
+import { num, number, percent } from '../format';
 import { evaluate, gcd } from './_expr';
 
 export const mathCalculators: Calculator[] = [

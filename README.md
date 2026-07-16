@@ -135,7 +135,8 @@ tryonlinecalculator.com/
 │   │   ├── storage.ts           # localStorage persistence for widget state
 │   │   ├── dropdown.ts          # Dropdown UI behavior
 │   │   ├── icons.ts             # Inline SVG icon set
-│   │   └── faq.ts               # Shared FAQ content helpers
+│   │   ├── faq.ts               # Shared FAQ content helpers
+│   │   └── client.ts            # (see above)
 │   │
 │   ├── pages/                   # File-based routes
 │   │   ├── index.astro          # Homepage

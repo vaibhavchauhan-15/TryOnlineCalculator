@@ -24,12 +24,14 @@
       mount.id = 'agentation-root';
       document.body.appendChild(mount);
 
+      // Agent Sync is opt-in. Only pass `endpoint` when PUBLIC_AGENTATION_ENDPOINT
+      // is set (e.g. "http://localhost:4747"). Without it, Agentation still works
+      // fully via localStorage — and we avoid the noisy net::ERR_CONNECTION_REFUSED
+      // console errors that occur when no Agent Sync server is running.
+      const endpoint = import.meta.env.PUBLIC_AGENTATION_ENDPOINT;
+
       ReactDOM.createRoot(mount).render(
-        React.createElement(Agentation, {
-          // Local Agent Sync server (agentation-mcp). Local-first: works
-          // offline and syncs when the server is available on this port.
-          endpoint: 'http://localhost:4747',
-        })
+        React.createElement(Agentation, endpoint ? { endpoint } : {})
       );
     })();
   }
