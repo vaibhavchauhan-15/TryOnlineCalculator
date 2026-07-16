@@ -12,7 +12,7 @@ interface Props {
 }
 const { storeKey } = Astro.props;
 
-const defaults = { current: '84', desired: '90', weight: '30' };
+const defaults = { current: '88', desired: '90', weight: '25' };
 const targets = [
   { label: 'A', value: '90' },
   { label: 'B', value: '80' },
@@ -110,7 +110,7 @@ const initial = renderResultsHTML(calc.compute(defaults));
   type Saved = { current: string; desired: string; weight: string };
 
   const calc = educationCalculators.find((c) => c.slug === 'final-grade-calculator')!;
-  const DEFAULTS: Saved = { current: '84', desired: '90', weight: '30' };
+  const DEFAULTS: Saved = { current: '88', desired: '90', weight: '25' };
 
   function mount(root: HTMLElement): void {
     const out = root.querySelector<HTMLElement>('[data-out]')!;

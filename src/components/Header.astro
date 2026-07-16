@@ -210,7 +210,11 @@ import Search from './Search.astro';
     white-space: nowrap;
     flex-shrink: 0;
   }
-  .header-search { flex: 1; max-width: 380px; }
+  /* min-width: 0 lets the search shrink with the viewport instead of pushing
+     the nav off-screen; it widens on roomy desktops and narrows on tablets. */
+  .header-search { flex: 1; min-width: 0; max-width: 380px; }
+  @media (min-width: 1280px) { .header-search { max-width: 460px; } }
+  @media (max-width: 720px) { .header-search { max-width: 260px; } }
   .header-nav {
     display: flex;
     align-items: center;

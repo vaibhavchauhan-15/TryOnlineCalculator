@@ -8,8 +8,20 @@ interface Props {
 }
 const { variant = 'bar', placeholder = 'Search calculators…' } = Astro.props;
 
+// Build the client search index at build time. We precompute the lowercase
+// haystack (h) and lowercase title (l) here so the browser does zero string
+// work per keystroke, and use short keys to keep the inlined JSON small.
 const catNames = Object.fromEntries(categories.map((c) => [c.id, c.name]));
-const index = searchIndex().map((e) => ({ ...e, cat: catNames[e.category] }));
+const index = searchIndex().map((e) => {
+  const cat = catNames[e.category] ?? '';
+  return {
+    t: e.title,
+    p: e.path,
+    c: cat,
+    h: `${e.title} ${e.keywords} ${cat}`.toLowerCase(),
+    l: e.title.toLowerCase(),
+  };
+});
 
 // Unique id per instance so the combobox → listbox association (aria-controls
 // and aria-activedescendant) stays valid when the component renders more than
@@ -44,8 +56,9 @@ const listboxId = `search-list-${Math.random().toString(36).slice(2, 10)}`;
 </div>
 
 <script>
-  interface Entry { slug: string; title: string; path: string; keywords: string; cat: string; }
-  interface Indexed extends Entry { hay: string; titleLower: string; }
+  // Compact record emitted by the component: title (t), path (p), category
+  // label (c), the precomputed lowercase haystack (h) and lowercase title (l).
+  interface Indexed { t: string; p: string; c: string; h: string; l: string; }
 
   const escapeHtml = (s: string) =>
     s.replace(/[&<>"']/g, (c) =>
@@ -69,23 +82,27 @@ const listboxId = `search-list-${Math.random().toString(36).slice(2, 10)}`;
     }
   };
 
+  // Parse the inlined index a single time and share it across every search box
+  // on the page. The instances emit identical data, so re-parsing per box is
+  // pure waste; this keeps startup and matching instant.
+  let sharedIndex: Indexed[] | null = null;
+  const getIndex = (): Indexed[] => {
+    if (!sharedIndex) {
+      const raw = document.querySelector('[data-search-index]')?.textContent || '[]';
+      sharedIndex = JSON.parse(raw) as Indexed[];
+    }
+    return sharedIndex;
+  };
+
   function setup(root: HTMLElement) {
     const input = root.querySelector<HTMLInputElement>('[data-search-input]')!;
     const results = root.querySelector<HTMLElement>('[data-search-results]')!;
     const clearBtn = root.querySelector<HTMLButtonElement>('[data-search-clear]')!;
-    const raw = root.querySelector<HTMLScriptElement>('[data-search-index]')!.textContent || '[]';
-
-    // Pre-compute lowercase haystacks once so each keystroke only does cheap
-    // substring checks instead of rebuilding + lowercasing strings.
-    const index: Indexed[] = (JSON.parse(raw) as Entry[]).map((e) => ({
-      ...e,
-      titleLower: e.title.toLowerCase(),
-      hay: `${e.title} ${e.keywords} ${e.cat}`.toLowerCase(),
-    }));
+    const index = getIndex();
 
     const optId = (i: number) => `${results.id}-opt-${i}`;
     let active = -1;
-    let current: Entry[] = [];
+    let current: Indexed[] = [];
     let tokens: string[] = [];
     let frame = 0;
 
@@ -96,7 +113,7 @@ const listboxId = `search-list-${Math.random().toString(36).slice(2, 10)}`;
       active = -1;
     };
 
-    const render = (list: Entry[]) => {
+    const render = (list: Indexed[]) => {
       current = list;
       active = -1;
       if (!list.length) {
@@ -105,10 +122,10 @@ const listboxId = `search-list-${Math.random().toString(36).slice(2, 10)}`;
         results.innerHTML = list
           .map(
             (e, i) =>
-              `<a class="search-item" role="option" id="${optId(i)}" href="${e.path}" aria-selected="false">` +
+              `<a class="search-item" role="option" id="${optId(i)}" href="${e.p}" aria-selected="false">` +
                 `<svg class="search-item-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>` +
-                `<span class="search-item-title">${highlight(e.title, tokens)}</span>` +
-                `<span class="search-cat">${escapeHtml(e.cat)}</span>` +
+                `<span class="search-item-title">${highlight(e.t, tokens)}</span>` +
+                `<span class="search-cat">${escapeHtml(e.c)}</span>` +
               `</a>`
           )
           .join('');
@@ -126,9 +143,9 @@ const listboxId = `search-list-${Math.random().toString(36).slice(2, 10)}`;
         let score = 0;
         let matchedAll = true;
         for (const t of tokens) {
-          if (e.hay.indexOf(t) === -1) { matchedAll = false; break; }
-          score += e.titleLower.includes(t) ? 10 : 1;
-          if (e.titleLower.startsWith(t)) score += 5;
+          if (e.h.indexOf(t) === -1) { matchedAll = false; break; }
+          score += e.l.includes(t) ? 10 : 1;
+          if (e.l.startsWith(t)) score += 5;
         }
         if (matchedAll) scored.push({ e, score });
       }
@@ -169,7 +186,7 @@ const listboxId = `search-list-${Math.random().toString(36).slice(2, 10)}`;
       else if (e.key === 'ArrowUp') { e.preventDefault(); active = Math.max(active - 1, 0); highlightActive(); }
       else if (e.key === 'Enter') {
         const target = current[active] ?? current[0];
-        if (target) { e.preventDefault(); window.location.href = target.path; }
+        if (target) { e.preventDefault(); window.location.href = target.p; }
       } else if (e.key === 'Escape') { close(); input.blur(); }
     });
 
@@ -190,7 +207,9 @@ const listboxId = `search-list-${Math.random().toString(36).slice(2, 10)}`;
 </script>
 
 <style>
-  .search { position: relative; width: 100%; }
+  /* min-width: 0 lets the box shrink instead of overflowing when it sits inside
+     a flex row (the header bar), so it stays responsive from mobile to wide. */
+  .search { position: relative; width: 100%; min-width: 0; }
 
   .search-icon {
     position: absolute;
@@ -336,5 +355,18 @@ const listboxId = `search-list-${Math.random().toString(36).slice(2, 10)}`;
     font-size: 14px;
     color: var(--color-mute);
     text-align: center;
+  }
+
+  /* Phones: give the panel more room and larger tap targets, and stop the
+     category chip from crowding out the title on the narrowest screens. */
+  @media (max-width: 640px) {
+    .search-results {
+      max-height: min(70vh, 440px);
+      padding: 8px;
+    }
+    .search-results :global(.search-item) { padding: 0.75rem; font-size: 15px; }
+  }
+  @media (max-width: 380px) {
+    .search-results :global(.search-cat) { display: none; }
   }
 </style>
