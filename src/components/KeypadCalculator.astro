@@ -68,11 +68,16 @@ const keys = scientific ? sciKeys : basicKeys;
     <div class="calc-screen-result" data-result aria-live="polite">0</div>
   </div>
 
-  <div class="calc-copy-row">
-    <button type="button" class="calc-copy-action" data-copy-btn aria-label="Copy result" title="Copy result">
-      <span data-copy-ico><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></span>
-      <span data-copy-txt>Copy result</span>
-    </button>
+  <div class="calc-copy-row calc-copy-row-split">
+    <span class="calc-hint">Tap any value to edit it, or paste a full expression</span>
+    <div class="calc-copy-actions">
+      <button type="button" class="calc-copy-action is-icon" data-paste-btn aria-label="Paste an expression" data-tip="Paste expression" data-tip-done="Pasted">
+        <span data-copy-ico><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1"></rect><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path></svg></span>
+      </button>
+      <button type="button" class="calc-copy-action is-icon" data-copy-btn aria-label="Copy result" data-tip="Copy result" data-tip-done="Copied result">
+        <span data-copy-ico><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></span>
+      </button>
+    </div>
   </div>
 
   {scientific && (
@@ -102,7 +107,8 @@ const keys = scientific ? sciKeys : basicKeys;
   import { evaluate } from '../lib/calculators/_expr';
   import { number } from '../lib/format';
   import { loadState, saveState } from '../lib/storage';
-  import { createHistoryUI, copyWithFeedback } from '../lib/history';
+  import { createHistoryUI, copyWithFeedback, CHECK_ICON } from '../lib/history';
+  import { haptic } from '../lib/haptics';
 
   type State = {
     expr: string;
@@ -226,7 +232,29 @@ const keys = scientific ? sciKeys : basicKeys;
     const historyMount = root.querySelector<HTMLElement>('[data-history-mount]');
     const history = historyMount && store ? createHistoryUI({ key: store, mount: historyMount }) : null;
     const copyBtn = root.querySelector<HTMLElement>('[data-copy-btn]');
-    copyBtn?.addEventListener('click', () => copyWithFeedback(copyBtn, resultEl.textContent?.trim() ?? ''));
+    copyBtn?.addEventListener('click', () => {
+      haptic.tap();
+      void copyWithFeedback(copyBtn, resultEl.textContent?.trim() ?? '');
+    });
+    const pasteBtn = root.querySelector<HTMLElement>('[data-paste-btn]');
+    const pasteIco = pasteBtn?.querySelector<HTMLElement>('[data-copy-ico]');
+    const pasteIcoHTML = pasteIco?.innerHTML ?? '';
+    // Flash the check + "Pasted" tooltip so the tap reads as successful on
+    // touch (where there's no hover) as well as on desktop.
+    function flashPaste(): void {
+      if (!pasteBtn) return;
+      const prev = pasteBtn.getAttribute('data-revert-timer');
+      if (prev) clearTimeout(Number(prev));
+      pasteBtn.classList.add('is-copied');
+      if (pasteIco) pasteIco.innerHTML = CHECK_ICON;
+      const timer = window.setTimeout(() => {
+        pasteBtn.classList.remove('is-copied');
+        if (pasteIco) pasteIco.innerHTML = pasteIcoHTML;
+        pasteBtn.removeAttribute('data-revert-timer');
+      }, 1200);
+      pasteBtn.setAttribute('data-revert-timer', String(timer));
+    }
+    pasteBtn?.addEventListener('click', () => { void pasteFromClipboard(); root.focus(); });
 
     const persist = (): void => {
       if (!store) return;
@@ -255,6 +283,21 @@ const keys = scientific ? sciKeys : basicKeys;
       }
       if (!caretDone) html += CARET; // caret sits at the very end
       exprEl.innerHTML = html;
+      scrollCaretIntoView();
+    }
+
+    // Keep the caret visible when a long expression overflows the read-out's
+    // capped, scrollable height (so the screen grows to its limit then scrolls
+    // rather than ballooning off the device).
+    function scrollCaretIntoView(): void {
+      const caret = exprEl.querySelector<HTMLElement>('.calc-caret');
+      if (!caret) { exprEl.scrollTop = exprEl.scrollHeight; return; }
+      const top = caret.offsetTop;
+      const bottom = top + caret.offsetHeight;
+      if (top < exprEl.scrollTop) exprEl.scrollTop = top;
+      else if (bottom > exprEl.scrollTop + exprEl.clientHeight) {
+        exprEl.scrollTop = bottom - exprEl.clientHeight;
+      }
     }
 
     function render(): void {
@@ -305,6 +348,50 @@ const keys = scientific ? sciKeys : basicKeys;
       render();
     }
 
+    // Turn arbitrary pasted text ("12,000 * (3+4) = ...", "3.14x2", etc.) into
+    // the glyph set the editor and evaluator understand, dropping anything
+    // unsupported so a stray label or unit can't wedge the calculator.
+    function sanitizePasted(raw: string): string {
+      let s = raw;
+      // If an equation was copied, keep only the expression side.
+      const eq = s.indexOf('=');
+      if (eq >= 0) s = s.slice(0, eq);
+      s = s
+        .replace(/\s+/g, '')                    // spaces / newlines
+        .replace(/,(?=\d{3}\b)/g, '')           // thousands separators
+        .replace(/\*\*/g, '^')                  // pow operator
+        .replace(/[*\u2217\u2715\u2716]/g, '\u00D7') // *, ∗, ✕, ✖ → ×
+        .replace(/(\d)[xX](?=[\d(.])/g, '$1\u00D7')  // 3x4 → 3×4 (leave "exp" alone)
+        .replace(/\//g, '\u00F7')               // / → ÷
+        .replace(/[-\u2010\u2011\u2013\u2014]/g, '\u2212'); // hyphens/dashes → −
+      // Keep only characters the editor + evaluator accept.
+      return s.replace(/[^0-9.\u00D7\u00F7\u2212+^%()a-zA-Z\u03C0\u221A\u221B]/g, '');
+    }
+
+    // Insert sanitized clipboard text at the caret (replacing any selection).
+    function insertPasted(raw: string): void {
+      const clean = sanitizePasted(raw);
+      if (!clean) return;
+      if (state.justEval) {
+        state.expr = '';
+        state.caret = 0;
+        state.sel = null;
+        state.justEval = false;
+      }
+      spliceAtCaret(clean);
+      render();
+    }
+
+    // Read the system clipboard on an explicit user gesture (button / Ctrl+V).
+    async function pasteFromClipboard(): Promise<void> {
+      try {
+        const text = await navigator.clipboard.readText();
+        if (text) { insertPasted(text); flashPaste(); }
+      } catch {
+        /* Clipboard blocked (permissions / insecure context) — no-op. */
+      }
+    }
+
     function setShift(on: boolean): void {
       state.shift = on;
       shiftBtn?.classList.toggle('is-active', on);
@@ -324,6 +411,12 @@ const keys = scientific ? sciKeys : basicKeys;
       if (!res.ok) {
         resultEl.textContent = res.msg;
         resultEl.classList.add('is-error');
+        // Restart the shake animation even if the screen was already in an
+        // error state (re-adding a class alone won't re-trigger it).
+        resultEl.classList.remove('is-shake');
+        void resultEl.offsetWidth; // force reflow
+        resultEl.classList.add('is-shake');
+        haptic.error();
         return;
       }
       state.ans = res.value;
@@ -331,10 +424,11 @@ const keys = scientific ? sciKeys : basicKeys;
       state.caret = source.length;
       state.sel = null;
       exprEl.textContent = source + ' =';
-      resultEl.classList.remove('is-error');
+      resultEl.classList.remove('is-error', 'is-shake');
       resultEl.textContent = fmt(res.value);
       history?.record(source, fmt(res.value));
       state.justEval = true;
+      haptic.success();
       persist();
     }
 
@@ -435,6 +529,9 @@ const keys = scientific ? sciKeys : basicKeys;
 
     root.querySelectorAll<HTMLButtonElement>('.calc-key').forEach((btn) => {
       btn.addEventListener('click', () => {
+        // Equals fires its own success/error pulse; every other key gets a
+        // light tick so the whole keypad feels tactile.
+        if (btn.dataset.action !== 'equals') haptic.tap();
         handle(btn.dataset.action, btn.dataset.val, btn.dataset['2ndVal']);
       });
       // Visual press feedback for touch.
@@ -451,8 +548,21 @@ const keys = scientific ? sciKeys : basicKeys;
       selectFromPoint(e.clientX, e.clientY);
     });
 
+    // Right-click / menu paste on browsers that dispatch it to a focusable div.
+    root.addEventListener('paste', (e) => {
+      const text = e.clipboardData?.getData('text') ?? '';
+      if (!text) return;
+      e.preventDefault();
+      insertPasted(text);
+    });
+
     // Physical keyboard support when the calculator is focused.
     root.addEventListener('keydown', (e) => {
+      // Let clipboard/OS shortcuts through; Ctrl/Cmd+V pastes an expression.
+      if (e.ctrlKey || e.metaKey) {
+        if (e.key === 'v' || e.key === 'V') { e.preventDefault(); void pasteFromClipboard(); }
+        return;
+      }
       const k = e.key;
       let handled = true;
       if (/^[0-9.]$/.test(k)) insert(k);

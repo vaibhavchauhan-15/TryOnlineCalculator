@@ -114,11 +114,13 @@ function enhance(select: HTMLSelectElement): void {
   // ---- State + sync ------------------------------------------------------
   let activeIndex = select.selectedIndex < 0 ? 0 : select.selectedIndex;
 
-  // Reflect the native select's current selection onto the custom UI.
+  // Reflect the native select's current selection onto the custom UI. An
+  // option may carry a short `data-trigger` label to show a compact value on
+  // the trigger while the listbox keeps the full option text.
   const sync = (): void => {
     const sel = select.selectedIndex;
     const current = select.options[sel];
-    valueEl.textContent = current ? current.textContent : '';
+    valueEl.textContent = current ? (current.dataset.trigger ?? current.textContent) : '';
     optionEls.forEach((li, i) => {
       const isSel = i === sel;
       li.setAttribute('aria-selected', isSel ? 'true' : 'false');

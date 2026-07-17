@@ -7,6 +7,7 @@
 // from an explicit value or the shared palette below.
 
 import type { BarDatum, ChartSpec, GaugeSegment, LineSeries, PieSlice } from './types';
+import { getCurrencySymbol } from './currency';
 
 /** Shared, theme-agnostic series palette (also used by legends). */
 export const CHART_PALETTE = ['#0070f3', '#7928ca', '#f5a623', '#50e3c2', '#ff0080', '#00dfd8'];
@@ -32,7 +33,7 @@ function compact(n: number, format?: ChartSpec['format']): string {
   if (abs >= 1_000_000) body = `${trimZeros(abs / 1_000_000)}M`;
   else if (abs >= 1_000) body = `${trimZeros(abs / 1_000)}K`;
   else body = trimZeros(abs);
-  return format === 'currency' ? `${sign}$${body}` : `${sign}${body}`;
+  return format === 'currency' ? `${sign}${getCurrencySymbol()}${body}` : `${sign}${body}`;
 }
 
 function trimZeros(n: number): string {

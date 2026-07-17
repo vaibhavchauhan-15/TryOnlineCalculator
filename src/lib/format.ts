@@ -1,5 +1,7 @@
 // Shared formatting + parsing helpers used by calculator compute functions.
-// Kept dependency-free so it can run on the server and in the browser.
+// Runs on the server and in the browser.
+
+import { formatCurrency } from './currency';
 
 export function num(v: string | number | undefined, fallback = NaN): number {
   if (typeof v === 'number') return v;
@@ -10,16 +12,13 @@ export function num(v: string | number | undefined, fallback = NaN): number {
   return Number.isFinite(n) ? n : fallback;
 }
 
+// Format a monetary value in the user's currently selected currency. The
+// symbol, digit grouping and default decimals all follow the active currency
+// (see src/lib/currency.ts); pass `decimals` to override the precision (e.g.
+// a 3-decimal cost-per-mile). The legacy `symbol` option is accepted for
+// backwards compatibility but ignored — the active currency owns the symbol.
 export function currency(n: number, opts: { decimals?: number; symbol?: string } = {}): string {
-  const { decimals = 2, symbol = '$' } = opts;
-  if (!Number.isFinite(n)) return '—';
-  const sign = n < 0 ? '-' : '';
-  const abs = Math.abs(n);
-  const s = abs.toLocaleString('en-US', {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
-  });
-  return `${sign}${symbol}${s}`;
+  return formatCurrency(n, { decimals: opts.decimals });
 }
 
 export function number(n: number, decimals = 2): string {

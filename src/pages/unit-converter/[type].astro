@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import UnitConverter from '../../components/UnitConverter.astro';
+import CurrencyConverter from '../../components/CurrencyConverter.astro';
 import { converters, converterPageSchemas } from '../../lib/converters';
 
 export function getStaticPaths() {
@@ -38,7 +39,7 @@ const others = converters.filter((c) => c.slug !== cfg.slug);
       </div>
 
       <div class="conv-tool">
-        <UnitConverter converter={cfg} />
+        {cfg.slug === 'currency' ? <CurrencyConverter converter={cfg} /> : <UnitConverter converter={cfg} />}
         {cfg.note && <p class="conv-note">{cfg.note}</p>}
       </div>
     </div>

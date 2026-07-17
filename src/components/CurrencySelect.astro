@@ -1,0 +1,31 @@
+---
+// The calculator's display-currency control: a reusable CurrencyPicker wired to
+// the shared currency store. Picking a currency updates every money field and
+// result on the page and is remembered for next visit.
+import CurrencyPicker from './CurrencyPicker.astro';
+---
+
+<CurrencyPicker variant="chip" label="Display currency" role="data-currency-store" />
+
+<script>
+  import { getActiveCode, setActiveCurrency, subscribeCurrency } from '../lib/currency';
+  import { enhanceCurrencyPickers } from '../lib/currency-picker';
+
+  // Ensure the picker is enhanced before we sync it (idempotent).
+  enhanceCurrencyPickers();
+
+  const pickers = Array.from(document.querySelectorAll<HTMLElement>('[data-currency-store]'));
+  const setUI = (code: string) =>
+    pickers.forEach((p) => p.dispatchEvent(new CustomEvent('cur:set', { detail: { code } })));
+
+  // Reflect the detected / saved currency, commit user choices to the store,
+  // and stay in sync if the currency is changed from anywhere else.
+  setUI(getActiveCode());
+  pickers.forEach((p) =>
+    p.addEventListener('cur:change', (e) => {
+      const code = (e as CustomEvent<{ code: string }>).detail?.code;
+      if (code) setActiveCurrency(code);
+    }),
+  );
+  subscribeCurrency((cur) => setUI(cur.code));
+</script>

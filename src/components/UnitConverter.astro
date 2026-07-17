@@ -6,12 +6,18 @@
 // explicit formulas. The full config is embedded as JSON so the client runs the
 // exact same numbers defined in src/lib/converters.ts.
 import type { ConverterConfig } from '../lib/converters';
+import CurrencyPicker from './CurrencyPicker.astro';
+import SwapButton from './SwapButton.astro';
 
 interface Props {
   converter: ConverterConfig;
 }
 const { converter } = Astro.props;
 const { units, defaultFrom, defaultTo, defaultValue, kind, precision, slug } = converter;
+
+// The currency converter swaps its two native unit <select>s for the searchable
+// CurrencyPicker; every other converter keeps the standard themed select.
+const isCurrency = slug === 'currency';
 
 // Serialise only what the client needs — keeps the inline payload tiny.
 const clientConfig = {
@@ -44,36 +50,39 @@ const clientConfig = {
           value={defaultValue}
           aria-label="Value to convert"
         />
-        <div class="uc-select-wrap">
-          <select class="uc-select" data-uc-from aria-label="Convert from unit">
-            {units.map((u) => (
-              <option value={u.id} selected={u.id === defaultFrom}>{u.name} ({u.symbol})</option>
-            ))}
-          </select>
-        </div>
+        {isCurrency ? (
+          <CurrencyPicker variant="field" value={defaultFrom} role="data-uc-from" label="Convert from currency" />
+        ) : (
+          <div class="uc-select-wrap">
+            <select class="uc-select" data-uc-from aria-label="Convert from unit">
+              {units.map((u) => (
+                <option value={u.id} selected={u.id === defaultFrom}>{u.name} ({u.symbol})</option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
     </div>
 
     <!-- SWAP -->
-    <button type="button" class="uc-swap" data-uc-swap aria-label="Swap units" title="Swap units">
-      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M7 16V4M7 4 3 8M7 4l4 4"></path>
-        <path d="M17 8v12M17 20l4-4M17 20l-4-4"></path>
-      </svg>
-    </button>
+    <SwapButton label="Swap units" data-uc-swap />
 
     <!-- TO -->
     <div class="uc-field">
       <label class="uc-label" for={`uc-to-${slug}`}>To</label>
       <div class="uc-row">
         <output id={`uc-to-${slug}`} class="uc-output" data-uc-result aria-live="polite">—</output>
-        <div class="uc-select-wrap">
-          <select class="uc-select" data-uc-to aria-label="Convert to unit">
-            {units.map((u) => (
-              <option value={u.id} selected={u.id === defaultTo}>{u.name} ({u.symbol})</option>
-            ))}
-          </select>
-        </div>
+        {isCurrency ? (
+          <CurrencyPicker variant="field" value={defaultTo} role="data-uc-to" label="Convert to currency" />
+        ) : (
+          <div class="uc-select-wrap">
+            <select class="uc-select" data-uc-to aria-label="Convert to unit">
+              {units.map((u) => (
+                <option value={u.id} selected={u.id === defaultTo}>{u.name} ({u.symbol})</option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
     </div>
   </div>
@@ -103,9 +112,31 @@ const clientConfig = {
 
 <script>
   import { copyWithFeedback, copyText } from '../lib/history';
+  import { enhanceCurrencyPickers } from '../lib/currency-picker';
+
+  // Ensure any embedded currency pickers are enhanced before we wire them.
+  enhanceCurrencyPickers();
 
   type Unit = { id: string; name: string; symbol: string; factor?: number };
   type Config = { kind: 'linear' | 'temperature'; precision: number; units: Unit[] };
+
+  // The from/to control is either a native <select> or an enhanced currency
+  // picker (a div carrying data-currency-picker). These helpers read, set and
+  // observe the selected unit uniformly across both.
+  const isPicker = (el: HTMLElement): boolean => el.hasAttribute('data-currency-picker');
+  const getUnit = (el: HTMLElement): string =>
+    isPicker(el) ? el.dataset.value ?? '' : (el as HTMLSelectElement).value;
+  const setUnit = (el: HTMLElement, id: string): void => {
+    if (isPicker(el)) {
+      el.dispatchEvent(new CustomEvent('cur:set', { detail: { code: id } }));
+    } else {
+      (el as HTMLSelectElement).value = id;
+      el.dispatchEvent(new Event('cs:sync', { bubbles: true }));
+    }
+  };
+  const onUnitChange = (el: HTMLElement, cb: () => void): void => {
+    el.addEventListener(isPicker(el) ? 'cur:change' : 'change', cb);
+  };
 
   // ---- Conversion core --------------------------------------------------
   // Linear: everything routes through a base unit via `factor`.
@@ -162,8 +193,8 @@ const clientConfig = {
     const byId = new Map(cfg.units.map((u) => [u.id, u]));
 
     const valueEl = root.querySelector<HTMLInputElement>('[data-uc-value]')!;
-    const fromEl = root.querySelector<HTMLSelectElement>('[data-uc-from]')!;
-    const toEl = root.querySelector<HTMLSelectElement>('[data-uc-to]')!;
+    const fromEl = root.querySelector<HTMLElement>('[data-uc-from]')!;
+    const toEl = root.querySelector<HTMLElement>('[data-uc-to]')!;
     const resultEl = root.querySelector<HTMLElement>('[data-uc-result]')!;
     const eqEl = root.querySelector<HTMLElement>('[data-uc-eq]')!;
     const copyBtn = root.querySelector<HTMLElement>('[data-uc-copy]')!;
@@ -173,8 +204,8 @@ const clientConfig = {
     const sym = (id: string) => byId.get(id)?.symbol ?? '';
 
     function update(): void {
-      const from = fromEl.value;
-      const to = toEl.value;
+      const from = getUnit(fromEl);
+      const to = getUnit(toEl);
       const raw = valueEl.value;
       const v = parseValue(raw);
 
@@ -208,16 +239,20 @@ const clientConfig = {
     }
 
     valueEl.addEventListener('input', update);
-    fromEl.addEventListener('change', update);
-    toEl.addEventListener('change', update);
+    onUnitChange(fromEl, update);
+    onUnitChange(toEl, update);
 
     swapBtn.addEventListener('click', () => {
-      const f = fromEl.value;
-      fromEl.value = toEl.value;
-      toEl.value = f;
-      // Relabel the custom dropdown triggers after the programmatic swap.
-      fromEl.dispatchEvent(new Event('cs:sync', { bubbles: true }));
-      toEl.dispatchEvent(new Event('cs:sync', { bubbles: true }));
+      // Replay the spin animation on every click (works the same on tap and mouse click).
+      swapBtn.classList.remove('is-swapping');
+      void swapBtn.offsetWidth; // force reflow so the animation restarts
+      swapBtn.classList.add('is-swapping');
+
+      const f = getUnit(fromEl);
+      const t = getUnit(toEl);
+      // Set both (silent for pickers / relabels selects), then update once.
+      setUnit(fromEl, t);
+      setUnit(toEl, f);
       // If there's a current numeric result, carry it into the value box so the
       // swap reads like a true reversal.
       const current = resultEl.textContent?.trim();
@@ -226,6 +261,7 @@ const clientConfig = {
       }
       update();
     });
+    swapBtn.addEventListener('animationend', () => swapBtn.classList.remove('is-swapping'));
 
     copyBtn.addEventListener('click', () => {
       const txt = resultEl.textContent?.trim() ?? '';
@@ -338,24 +374,6 @@ const clientConfig = {
      the custom trigger draws its own. */
   .uc-select-wrap:has(.cs)::after { display: none; }
 
-  /* Swap button — sits in the middle column, aligned to the inputs' row */
-  .uc-swap {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 56px;
-    color: var(--color-body);
-    background-color: var(--color-canvas);
-    border: 1px solid var(--color-hairline);
-    border-radius: var(--radius-md);
-    cursor: pointer;
-    transition: color 0.15s ease, background-color 0.15s ease, transform 0.2s ease, border-color 0.15s ease;
-  }
-  .uc-swap:hover { color: var(--color-ink); background-color: var(--color-canvas-soft-2); border-color: var(--color-hairline-strong); }
-  .uc-swap:active { transform: rotate(180deg) scale(0.94); }
-  .uc-swap:focus-visible { outline: 2px solid var(--color-link); outline-offset: 2px; }
-
   /* Equation + copy */
   .uc-eq-row {
     display: flex;
@@ -431,17 +449,9 @@ const clientConfig = {
   }
   .uc-cell-unit { font-size: 12px; color: var(--color-mute); }
 
-  /* Responsive: stack the from/to pair and rotate the swap on small screens */
+  /* Responsive: stack the from/to pair on small screens */
   @media (max-width: 640px) {
     .uc-io { grid-template-columns: 1fr; }
-    .uc-swap {
-      width: 100%;
-      height: 40px;
-      transform: rotate(90deg);
-      justify-self: center;
-      max-width: 120px;
-    }
-    .uc-swap:active { transform: rotate(270deg) scale(0.94); }
     .uc-input, .uc-output { height: 52px; font-size: 18px; }
   }
 </style>

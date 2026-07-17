@@ -20,8 +20,33 @@
 
 import type { FaqItem } from './types';
 import { faqPageSchema, breadcrumbSchema } from './seo';
+import { CURRENCIES } from './currency';
 
 const SITE = 'https://tryonlinecalculator.com';
+
+// Approximate reference exchange rates: value of ONE unit of each currency in
+// US dollars (the currency converter's base unit). These are static estimates
+// for quick conversions and demonstrations — not live market rates (see the
+// on-page disclaimer). Currency metadata (name, symbol) is single-sourced from
+// the shared catalog in ./currency; here we only attach a rate per code.
+const CURRENCY_RATES: Record<string, number> = {
+  USD: 1, EUR: 1.08, GBP: 1.27, INR: 0.012, JPY: 0.0067, CNY: 0.14,
+  AUD: 0.66, CAD: 0.73, CHF: 1.12, NZD: 0.61, SGD: 0.74, HKD: 0.128,
+  KRW: 0.00075, TWD: 0.031, THB: 0.028, MYR: 0.22, IDR: 0.000063,
+  PHP: 0.0175, VND: 0.00004, AED: 0.272, SAR: 0.266, QAR: 0.275,
+  KWD: 3.25, BHD: 2.65, OMR: 2.6, TRY: 0.03, RUB: 0.011, ZAR: 0.054,
+  EGP: 0.021, NGN: 0.00065, PKR: 0.0036, BDT: 0.0091, LKR: 0.0033,
+  NPR: 0.0075, BRL: 0.185, MXN: 0.058, ARS: 0.0011, CLP: 0.00105,
+  COP: 0.00025, PEN: 0.27, SEK: 0.096, NOK: 0.094, DKK: 0.145,
+  PLN: 0.25, CZK: 0.043, HUF: 0.0028, RON: 0.22, UAH: 0.024, ILS: 0.27,
+};
+
+// Currency converter units, generated from the shared catalog so the picker and
+// the converter always agree. The unit id is the ISO code (matches the picker's
+// value) and the "symbol" shown in the grid/equation is the code itself.
+const currencyUnits: ConverterUnit[] = CURRENCIES.filter(
+  (c) => CURRENCY_RATES[c.code] !== undefined,
+).map((c) => ({ id: c.code, name: c.name, symbol: c.code, factor: CURRENCY_RATES[c.code] }));
 
 export type ConverterKind = 'linear' | 'temperature';
 
@@ -507,15 +532,15 @@ const currency: ConverterConfig = {
   name: 'Currency',
   title: 'Currency Converter',
   baseUnit: 'US dollar',
-  metaTitle: 'Currency Converter — USD to EUR, USD to INR, GBP, JPY',
+  metaTitle: 'Currency Converter — Live Rates USD to EUR, INR, GBP, JPY',
   metaDescription:
-    'Free currency converter for USD to EUR, EUR to USD, USD to INR, GBP and JPY. Convert between major world currencies using clear reference exchange rates.',
-  description: 'Convert USD to EUR, USD to INR, GBP, JPY and other major currencies using reference exchange rates.',
+    'Free currency converter with live daily exchange rates for USD to EUR, USD to INR, GBP and JPY, plus interactive rate-history charts from 1 week to 5 years.',
+  description: 'Convert USD to EUR, USD to INR, GBP, JPY and more with live daily exchange rates and interactive rate-history charts.',
   intro:
-    'This currency converter changes an amount from one currency into another as you type, covering the pairs people search for most — USD to EUR, USD to INR, and USD to GBP. It uses clearly labelled reference exchange rates so you can estimate values quickly for budgeting, travel and shopping.',
+    'This currency converter changes an amount from one currency into another as you type, covering the pairs people search for most — USD to EUR, USD to INR, and USD to GBP. Rates for the major world currencies update every working day from official central-bank data, and an interactive chart shows how any pair has moved over the last week, month or several years.',
   about: [
     'A currency converter translates a monetary amount from one national currency into another using an exchange rate — the price of one currency in terms of another. Exchange rates move constantly during trading hours in response to interest rates, inflation, trade flows and market sentiment, which is why the same $100 can be worth slightly different amounts of euros from one day to the next.',
-    'Every amount here is anchored to the US dollar (USD). Each currency has a reference rate expressed as its value in dollars, so converting between any two currencies routes through USD. These built-in rates are static reference values meant for quick estimates and learning how conversion works — they are not live market rates. For an exact figure to send money, book travel or trade, always check a bank or a live foreign-exchange source at the moment of the transaction.',
+    'This tool uses live reference rates for the major world currencies, refreshed every working day from European Central Bank data (published around 16:00 CET), so a USD to EUR or USD to GBP conversion reflects the latest official close. A handful of less-traded currencies fall back to a clearly flagged reference estimate. Every amount is anchored to the US dollar (USD): each currency carries its value in dollars, so converting between any two currencies routes through USD. For an exact figure to send money, book travel or trade, always confirm with your bank or a live foreign-exchange source at the moment of the transaction, since providers add a margin on top of the mid-market rate.',
   ],
   keywords: [
     'currency converter',
@@ -529,30 +554,19 @@ const currency: ConverterConfig = {
     'money converter',
     'convert currency',
   ],
-  units: [
-    { id: 'usd', name: 'US Dollar', symbol: 'USD', factor: 1 },
-    { id: 'eur', name: 'Euro', symbol: 'EUR', factor: 1.08 },
-    { id: 'gbp', name: 'British Pound', symbol: 'GBP', factor: 1.27 },
-    { id: 'jpy', name: 'Japanese Yen', symbol: 'JPY', factor: 0.0067 },
-    { id: 'cad', name: 'Canadian Dollar', symbol: 'CAD', factor: 0.73 },
-    { id: 'aud', name: 'Australian Dollar', symbol: 'AUD', factor: 0.66 },
-    { id: 'chf', name: 'Swiss Franc', symbol: 'CHF', factor: 1.12 },
-    { id: 'cny', name: 'Chinese Yuan', symbol: 'CNY', factor: 0.14 },
-    { id: 'inr', name: 'Indian Rupee', symbol: 'INR', factor: 0.012 },
-    { id: 'sgd', name: 'Singapore Dollar', symbol: 'SGD', factor: 0.74 },
-  ],
-  defaultFrom: 'usd',
-  defaultTo: 'eur',
+  units: currencyUnits,
+  defaultFrom: 'USD',
+  defaultTo: 'EUR',
   defaultValue: '100',
   precision: 2,
   howto: [
     'Enter the amount you want to convert in the value box.',
     'Choose the currency you are converting from (for example, US Dollar).',
     'Choose the currency you want the result in (for example, Euro).',
-    'The converted amount appears instantly using the built-in reference rate.',
-    'Swap the currencies with the arrows, or scan the grid to see the amount in every listed currency.',
+    'Read the converted amount instantly, along with the live rate and its inverse.',
+    'Tap a popular currency to switch the target, or use the chart range buttons (1W to 5Y) to see how the pair has moved over time.',
   ],
-  note: 'Rates shown are static reference values for quick estimates and demonstrations — not live market rates. Check a bank or a live foreign-exchange source before making a real transaction.',
+  note: 'Live rates for major currencies update every working day from European Central Bank reference data; a few less-traded currencies use a flagged reference estimate. Banks and transfer services add a margin, so confirm the exact figure before making a real transaction.',
   factorRows: [
     { label: '1 USD', value: '≈ 0.93 EUR' },
     { label: '1 EUR', value: '≈ 1.08 USD' },
@@ -564,11 +578,11 @@ const currency: ConverterConfig = {
     { label: '1 USD', value: '≈ 7.14 CNY' },
   ],
   faqs: [
-    { q: 'How do I convert USD to EUR?', a: 'Multiply the dollar amount by the USD→EUR rate. With the reference rate here (1 EUR ≈ 1.08 USD), $100 ≈ €93. Because rates change, confirm with a live source before any real transaction.' },
-    { q: 'Are these exchange rates live?', a: 'No. This converter uses static reference rates so it works instantly and offline. They are great for quick estimates and understanding conversion, but for exact figures use a bank or a live FX service.' },
-    { q: 'How does an exchange rate work?', a: 'An exchange rate is the value of one currency expressed in another. If 1 EUR = 1.08 USD, then euros are "more expensive" than dollars, and you get fewer euros per dollar. Rates float based on supply, demand and economic conditions.' },
-    { q: 'Why is the amount I receive from a bank different?', a: 'Banks and money-transfer services add a margin or fee on top of the mid-market rate, so the amount you actually receive is usually a little lower than a pure rate-based conversion suggests.' },
-    { q: 'Which currencies can I convert?', a: 'This tool covers major world currencies including USD, EUR, GBP, JPY, CAD, AUD, CHF, CNY, INR and SGD. Enter any amount and see it in every listed currency at once.' },
+    { q: 'How do I convert USD to EUR?', a: 'Enter the dollar amount and pick USD as the source and EUR as the target. The converter multiplies by the current USD→EUR rate and shows the result instantly. It also displays the live rate and its inverse, so you can sanity-check the number.' },
+    { q: 'Are these exchange rates live?', a: 'Yes for the major world currencies. Rates refresh every working day from European Central Bank reference data (published around 16:00 CET). A few less-traded currencies use a clearly flagged reference estimate rather than a live feed.' },
+    { q: 'How often do the rates update?', a: 'Official reference rates are published once per working day, so the converter refreshes daily. It does not track intraday (minute-by-minute) movements, which is why the history chart starts at a one-week range rather than showing tick data.' },
+    { q: 'Can I see historical exchange rates?', a: 'Yes. The built-in chart plots the daily closing rate for any supported pair. Use the range buttons to switch between one week, one month, three months, six months, one year and five years, and hover the line to read the rate on a specific day.' },
+    { q: 'Why is the amount I receive from a bank different?', a: 'Banks and money-transfer services add a margin or fee on top of the mid-market rate shown here, so the amount you actually receive is usually a little lower. Always confirm the final figure with your provider before sending money.' },
   ],
 };
 

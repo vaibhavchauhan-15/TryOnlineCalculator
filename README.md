@@ -20,9 +20,10 @@ live, as-you-type experience in the browser.
 | Language | TypeScript |
 | Styling | [Tailwind CSS 4](https://tailwindcss.com) (via `@tailwindcss/vite`) + a token-based `global.css` |
 | Fonts | Geist + Geist Mono (self-hosted `woff2` and Fontsource) |
-| Hosting / adapter | [Cloudflare](https://developers.cloudflare.com/pages/) (`@astrojs/cloudflare`) |
+| Hosting | [Cloudflare Pages](https://developers.cloudflare.com/pages/) — fully static, no adapter, Worker or server |
+| Live data | [Frankfurter API](https://frankfurter.dev) fetched directly in the browser (currency rates + history) |
 | Sitemap | `@astrojs/sitemap` |
-| Deploy tooling | [Wrangler](https://developers.cloudflare.com/workers/wrangler/) |
+| Deploy tooling | [Wrangler](https://developers.cloudflare.com/workers/wrangler/) (`wrangler pages deploy`) |
 
 Node `>=22.12.0` is required (see `engines` in `package.json`).
 
@@ -46,8 +47,7 @@ All commands run from the project root.
 | `npm run dev` | Start the local dev server |
 | `npm run build` | Build the production site to `./dist/` |
 | `npm run preview` | Preview the production build locally |
-| `npm run generate-types` | Generate Cloudflare binding types (`wrangler types`) |
-| `npm run deploy` | Build and deploy to Cloudflare Pages (`main` branch) |
+| `npm run deploy` | Build (`astro build`) and deploy the static `./dist` to Cloudflare Pages (`wrangler pages deploy`) |
 | `npm run astro ...` | Run Astro CLI commands (`astro add`, `astro check`, ...) |
 
 ## How It Works
@@ -157,8 +157,8 @@ tryonlinecalculator.com/
 │   └── styles/
 │       └── global.css           # Design tokens + global styles (Tailwind layer)
 │
-├── astro.config.mjs             # Astro config (Cloudflare adapter, sitemap, Tailwind)
-├── wrangler.jsonc               # Cloudflare Wrangler config
+├── astro.config.mjs             # Astro config (static output, sitemap, Tailwind)
+├── wrangler.jsonc               # Cloudflare Pages config (static output dir only)
 ├── package.json
 ├── tsconfig.json
 ├── PRD.md                       # Product requirements / roadmap
@@ -187,9 +187,11 @@ Category ids in use: `finance`, `health`, `education`, `math`, `salary`, `shoppi
 
 ## Deployment
 
-The site targets Cloudflare Pages. `npm run deploy` builds the site and pushes
-`dist/client` to the `main` branch via Wrangler. Cloudflare-specific configuration lives
-in `wrangler.jsonc`; HTTP headers are set in `public/_headers`.
+The site is fully static and targets Cloudflare Pages. `npm run deploy` builds the site to
+`./dist` and uploads it via `wrangler pages deploy`. There is no Worker, KV namespace or
+server binding — live currency rates and exchange-rate history are fetched directly from the
+[Frankfurter API](https://frankfurter.dev) in the browser. Static-hosting config lives in
+`wrangler.jsonc` (just the build output dir); HTTP headers are set in `public/_headers`.
 
 ## Documentation
 

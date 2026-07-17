@@ -1,14 +1,8 @@
 {
-	"$schema": "./node_modules/wrangler/config-schema.json",
-	"compatibility_date": "2026-07-15",
-	"compatibility_flags": ["global_fetch_strictly_public"],
 	"name": "tryonlinecalculator",
-	"main": "@astrojs/cloudflare/entrypoints/server",
-	"assets": {
-		"directory": "./dist",
-		"binding": "ASSETS"
-	},
-	"observability": {
-		"enabled": true
-	}
+	"compatibility_date": "2026-07-15",
+	// Static Cloudflare Pages project. The site builds to ./dist and the
+	// currency converter fetches live rates from the Frankfurter API directly in
+	// the browser, so there is no Worker, KV namespace or server binding.
+	"pages_build_output_dir": "./dist"
 }

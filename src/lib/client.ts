@@ -7,6 +7,33 @@ import type { Values } from './types';
 import { renderResultsHTML } from './render';
 import { loadState, saveState, clearState } from './storage';
 import { createHistoryUI, copyWithFeedback, wireCalculateButton } from './history';
+import { getCurrencySymbol, subscribeCurrency } from './currency';
+import { snapshotResults, animateResults } from './countup';
+import { haptic } from './haptics';
+
+// Every mounted calculator registers its live `update()` here so a currency
+// change can re-run them all at once (compute() re-formats in the new currency
+// and the charts re-render through the same pipeline).
+const updaters = new Set<() => void>();
+
+// Repaint the currency symbol on every currency-prefixed input and widen the
+// field's left padding to fit multi-character symbols (e.g. "CHF", "kr") so
+// the symbol never overlaps the typed value. Only visible affixes can be
+// measured, so this is re-run whenever fields toggle (see update()).
+function applyCurrencySymbols(root: ParentNode = document): void {
+  const symbol = getCurrencySymbol();
+  root.querySelectorAll<HTMLElement>('[data-currency-prefix]').forEach((affix) => {
+    if (affix.textContent !== symbol) affix.textContent = symbol;
+    const input = affix.closest('.field-wrap')?.querySelector<HTMLElement>('.field');
+    if (!input) return;
+    const w = Math.ceil(affix.getBoundingClientRect().width);
+    // A hidden field measures 0; leave its padding until it becomes visible.
+    if (w > 0) {
+      // 0.75rem left offset of the affix + its width + a small gap.
+      input.style.paddingLeft = `calc(0.75rem + ${w}px + 0.35rem)`;
+    }
+  });
+}
 
 type FormEl = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
@@ -188,22 +215,36 @@ function mount(root: HTMLElement): void {
   const history = historyMount ? createHistoryUI({ key: slug, mount: historyMount }) : null;
 
   const readPrimary = (): { label: string; value: string } | null => {
-    const valEl = output.querySelector('[data-primary-value]');
+    const valEl = output.querySelector<HTMLElement>('[data-primary-value]');
     if (!valEl) return null;
     const labelEl = output.querySelector('.result-primary-label');
-    return { label: labelEl?.textContent?.trim() ?? '', value: valEl.textContent?.trim() ?? '' };
+    const value = (valEl.dataset.final ?? valEl.textContent ?? '').trim();
+    return { label: labelEl?.textContent?.trim() ?? '', value };
   };
+
+  // First client render happens on mount; there's no meaningful "previous"
+  // value to roll from then, so we skip the count-up animation on that pass to
+  // avoid motion on load (and any layout work before the user interacts).
+  let firstRender = true;
 
   const update = () => {
     // Visibility first so disabled fields drop out before we read values.
     applyVisibility(root, collect(form));
     const values = collect(form);
     const out = calc.compute(values);
+    // Snapshot the currently displayed result values so each one can roll from
+    // where it was to its new value after the re-render.
+    const prev = firstRender ? {} : snapshotResults(output);
     output.innerHTML = renderResultsHTML(out);
+    // Fit the prefix padding on any field that just became visible.
+    applyCurrencySymbols(root);
+    if (!firstRender) animateResults(output, prev);
+    firstRender = false;
     saveState(storeKey, serialize(form));
   };
 
   form.addEventListener('input', update);
+  updaters.add(update);
   wireSteppers(form);
 
   // History is recorded only when the user presses Calculate — the expression
@@ -216,16 +257,26 @@ function mount(root: HTMLElement): void {
   };
   wireCalculateButton(root, () => {
     update();
-    return commit();
+    const saved = commit();
+    // A firm double-tap confirms the calculation was committed to history.
+    if (saved) haptic.success();
+    return saved;
   });
+
+  // Read the finished result string. During a count-up roll the visible text is
+  // an intermediate frame, so prefer the exact value mirrored to `data-final`.
+  const primaryValue = (): string => {
+    const el = output.querySelector<HTMLElement>('[data-primary-value]');
+    return (el?.dataset.final ?? el?.textContent ?? '').trim();
+  };
 
   // The small copy icon on the headline result (re-rendered each update, so
   // this is delegated on the stable output container).
   output.addEventListener('click', (e) => {
     const btn = (e.target as HTMLElement).closest<HTMLElement>('[data-copy-result]');
     if (!btn) return;
-    const val = output.querySelector('[data-primary-value]')?.textContent?.trim() ?? '';
-    void copyWithFeedback(btn, val);
+    haptic.tap();
+    void copyWithFeedback(btn, primaryValue());
   });
 
   const resetBtn = root.querySelector<HTMLButtonElement>('[data-calc-reset]');
@@ -239,7 +290,8 @@ function mount(root: HTMLElement): void {
 
   const copyBtn = root.querySelector<HTMLButtonElement>('[data-calc-copy]');
   copyBtn?.addEventListener('click', async () => {
-    const val = output.querySelector('[data-primary-value]')?.textContent ?? '';
+    const val = primaryValue();
+    haptic.tap();
     try {
       await navigator.clipboard.writeText(val);
       const label = copyBtn.querySelector('[data-copy-label]');
@@ -258,6 +310,14 @@ function mount(root: HTMLElement): void {
 
 function init(): void {
   document.querySelectorAll<HTMLElement>('[data-calculator]').forEach(mount);
+
+  // Paint the detected/saved currency onto the input prefixes, then keep them
+  // and every live result in sync whenever the user switches currency.
+  applyCurrencySymbols();
+  subscribeCurrency(() => {
+    applyCurrencySymbols();
+    updaters.forEach((run) => run());
+  });
 }
 
 if (document.readyState === 'loading') {

@@ -728,9 +728,13 @@ html[data-theme='dark'] {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 0.25rem;
-    min-height: 104px;
+    /* Grow with content between a comfortable floor and a viewport-relative
+       ceiling, then let the expression scroll — so a long expression never
+       balloons the device off-screen on desktop or mobile. */
+    min-height: clamp(88px, 14vh, 104px);
+    max-height: clamp(150px, 32vh, 260px);
     padding: 0.875rem 1rem;
     background-color: #0f1729;
     border-radius: var(--radius-md);
@@ -739,6 +743,11 @@ html[data-theme='dark'] {
   }
   .calc-screen-expr {
     width: 100%;
+    flex: 1 1 auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
     font-family: var(--font-mono);
     font-size: 15px;
     line-height: 1.4;
@@ -747,8 +756,10 @@ html[data-theme='dark'] {
     word-break: break-all;
     min-height: 21px;
   }
+  .calc-screen-expr::-webkit-scrollbar { width: 0; height: 0; }
   .calc-screen-result {
     width: 100%;
+    flex: 0 0 auto;
     font-family: var(--font-mono);
     font-size: clamp(1.75rem, 7vw, 2.5rem);
     font-weight: 600;
@@ -759,6 +770,17 @@ html[data-theme='dark'] {
     word-break: break-all;
   }
   .calc-screen-result.is-error { color: #ff8f92; font-size: 1.125rem; }
+
+  /* Error shake — a tiny, GPU-friendly horizontal nudge (transform only) that
+     draws the eye to an invalid expression. Kept under 300ms and disabled for
+     reduced-motion users by the global rule above. */
+  .calc-screen-result.is-shake { animation: calc-shake 0.3s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; }
+  @keyframes calc-shake {
+    10%, 90% { transform: translate3d(-1px, 0, 0); }
+    20%, 80% { transform: translate3d(2px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-3px, 0, 0); }
+    40%, 60% { transform: translate3d(3px, 0, 0); }
+  }
 
   /* Editable expression: tap a value to select (highlight) and edit it. */
   .calc-screen-expr.is-editable { cursor: text; }
@@ -1018,6 +1040,74 @@ html[data-theme='dark'] {
   .calc-copy-action:active { transform: scale(0.97); }
   .calc-copy-action.is-copied { color: var(--color-success); box-shadow: inset 0 0 0 1px var(--color-success); }
   .calc-copy-action svg { display: block; }
+
+  /* ---- Icon-only variant: a square button whose label lives in a hover
+     tooltip. On tap (mobile) or click (desktop) the tooltip flips to a
+     confirmation ("Copied result" / "Pasted") via the .is-copied state so the
+     action always reads as successful, with or without hover. ---- */
+  .calc-copy-action.is-icon {
+    position: relative;
+    gap: 0;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    justify-content: center;
+  }
+  .calc-copy-action.is-icon > [data-copy-ico] { display: inline-flex; }
+  .calc-copy-action.is-icon::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: calc(100% + 6px);
+    right: 0;
+    padding: 0.3rem 0.5rem;
+    font-family: var(--font-sans);
+    font-size: 11.5px;
+    font-weight: 500;
+    line-height: 1.2;
+    white-space: nowrap;
+    color: var(--color-on-primary);
+    background-color: var(--color-ink);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-float);
+    opacity: 0;
+    transform: translateY(3px);
+    pointer-events: none;
+    transition: opacity 0.14s ease, transform 0.14s ease;
+    z-index: 6;
+  }
+  .calc-copy-action.is-icon:hover::after,
+  .calc-copy-action.is-icon:focus-visible::after {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .calc-copy-action.is-icon.is-copied {
+    color: #ffffff;
+    background-color: var(--color-success);
+    box-shadow: none;
+  }
+  .calc-copy-action.is-icon.is-copied::after {
+    content: attr(data-tip-done);
+    opacity: 1;
+    transform: translateY(0);
+    color: #ffffff;
+    background-color: var(--color-success);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .calc-copy-action.is-icon::after { transition: none; }
+  }
+
+  /* ---- Split toolbar: an inline edit/paste hint on the left, the Paste +
+     Copy pills on the right. Keeps the keypad's new editing affordances
+     discoverable without crowding the read-out screen. ---- */
+  .calc-copy-row-split { justify-content: space-between; align-items: center; gap: 0.5rem; }
+  .calc-copy-actions { display: inline-flex; gap: 0.4rem; }
+  .calc-hint {
+    font-size: 11.5px;
+    line-height: 1.35;
+    color: var(--color-mute);
+    text-align: left;
+  }
+  @media (max-width: 430px) { .calc-hint { display: none; } }
 
   /* ---- Reusable "Calculate" primary action (shared by every calculator) ----
      The single black-ink pill CTA. Clicking it commits the current result to
