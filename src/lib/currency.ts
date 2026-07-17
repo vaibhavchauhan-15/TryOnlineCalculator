@@ -258,7 +258,16 @@ export function detectCurrency(): string {
 let activeCode = DEFAULT_CODE;
 if (typeof window !== 'undefined') {
   const saved = loadState<string>(STORE_KEY);
-  activeCode = isSupported(saved) ? saved : detectCurrency();
+  if (isSupported(saved)) {
+    activeCode = saved;
+  } else {
+    // No explicit choice yet: auto-detect AND persist it. Persisting the
+    // detected code lets the pre-paint inline restore (see CalculatorWidget)
+    // read it synchronously on the next load and paint the right symbol
+    // immediately — so the currency never flashes from the default on refresh.
+    activeCode = detectCurrency();
+    saveState(STORE_KEY, activeCode, 0);
+  }
 }
 
 export function getActiveCode(): string {

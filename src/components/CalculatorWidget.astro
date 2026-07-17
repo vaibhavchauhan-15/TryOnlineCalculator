@@ -1,6 +1,7 @@
 ---
 import type { Calculator, InputField, Values } from '../lib/types';
 import { renderResultsHTML } from '../lib/render';
+import { CURRENCIES } from '../lib/currency';
 import CalculateButton from './CalculateButton.astro';
 import CurrencySelect from './CurrencySelect.astro';
 
@@ -9,6 +10,13 @@ interface Props {
 }
 const { calculator } = Astro.props;
 const inputs = calculator.inputs;
+
+// Compact code→symbol map handed to the pre-paint inline restore script so it
+// can repaint the saved currency's symbol before first paint (kept in sync with
+// the catalog — the single source of truth — rather than duplicated).
+const currencySymbols: Record<string, string> = Object.fromEntries(
+  CURRENCIES.map((c) => [c.code, c.symbol]),
+);
 
 // A "$" prefix marks a monetary field. When any input is money, this calculator
 // deals in currency, so we surface the currency picker and let the client swap
@@ -170,6 +178,106 @@ const isVisible = (f: InputField) =>
       <div data-history-mount></div>
     </div>
   </div>
+
+  {/* Pre-paint restore. This runs synchronously while the browser is still
+     parsing the page — BEFORE the first paint — so the saved values are already
+     on the inputs when the widget first appears. The main engine below is a
+     deferred module (it can only run after paint), which is why restoring there
+     caused the brief flash of the default/empty state on every refresh. */}
+  <script is:inline define:vars={{ slug: calculator.slug, currencySymbols, usesCurrency }}>
+    (function () {
+      var script = document.currentScript;
+      var root = script && script.closest ? script.closest('[data-calculator]') : null;
+      if (!root) return;
+
+      try {
+        var form = root.querySelector('form[data-calc-form]');
+
+        // ---- 1. Restore saved input values (the main fix) ----
+        if (form) {
+          var state = null;
+          try {
+            var raw = localStorage.getItem('toc:v1:calc:' + slug);
+            if (raw) state = JSON.parse(raw);
+          } catch (e) {}
+
+          if (state && typeof state === 'object') {
+            var controls = form.querySelectorAll('[name]');
+            for (var i = 0; i < controls.length; i++) {
+              var el = controls[i];
+              var saved = state[el.name];
+              if (saved === undefined) continue;
+              if (el.tagName === 'INPUT' && el.type === 'radio') {
+                el.checked = el.value === saved;
+              } else {
+                el.value = saved;
+              }
+            }
+
+            // Re-apply conditional field visibility for the restored values so a
+            // field that should now be shown/hidden doesn't flash either.
+            var currentVal = function (name) {
+              var els = form.querySelectorAll('[name="' + name.replace(/"/g, '\\"') + '"]');
+              for (var k = 0; k < els.length; k++) {
+                var e = els[k];
+                if (e.tagName === 'INPUT' && e.type === 'radio') {
+                  if (e.checked) return e.value;
+                } else {
+                  return e.value;
+                }
+              }
+              return '';
+            };
+            var wraps = root.querySelectorAll('[data-show-field]');
+            for (var j = 0; j < wraps.length; j++) {
+              var wrap = wraps[j];
+              var field = wrap.getAttribute('data-show-field');
+              var allowed = (wrap.getAttribute('data-show-values') || '').split('|');
+              var show = allowed.indexOf(currentVal(field)) !== -1;
+              wrap.hidden = !show;
+              var inner = wrap.querySelectorAll('[name]');
+              for (var m = 0; m < inner.length; m++) inner[m].disabled = !show;
+            }
+          }
+        }
+
+        // ---- 2. Paint the saved/detected currency before first paint ----
+        if (usesCurrency) {
+          var code = null;
+          try {
+            var craw = localStorage.getItem('toc:v1:currency');
+            if (craw) code = JSON.parse(craw);
+          } catch (e) {}
+
+          var symbol = code && currencySymbols[code];
+          if (symbol) {
+            // Input prefix symbols (+ padding so multi-char symbols don't overlap).
+            var prefixes = root.querySelectorAll('[data-currency-prefix]');
+            for (var p = 0; p < prefixes.length; p++) {
+              var affix = prefixes[p];
+              if (affix.textContent !== symbol) affix.textContent = symbol;
+              var fwrap = affix.closest('.field-wrap');
+              var input = fwrap ? fwrap.querySelector('.field') : null;
+              if (input) {
+                var w = Math.ceil(affix.getBoundingClientRect().width);
+                if (w > 0) input.style.paddingLeft = 'calc(0.75rem + ' + w + 'px + 0.35rem)';
+              }
+            }
+            // Currency picker chip: label matches the enhanced `code symbol` form.
+            var pickers = root.querySelectorAll('[data-currency-picker]');
+            for (var q = 0; q < pickers.length; q++) {
+              var picker = pickers[q];
+              picker.dataset.value = code;
+              var valEl = picker.querySelector('.curp-value');
+              if (valEl) valEl.textContent = code + ' ' + symbol;
+            }
+          }
+        }
+      } catch (e) {
+        /* never let a restore hiccup block rendering */
+      }
+    })();
+  </script>
 </div>
 
 <script>
