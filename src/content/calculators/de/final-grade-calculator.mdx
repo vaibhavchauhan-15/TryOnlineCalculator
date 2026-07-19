@@ -1,0 +1,30 @@
+---
+slug: "final-grade-calculator"
+category: "education"
+title: "Abschlussnoten-Rechner"
+description: "Berechnen Sie, welche Note Sie in der Abschlussprüfung brauchen, um Ihre Wunschnote zu erreichen."
+keywords: ["Abschlussnoten Rechner", "benötigte Prüfungsnote", "Endnote berechnen", "welche Note brauche ich"]
+calculatorVersion: 1
+seoVersion: 2
+translationVersion: 2
+source: "en"
+translatedFromVersion: 1
+model: "manual-de-v2"
+searchIntent: "Die benötigte Note in der Abschlussprüfung berechnen, um ein bestimmtes Ergebnis zu erreichen."
+readingLevel: "general"
+market: "DE"
+audience: "Schüler und Studenten, die wissen möchten, welche Prüfungsnote sie brauchen"
+labels: {"field.current":"Aktuelle Note","field.desired":"Wunschnote","field.weight":"Gewichtung der Prüfung","finalContributesUpTo":"Prüfung zählt bis zu","gradeFromOtherWork":"Note aus bisherigen Leistungen","scoreNeeded":"Benötigte Note","status":"Status"}
+enums: {"achievable":"Erreichbar","alreadySecured":"Bereits gesichert","doable":"Machbar","easy":"Komfortabel","hard":"Anspruchsvoll","outOfReach":"Nicht erreichbar"}
+hints: {"finalGrade.notReachable":"Nicht erreichbar"}
+chartTitles: {"finalGrade.gaugeTitle":"Notenskala"}
+intro: "Geben Sie Ihre aktuelle Note, Ihre Wunschnote und die Gewichtung der Abschlussprüfung ein."
+formulaItems: [{"name":"Benötigte Note","expr":"Benötigt = (Ziel - Aktuell * (1 - w)) / w","desc":"w = Gewichtung der Prüfung als Dezimalzahl."}]
+howto: ["Geben Sie Ihre aktuelle Note ein.","Geben Sie Ihre gewünschte Endnote ein.","Geben Sie die Gewichtung der Abschlussprüfung ein (z. B. 40 %).","Lesen Sie ab, welche Note Sie in der Prüfung erreichen müssen."]
+faq: [{"q":"Was bedeutet es, wenn die benötigte Note über 100 % liegt?","a":"Dann ist die Wunschnote allein durch die Prüfung nicht mehr erreichbar. Sie bräuchten Zusatzpunkte oder eine stärker gewichtete Leistung."},{"q":"Funktioniert der Rechner auch mit dem deutschen Notensystem?","a":"Ja. Geben Sie Ihre Noten als Dezimalzahlen ein (z. B. 2,3 als aktuelle Note und 2,0 als Wunschnote)."}]
+related: ["grade-calculator","gpa-calculator","percentage-calculator"]
+---
+
+Finden Sie heraus, welche Note Sie in der Abschlussprüfung brauchen, um
+Ihre Wunschnote zu erreichen. Geben Sie einfach Ihre aktuelle Note, das
+Ziel und die Gewichtung der Prüfung ein.

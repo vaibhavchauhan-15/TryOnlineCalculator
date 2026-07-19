@@ -134,8 +134,14 @@ export function evaluate(input: string, opts: { scientific?: boolean; degrees?: 
         case '+': stack.push(a + b); break;
         case '-': stack.push(a - b); break;
         case '*': stack.push(a * b); break;
-        case '/': stack.push(a / b); break;
-        case '%': stack.push(a % b); break;
+        case '/':
+          if (b === 0) throw new Error('Division by zero.');
+          stack.push(a / b);
+          break;
+        case '%':
+          if (b === 0) throw new Error('Division by zero.');
+          stack.push(a % b);
+          break;
         case '^': stack.push(Math.pow(a, b)); break;
         default: throw new Error(`Unknown operator ${t.value}`);
       }
@@ -146,9 +152,11 @@ export function evaluate(input: string, opts: { scientific?: boolean; degrees?: 
 }
 
 // Greatest common divisor for the fraction calculator.
+// Rounds inputs to integers first so floating-point remainders don't cause
+// infinite loops when a user types a decimal numerator or denominator.
 export function gcd(a: number, b: number): number {
-  a = Math.abs(a);
-  b = Math.abs(b);
+  a = Math.abs(Math.round(a));
+  b = Math.abs(Math.round(b));
   while (b) [a, b] = [b, a % b];
   return a || 1;
 }

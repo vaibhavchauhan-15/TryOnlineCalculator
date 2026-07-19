@@ -1,0 +1,84 @@
+---
+slug: bmi-calculator
+category: health
+title: BMI Calculator
+description: Calculate your Body Mass Index with age and sex for a clearer, more personal reading of your weight.
+keywords:
+  - bmi calculator
+  - body mass index
+  - healthy weight
+  - body fat percentage
+  - bmi with age
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: en
+searchIntent: Understand whether my weight is healthy and what a BMI number means for me.
+readingLevel: general
+market: global
+audience: adults tracking their weight and health
+labels:
+  bmi: Your BMI
+  category: Category
+  healthyRange: Healthy weight range
+  bodyFat: Estimated body fat
+  toHealthyRange: To reach healthy range
+  field.unitSystem: Units
+  field.sex: Sex
+  field.age: Age
+  field.height: Height
+  field.weight: Weight
+  field.heightFt: Height (feet)
+  field.heightIn: Height (inches)
+  field.weightLb: Weight
+enums:
+  underweight: Underweight
+  normal: Normal weight
+  overweight: Overweight
+  obese: Obese
+  gain: Gain
+  lose: Lose
+  metric: Metric
+  imperial: Imperial
+  male: Male
+  female: Female
+hints:
+  bmi.bodyFatMethod: Deurenberg estimate for adults
+chartTitles:
+  bmi.gaugeTitle: Where your BMI falls
+intro: BMI relates your weight to your height. Add your age and sex and we also estimate your body-fat percentage, then plot the result on a visual scale so you can see exactly where you land.
+formulaIntro: BMI is a simple ratio of weight to height, with a body-fat estimate layered on top.
+formulaItems:
+  - name: BMI (metric)
+    expr: BMI = weight(kg) / height(m)²
+  - name: BMI (imperial)
+    expr: BMI = 703 · weight(lb) / height(in)²
+  - name: Body fat % (Deurenberg)
+    expr: BF% = 1.2·BMI + 0.23·age − 10.8·sex − 5.4
+    desc: sex = 1 for male, 0 for female (adult estimate).
+howto:
+  - Pick metric or imperial units.
+  - Enter your sex and age for a more personal reading.
+  - Enter your height and weight.
+  - Read your BMI, body-fat estimate and category on the scale.
+faq:
+  - q: Why does the calculator ask for age and sex?
+    a: BMI itself only uses height and weight, but age and sex let us estimate your body-fat percentage and interpret the number more accurately. At the same BMI, body fat tends to be higher with age and higher for women than men.
+  - q: Is BMI accurate for everyone?
+    a: BMI is a population screen, not a diagnosis. It can overestimate body fat in muscular people and underestimate it in older adults. The body-fat estimate helps, but treat both as a starting point.
+  - q: What is a healthy BMI?
+    a: For most adults a BMI between 18.5 and 24.9 is considered the healthy range.
+related:
+  - bmr-calculator
+  - ideal-weight-calculator
+  - calorie-calculator
+  - tdee-calculator
+---
+
+Body Mass Index is the most widely used way to check whether your weight sits
+in a healthy range for your height. This calculator goes a step further than a
+plain BMI number: by adding your age and sex it also estimates your body-fat
+percentage and shows exactly where you fall on the healthy-weight scale.
+
+Use it as a quick screen, not a diagnosis — muscle, frame size and age all
+affect what a given number means for you.

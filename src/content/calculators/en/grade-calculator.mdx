@@ -1,0 +1,21 @@
+---
+slug: "grade-calculator"
+category: "education"
+title: "Grade Calculator"
+description: "Calculate your overall course grade from assignment scores and their weights."
+keywords: ["grade calculator","weighted grade","course grade"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+labels: {"letterGrade":"Letter grade","overallGrade":"Overall grade","totalWeight":"Total weight"}
+enums: {"a":"A","aMinus":"A-","aPlus":"A+","b":"B","bMinus":"B-","bPlus":"B+","c":"C","cMinus":"C-","cPlus":"C+","d":"D","dMinus":"D-","dPlus":"D+","f":"F"}
+hints: {"grade.letter":"Letter"}
+chartTitles: {"grade.gaugeTitle":"Gauge title"}
+intro: "Enter each assignment as \"score, weight\" per line. Scores and weights are percentages."
+formulaItems: [{"name":"Weighted grade","expr":"Grade = Σ(score × weight) / Σ weight"}]
+faq: [{"q":"Do the weights need to add up to 100%?","a":"Not for the calculation — the result is normalised by the total weight. But if you have entered every graded item, the weights should total 100%."}]
+related: ["final-grade-calculator","gpa-calculator","average-grade-calculator","percentage-calculator"]
+---
+
+Enter each assignment as "score, weight" per line. Scores and weights are percentages.

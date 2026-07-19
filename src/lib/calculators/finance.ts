@@ -390,7 +390,191 @@ export const financeCalculators: Calculator[] = [
       { q: 'What return should I assume?', a: 'Historically a diversified stock portfolio has averaged roughly 7%–10% before inflation. Use a conservative figure and remember past performance does not guarantee future results.' },
       { q: 'Does this account for inflation?', a: 'No. To see purchasing power in today\'s dollars, subtract expected inflation (around 2%–3%) from your return rate.' },
     ],
-    related: ['compound-interest-calculator', 'savings-calculator', 'retirement-calculator', 'interest-calculator'],
+    related: ['sip-calculator', 'compound-interest-calculator', 'savings-calculator', 'retirement-calculator'],
+  },
+
+  /* -------------------------------------------------------------------- SIP */
+  {
+    slug: 'sip-calculator',
+    category: 'finance',
+    title: 'SIP Calculator',
+    description:
+      'Calculate the maturity value and estimated returns of a monthly SIP or a one-time lumpsum investment, with an optional annual step-up.',
+    intro:
+      'A Systematic Investment Plan (SIP) invests a fixed amount every month so you benefit from compounding and rupee-cost averaging. Switch to Lumpsum for a one-time investment, or turn on an annual step-up to grow your monthly amount each year.',
+    keywords: [
+      'sip calculator',
+      'sip return calculator',
+      'lumpsum calculator',
+      'step up sip calculator',
+      'mutual fund calculator',
+      'systematic investment plan',
+      'monthly investment calculator',
+    ],
+    popular: true,
+    visual: 'sip',
+    inputs: [
+      {
+        name: 'mode', label: 'Investment type', type: 'radio', default: 'sip',
+        options: [
+          { label: 'SIP (monthly)', value: 'sip' },
+          { label: 'Lumpsum', value: 'lumpsum' },
+        ],
+      },
+      { name: 'amount', label: 'Investment amount', type: 'number', prefix: '$', default: 25000, min: 0, step: 500 },
+      { name: 'rate', label: 'Expected return rate (p.a)', type: 'number', suffix: '%', default: 12, min: 0, max: 40, step: 0.1 },
+      { name: 'years', label: 'Time period', type: 'number', suffix: 'yrs', default: 10, min: 1, max: 40, step: 1 },
+      { name: 'stepup', label: 'Annual step-up', type: 'number', suffix: '%', default: 0, min: 0, max: 25, step: 1, help: 'SIP only. Raises your monthly amount by this % after every year.' },
+    ],
+    compute: (v) => {
+      const mode = v.mode === 'lumpsum' ? 'lumpsum' : 'sip';
+      const amount = num(v.amount, 0);
+      const rate = num(v.rate, 0);
+      const years = Math.min(Math.round(num(v.years, 0)), 100);
+      const stepUp = mode === 'sip' ? Math.max(num(v.stepup, 0), 0) : 0;
+      if (amount <= 0 || years <= 0) return { results: [], error: 'Enter an investment amount and a time period greater than zero.' };
+
+      let invested: number;
+      let total: number;
+      // Growth of invested capital vs total value, sampled each year for the chart.
+      const yearLabels: string[] = ['0'];
+      const investedPts: number[] = [mode === 'lumpsum' ? amount : 0];
+      const valuePts: number[] = [mode === 'lumpsum' ? amount : 0];
+
+      if (mode === 'lumpsum') {
+        invested = amount;
+        total = amount * Math.pow(1 + rate / 100, years);
+        for (let y = 1; y <= years; y++) {
+          yearLabels.push(String(y));
+          investedPts.push(amount);
+          valuePts.push(amount * Math.pow(1 + rate / 100, y));
+        }
+      } else {
+        // Effective monthly rate (compounds to the stated annual return),
+        // not the nominal rate/12 which over-states SIP maturity.
+        const i = Math.pow(1 + rate / 100, 1 / 12) - 1;
+        const g = stepUp / 100;
+        let fv = 0;
+        let put = 0;
+        let monthly = amount;
+        for (let y = 0; y < years; y++) {
+          for (let m = 0; m < 12; m++) {
+            fv = (fv + monthly) * (1 + i);
+            put += monthly;
+          }
+          monthly *= 1 + g;
+          yearLabels.push(String(y + 1));
+          investedPts.push(put);
+          valuePts.push(fv);
+        }
+        invested = put;
+        total = fv;
+      }
+
+      const gains = Math.max(total - invested, 0);
+      const amountLabel = mode === 'lumpsum' ? 'Total investment' : 'Monthly investment';
+
+      return {
+        results: [
+          { label: 'Total value', value: currency(total, { decimals: 0 }), primary: true, hint: mode === 'lumpsum' ? 'One-time investment' : 'At the end of the plan' },
+          { label: 'Invested amount', value: currency(invested, { decimals: 0 }) },
+          { label: 'Est. returns', value: currency(gains, { decimals: 0 }), tone: 'success' },
+        ],
+        breakdown: [
+          { label: amountLabel, value: currency(amount, { decimals: 0 }) },
+          { label: 'Wealth gain multiple', value: `${number(invested ? total / invested : 0, 2)}×` },
+          ...(mode === 'sip' && stepUp > 0 ? [{ label: 'Annual step-up', value: `${number(stepUp, 0)}%` }] : []),
+        ],
+        charts: [
+          {
+            type: 'pie',
+            title: 'Invested vs estimated returns',
+            format: 'currency',
+            slices: [
+              { label: 'Invested amount', value: invested, color: '#0070f3' },
+              { label: 'Est. returns', value: gains, color: '#50e3c2' },
+            ],
+          },
+          ...(valuePts.length > 2
+            ? [{
+                type: 'line' as const,
+                title: 'Projected growth',
+                format: 'currency' as const,
+                labels: yearLabels,
+                series: [
+                  { label: 'Total value', points: valuePts, color: '#0070f3' },
+                  { label: 'Invested', points: investedPts, color: '#7928ca' },
+                ],
+              }]
+            : []),
+        ],
+      };
+    },
+    article: [
+      {
+        heading: 'What is a SIP calculator?',
+        body: [
+          'A Systematic Investment Plan (SIP) is a way of investing a fixed amount into mutual funds at regular intervals — usually every month, though weekly and quarterly options also exist. It is one of two common ways to invest in mutual funds, the other being a one-time lumpsum.',
+          'A SIP calculator is a simple online tool that estimates the maturity value and returns of your monthly investments. You enter how much you invest each month, the number of years you stay invested, and an expected annual rate of return, and it projects the corpus you could build.',
+          'The figures are estimates. Actual mutual fund returns vary with market conditions, and the calculator does not account for exit loads or a scheme\'s expense ratio.',
+        ],
+      },
+      {
+        heading: 'How can a SIP return calculator help you?',
+        body: [
+          'Investing through a SIP encourages financial discipline and a regular savings habit, and it spreads your entry across market highs and lows (rupee-cost averaging). A calculator makes planning easier by showing what those regular investments could grow into.',
+          'In particular, it helps you decide how much to invest each month, tracks the total you will have contributed over the tenure, and gives an estimate of the returns and final value — in seconds and without manual maths.',
+        ],
+      },
+      {
+        heading: 'How does this SIP calculator work?',
+        body: [
+          'The maturity value of a SIP is calculated with the standard future-value-of-an-annuity formula:',
+          '<strong>M = P × ((1 + i)<sup>n</sup> − 1) / i) × (1 + i)</strong>',
+          'where <strong>M</strong> is the maturity amount, <strong>P</strong> is the amount invested each month, <strong>n</strong> is the number of instalments, and <strong>i</strong> is the periodic (monthly) rate of return.',
+          'The important detail is how <strong>i</strong> is derived. A common mistake is to divide the annual return by 12 — treating a 12% annual return as 1% a month. Because returns compound, that overstates the result: 1% compounded for 12 months works out to more than 12% a year.',
+          'The correct approach is to convert the annual return into an effective monthly return using <code>i = (1 + annual return)<sup>1/12</sup> − 1</code>. For a 12% annual return this comes to about 0.95% a month, not 1%, because compounding 0.95% over 12 months returns exactly 12%.',
+          'For example, investing ₹1,000 a month for 12 months at 12% a year uses i ≈ 0.0095, giving M = 1,000 × ((1.0095<sup>12</sup> − 1) / 0.0095) × 1.0095 ≈ <strong>₹12,766</strong>. This calculator uses that effective monthly rate, so its maturity values line up with leading SIP tools.',
+          'Remember that the return rate is only an assumption. Real returns rise and fall with the market, so treat the output as a projection rather than a guarantee.',
+        ],
+      },
+      {
+        heading: 'Advantages of this SIP calculator',
+        body: [
+          'You can plan investments around any amount and tenure, see an estimate of your total corpus at the end of the SIP, and switch to lumpsum mode for one-time investments. An optional annual step-up lets you raise your monthly amount each year to keep pace with a rising income, giving a realistic picture of a growing SIP.',
+        ],
+      },
+    ],
+    formulaIntro: 'A SIP is a series of monthly investments, while a lumpsum is a single deposit that compounds over time. The monthly rate is the effective rate that compounds to the stated annual return.',
+    formulaItems: [
+      { name: 'SIP maturity value', expr: 'M = P × ((1 + i)^n − 1) / i × (1 + i)', desc: 'P = monthly investment, i = effective monthly rate, n = number of instalments.' },
+      { name: 'Effective monthly rate', expr: 'i = (1 + r)^(1/12) − 1', desc: 'r = expected annual return. Compounding i over 12 months reproduces r exactly, so 12% a year ≈ 0.95% a month.' },
+      { name: 'Lumpsum future value', expr: 'FV = P × (1 + r)^t', desc: 'P = amount invested, r = annual rate, t = years.' },
+      { name: 'Step-up SIP', expr: 'Monthly amount ×= (1 + g) each year', desc: 'g = annual step-up %, applied after every 12 instalments.' },
+    ],
+    howto: [
+      'Choose SIP for a monthly investment or Lumpsum for a one-time deposit.',
+      'Set the amount, your expected annual return and the time period.',
+      'Optionally enable an annual step-up to grow your SIP each year.',
+      'Read the invested amount, estimated returns and total value below.',
+    ],
+    examples: [
+      { title: '₹25,000/month SIP at 12% for 10 years', body: 'Investing ₹25,000 every month for 10 years at a 12% expected annual return puts in ₹30,00,000 and grows to about ₹56,00,900 — roughly ₹26,00,900 of estimated returns.' },
+      { title: 'Lumpsum ₹25,000 at 12% for 10 years', body: 'A single ₹25,000 investment compounding at 12% a year becomes about ₹77,646 after 10 years.' },
+    ],
+    faq: [
+      { q: 'What is the difference between SIP and lumpsum?', a: 'A SIP invests a fixed amount every month, which spreads your entry across market highs and lows (rupee-cost averaging). A lumpsum invests the full amount once, so its return depends heavily on the single entry point.' },
+      { q: 'Are SIPs the same as mutual funds?', a: 'No. A mutual fund is the investment; a SIP is just one method of putting money into it. The alternative is a one-time lumpsum. So you invest in a mutual fund either through a SIP or as a lumpsum.' },
+      { q: 'How much can I invest in a SIP?', a: 'There is no upper limit. Many funds let you start with as little as ₹100 or ₹500 a month, and you can invest as much as you like above that.' },
+      { q: 'What is the maximum tenure of a SIP?', a: 'There is no maximum — you can keep a SIP running for as long as you want. The minimum is usually around six months, and many investors continue for decades to benefit from long-term compounding.' },
+      { q: 'Can I modify my SIP amount?', a: 'You cannot change the amount of an existing SIP directly, but you can start an additional SIP in the same fund or use a step-up SIP to raise the amount automatically each year.' },
+      { q: 'Can I pause my SIP?', a: 'Most fund houses let you pause a SIP for a set period (often one to three months) instead of stopping it, and resume afterwards without starting a new plan.' },
+      { q: 'Do SIPs allow only equity mutual funds?', a: 'No. You can run a SIP in equity, debt, hybrid or other categories of mutual funds. Equity SIPs suit long-term goals, while debt SIPs suit shorter horizons.' },
+      { q: 'What is a step-up SIP?', a: 'A step-up (or top-up) SIP increases your monthly contribution by a set percentage each year — for example 10% — so your investing keeps pace with a rising income and builds a noticeably larger corpus.' },
+      { q: 'What return rate should I assume?', a: 'Equity mutual funds have historically returned roughly 10%–12% a year over long periods, while debt funds are lower. These are estimates, not guarantees — actual returns vary with the market.' },
+      { q: 'Are the returns guaranteed?', a: 'No. This calculator assumes a constant annual return for illustration. Real mutual fund returns fluctuate and can be negative in some years, so treat the result as a projection.' },
+    ],
+    related: ['investment-calculator', 'compound-interest-calculator', 'retirement-calculator', 'savings-calculator'],
   },
 
   /* --------------------------------------------------- Compound Interest */
@@ -486,7 +670,7 @@ export const financeCalculators: Calculator[] = [
       { q: 'Does compounding frequency matter much?', a: 'It helps, but with diminishing returns. Moving from annual to monthly compounding makes a noticeable difference; monthly to daily is tiny.' },
       { q: 'What is APY?', a: 'Annual Percentage Yield is the effective yearly rate after compounding: APY = (1 + r/k)^k − 1.' },
     ],
-    related: ['investment-calculator', 'savings-calculator', 'interest-calculator', 'retirement-calculator'],
+    related: ['investment-calculator', 'sip-calculator', 'savings-calculator', 'retirement-calculator'],
   },
 
   /* ----------------------------------------------------------------- Savings */
@@ -752,6 +936,6 @@ export const financeCalculators: Calculator[] = [
       { q: 'What is the 4% rule?', a: 'A common guideline suggesting you can withdraw about 4% of your retirement balance in the first year, then adjust for inflation, with a good chance the money lasts 30 years.' },
       { q: 'Is this adjusted for inflation?', a: 'No. Consider using a real return (nominal return minus inflation) if you want the result in today\'s purchasing power.' },
     ],
-    related: ['investment-calculator', 'compound-interest-calculator', 'savings-calculator'],
+    related: ['investment-calculator', 'sip-calculator', 'compound-interest-calculator', 'savings-calculator'],
   },
 ];

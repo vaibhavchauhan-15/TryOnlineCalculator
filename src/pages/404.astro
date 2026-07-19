@@ -1,7 +1,17 @@
 ---
+// Root 404 fallback — detects the user's preferred locale from the URL path or
+// the `locale-pref` cookie, then renders the appropriate localized 404 content.
+//
+// Since this is a static site, we can't do a server-side redirect here. Instead
+// we render the English 404 as the default and use a small inline script to
+// redirect to the correct localized 404 if the user has a preference set or if
+// the URL path indicates a locale.
+
 import Layout from '../layouts/Layout.astro';
 import Search from '../components/Search.astro';
 import { categories } from '../lib/categories';
+import { to } from '../lib/i18n/paths';
+import { DEFAULT_LOCALE, enabledLocaleCodes } from '../lib/i18n/locales';
 ---
 
 <Layout title="Page not found" description="The page you were looking for could not be found." noindex>
@@ -11,11 +21,37 @@ import { categories } from '../lib/categories';
     <p>The calculator or page you were looking for may have moved. Try searching for it below.</p>
     <div class="notfound-search"><Search variant="hero" /></div>
     <div class="notfound-cats">
-      {categories.map((c) => <a href={c.path} class="notfound-pill">{c.name}</a>)}
+      {categories.map((c) => <a href={to(c.path, DEFAULT_LOCALE)} class="notfound-pill">{c.name}</a>)}
     </div>
-    <a href="/" class="btn btn-primary">Back to home</a>
+    <a href={to('/', DEFAULT_LOCALE)} class="btn btn-primary">Back to home</a>
   </div>
 </Layout>
+
+<script is:inline define:vars={{ enabledLocales: enabledLocaleCodes(), defaultLocale: DEFAULT_LOCALE }}>
+  // Detect locale from the current URL path or from the locale-pref cookie.
+  // If a non-default locale is detected, redirect to the localized 404 page.
+  (function () {
+    try {
+      var path = window.location.pathname;
+      var segments = path.split('/').filter(Boolean);
+      var localeFromPath = segments.length > 0 && enabledLocales.indexOf(segments[0]) !== -1 ? segments[0] : null;
+
+      // Read the locale-pref cookie
+      var cookieMatch = document.cookie.match(/(?:^|;\s*)locale-pref=([^;]*)/);
+      var localePref = cookieMatch ? decodeURIComponent(cookieMatch[1]) : null;
+
+      var targetLocale = localeFromPath || localePref || defaultLocale;
+
+      // Only redirect if we have a non-default locale preference and we're not already
+      // on a locale-prefixed path (which means the [locale]/404.astro should have caught it).
+      if (targetLocale !== defaultLocale && !localeFromPath) {
+        window.location.replace('/' + targetLocale + '/404');
+      }
+    } catch (e) {
+      // Silently fail — the English 404 content is already rendered as fallback.
+    }
+  })();
+</script>
 
 <style>
   .notfound { max-width: 560px; margin: 0 auto; text-align: center; padding: 5rem 0; }

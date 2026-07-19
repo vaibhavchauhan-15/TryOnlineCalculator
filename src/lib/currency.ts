@@ -92,6 +92,7 @@ export const CURRENCIES: CurrencyDef[] = [
 
 const DEFAULT_CODE = 'USD';
 const STORE_KEY = 'currency';
+const EXPLICIT_KEY = 'currency:explicit';
 
 const BY_CODE: Record<string, CurrencyDef> = Object.fromEntries(
   CURRENCIES.map((c) => [c.code, c]),
@@ -247,17 +248,28 @@ function detectFromTimeZone(): string | null {
   }
 }
 
+/** Read the geo-country cookie set by the Cloudflare edge middleware. */
+function detectFromGeoCookie(): string | null {
+  if (typeof document === 'undefined') return null;
+  const m = document.cookie.match(/(?:^|;\s*)geo-country=([A-Z]{2})/);
+  if (!m) return null;
+  const code = COUNTRY_CURRENCY[m[1]];
+  return isSupported(code) ? code : null;
+}
+
 /** Best-effort currency for a first-time visitor. Never throws. */
 export function detectCurrency(): string {
-  return detectFromLocale() ?? detectFromTimeZone() ?? DEFAULT_CODE;
+  return detectFromGeoCookie() ?? detectFromLocale() ?? detectFromTimeZone() ?? DEFAULT_CODE;
 }
 
 // Resolve the starting currency synchronously at module load so the very first
 // render (and the calculators' initial compute) already use it — no flash of
 // the wrong symbol on the client. A saved explicit choice always wins.
 let activeCode = DEFAULT_CODE;
+let explicitChoice = false;
 if (typeof window !== 'undefined') {
   const saved = loadState<string>(STORE_KEY);
+  explicitChoice = loadState<boolean>(EXPLICIT_KEY) === true;
   if (isSupported(saved)) {
     activeCode = saved;
   } else {
@@ -267,6 +279,7 @@ if (typeof window !== 'undefined') {
     // immediately — so the currency never flashes from the default on refresh.
     activeCode = detectCurrency();
     saveState(STORE_KEY, activeCode, 0);
+    // NOT an explicit choice — locale-aware pages may override this.
   }
 }
 
@@ -294,7 +307,28 @@ export function subscribeCurrency(cb: Listener): () => void {
 export function setActiveCurrency(code: string): void {
   if (!isSupported(code) || code === activeCode) return;
   activeCode = code;
+  explicitChoice = true;
   saveState(STORE_KEY, code, 0);
+  saveState(EXPLICIT_KEY, true, 0);
+  const currency = getActiveCurrency();
+  listeners.forEach((cb) => cb(currency));
+}
+
+/** True if the user has manually chosen a currency (not just auto-detected). */
+export function isExplicitCurrencyChoice(): boolean {
+  return explicitChoice;
+}
+
+/**
+ * Override the active currency from a locale/geo hint without marking it as an
+ * explicit user choice. Used by the page locale sync so future locale switches
+ * can still override. Notifies subscribers like setActiveCurrency does.
+ */
+export function setLocaleCurrency(code: string): void {
+  if (!isSupported(code) || code === activeCode) return;
+  activeCode = code;
+  saveState(STORE_KEY, code, 0);
+  // Deliberately does NOT set EXPLICIT_KEY — this is an automatic override.
   const currency = getActiveCurrency();
   listeners.forEach((cb) => cb(currency));
 }

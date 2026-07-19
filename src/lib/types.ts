@@ -157,7 +157,7 @@ export interface Calculator {
    * structured UI) instead of the generic form widget. The compute() function
    * and inputs are still used for SEO / no-JS fallback and related content.
    */
-  visual?: 'basic' | 'scientific' | 'fraction' | 'percentage' | 'average';
+  visual?: 'basic' | 'scientific' | 'fraction' | 'percentage' | 'average' | 'sip';
   /**
    * When set, the page renders a dedicated guided calculator component (with a
    * friendly, low-typing input UI) in place of the generic form widget, while
@@ -171,6 +171,11 @@ export interface Calculator {
   formulaItems?: FormulaItem[];
   howto?: string[];
   examples?: { title: string; body: string }[];
+  /**
+   * Long-form SEO article rendered as H2 headings with paragraphs, shown above
+   * the how-to / formula sections. Use for in-depth explanatory content.
+   */
+  article?: { heading: string; body: string[] }[];
   faq: FaqItem[];
   related?: string[]; // slugs
 }

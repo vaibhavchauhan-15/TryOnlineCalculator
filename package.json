@@ -7,14 +7,24 @@
   },
   "scripts": {
     "dev": "astro dev",
+    "validate": "vite-node scripts/validate.ts",
+    "prebuild": "vite-node scripts/validate.ts && vite-node scripts/build-search.ts",
     "build": "astro build",
+    "postbuild": "vite-node scripts/audit-seo.ts",
+    "audit": "vite-node scripts/audit-seo.ts",
+    "rollout:gate": "vite-node scripts/rollout-gate.ts",
     "preview": "astro preview",
     "astro": "astro",
-    "test": "node --test \"src/**/*.test.ts\"",
-    "deploy": "astro build && wrangler pages deploy"
+    "search:index": "vite-node scripts/build-search.ts",
+    "translate": "vite-node scripts/translate.ts",
+    "translate:check": "vite-node scripts/translate.ts --check",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "deploy": "npm run build && wrangler pages deploy"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.9",
+    "@astrojs/mdx": "^7.0.3",
     "@astrojs/sitemap": "^3.7.3",
     "@fontsource-variable/geist": "^5.2.9",
     "@fontsource-variable/geist-mono": "^5.2.8",
@@ -28,6 +38,7 @@
     "agentation": "^3.0.2",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
+    "vitest": "^3.2.7",
     "wrangler": "^4.111.0"
   }
 }

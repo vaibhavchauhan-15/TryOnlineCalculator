@@ -1,6 +1,14 @@
 ---
+// Root 500 fallback — detects the user's preferred locale from the URL path or
+// the `locale-pref` cookie, then redirects to the localized 500 page if needed.
+//
+// English content is rendered as the immediate fallback so there's no blank
+// page flash even before the redirect fires.
+
 import Layout from '../layouts/Layout.astro';
 import { categories } from '../lib/categories';
+import { to } from '../lib/i18n/paths';
+import { DEFAULT_LOCALE, enabledLocaleCodes } from '../lib/i18n/locales';
 ---
 
 <Layout
@@ -17,15 +25,37 @@ import { categories } from '../lib/categories';
     </p>
     <div class="errpage-actions">
       <button type="button" id="err-retry" class="btn btn-primary">Try again</button>
-      <a href="/" class="btn btn-secondary">Back to home</a>
+      <a href={to('/', DEFAULT_LOCALE)} class="btn btn-secondary">Back to home</a>
     </div>
     <div class="errpage-cats">
-      {categories.map((c) => <a href={c.path} class="errpage-pill">{c.name}</a>)}
+      {categories.map((c) => <a href={to(c.path, DEFAULT_LOCALE)} class="errpage-pill">{c.name}</a>)}
     </div>
   </div>
 </Layout>
 
-<script is:inline>
+<script is:inline define:vars={{ enabledLocales: enabledLocaleCodes(), defaultLocale: DEFAULT_LOCALE }}>
+  // Detect locale from the current URL path or from the locale-pref cookie.
+  // If a non-default locale is detected, redirect to the localized 500 page.
+  (function () {
+    try {
+      var path = window.location.pathname;
+      var segments = path.split('/').filter(Boolean);
+      var localeFromPath = segments.length > 0 && enabledLocales.indexOf(segments[0]) !== -1 ? segments[0] : null;
+
+      var cookieMatch = document.cookie.match(/(?:^|;\s*)locale-pref=([^;]*)/);
+      var localePref = cookieMatch ? decodeURIComponent(cookieMatch[1]) : null;
+
+      var targetLocale = localeFromPath || localePref || defaultLocale;
+
+      if (targetLocale !== defaultLocale && !localeFromPath) {
+        window.location.replace('/' + targetLocale + '/500');
+      }
+    } catch (e) {
+      // Silently fail — the English 500 content is already rendered.
+    }
+  })();
+
+  // Retry button
   document.getElementById('err-retry')?.addEventListener('click', function () {
     window.location.reload();
   });

@@ -1,0 +1,58 @@
+---
+slug: "sip-calculator"
+category: "finance"
+title: "SIP कैलकुलेटर"
+description: "Calculate the maturity value and estimated returns of a मासिक SIP or a one-time lumpsum investment, with an optional वार्षिक step-up."
+keywords: ["SIP कैलकुलेटर","sip return कैलकुलेटर","lumpsum कैलकुलेटर","step up sip कैलकुलेटर","mutual fund कैलकुलेटर","systematic investment plan","मासिक investment कैलकुलेटर"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "offline-dictionary-v1"
+labels: {"estReturns":"Est returns","field.annualStepUp":"वार्षिक step up","field.expectedReturn":"Expected return","field.investmentAmount":"Investment राशि","field.investmentType":"Investment type","field.timePeriod":"Time period","invested":"Invested","investedAmount":"Invested राशि","monthlyInvestment":"मासिक investment","totalValue":"कुल value","wealthGainMultiple":"Wealth gain multiple"}
+enums: {"mode.lumpsum":"Lump sum","mode.sip":"मासिक SIP"}
+hints: {"sip.endOfPlanHint":"End of plan hint","sip.stepUpHelp":"Step up help"}
+chartTitles: {"sip.growthTitle":"Growth title","sip.pieTitle":"Pie title"}
+intro: "A Systematic Investment Plan (SIP) invests a fixed राशि every month so you benefit from compounding and rupee-cost averaging. Switch to Lumpsum for a one-time investment, or turn on an वार्षिक step-up to grow your मासिक राशि each year."
+formulaIntro: "A SIP is a series of मासिक investments, while a lumpsum is a single deposit that compounds over time. The मासिक rate is the effective rate that compounds to the stated वार्षिक return."
+formulaItems: [{"name":"SIP maturity value","expr":"M = P × ((1 + i)^n − 1) / i × (1 + i)","desc":"P = मासिक investment, i = effective मासिक rate, n = number of instalments."},{"name":"Effective मासिक rate","expr":"i = (1 + r)^(1/12) − 1","desc":"r = expected वार्षिक return. Compounding i over 12 months reproduces r exactly, so 12% a year ≈ 0.95% a month."},{"name":"Lumpsum future value","expr":"FV = P × (1 + r)^t","desc":"P = राशि invested, r = वार्षिक rate, t = वर्ष."},{"name":"Step-up SIP","expr":"Monthly amount ×= (1 + g) each year","desc":"g = वार्षिक step-up %, applied after every 12 instalments."}]
+howto: ["Choose SIP for a मासिक investment or Lumpsum for a one-time deposit.","Set the राशि, your expected वार्षिक return and the time period.","Optionally enable an वार्षिक step-up to grow your SIP each year.","Read the invested राशि, estimated returns and कुल value below."]
+examples: [{"title":"₹25,000/month SIP at 12% for 10 वर्ष","body":"Investing ₹25,000 every month for 10 वर्ष at a 12% expected वार्षिक return puts in ₹30,00,000 and grows to about ₹56,00,900 — roughly ₹26,00,900 of estimated returns."},{"title":"Lumpsum ₹25,000 at 12% for 10 वर्ष","body":"A single ₹25,000 investment compounding at 12% a year becomes about ₹77,646 after 10 वर्ष."}]
+faq: [{"q":"What is the difference between SIP and lumpsum?","a":"A SIP invests a fixed राशि every month, which spreads your entry across market highs and lows (rupee-cost averaging). A lumpsum invests the full राशि once, so its return depends heavily on the single entry point."},{"q":"Are SIPs the same as mutual funds?","a":"No. A mutual fund is the investment; a SIP is just one method of putting money into it. The alternative is a one-time lumpsum. So you invest in a mutual fund either through a SIP or as a lumpsum."},{"q":"How much can I invest in a SIP?","a":"There is no upper limit. Many funds let you start with as little as ₹100 or ₹500 a month, and you can invest as much as you like above that."},{"q":"What is the maximum tenure of a SIP?","a":"There is no maximum — you can keep a SIP running for as long as you want. The minimum is usually around six months, and many investors continue for decades to benefit from long-term compounding."},{"q":"Can I modify my SIP राशि?","a":"You cannot change the राशि of an existing SIP directly, but you can start an additional SIP in the same fund or use a step-up SIP to raise the राशि automatically each year."},{"q":"Can I pause my SIP?","a":"Most fund houses let you pause a SIP for a set period (often one to three months) instead of stopping it, and resume afterwards without starting a new plan."},{"q":"Do SIPs allow only equity mutual funds?","a":"No. You can run a SIP in equity, debt, hybrid or other categories of mutual funds. Equity SIPs suit long-term goals, while debt SIPs suit shorter horizons."},{"q":"What is a step-up SIP?","a":"A step-up (or top-up) SIP increases your मासिक contribution by a set percentage each year — for example 10% — so your investing keeps pace with a rising आय and builds a noticeably larger corpus."},{"q":"What return rate should I assume?","a":"Equity mutual funds have historically returned roughly 10%–12% a year over long periods, while debt funds are lower. These are estimates, not guarantees — actual returns vary with the market."},{"q":"Are the returns guaranteed?","a":"No. This कैलकुलेटर assumes a constant वार्षिक return for illustration. Real mutual fund returns fluctuate and can be negative in some वर्ष, so treat the result as a projection."}]
+related: ["investment-calculator","compound-interest-calculator","retirement-calculator","savings-calculator"]
+---
+
+## What is a SIP कैलकुलेटर?
+
+A Systematic Investment Plan (SIP) is a way of investing a fixed राशि into mutual funds at regular intervals — usually every month, though साप्ताहिक and quarterly options also exist. It is one of two common ways to invest in mutual funds, the other being a one-time lumpsum.
+
+A SIP कैलकुलेटर is a simple online tool that estimates the maturity value and returns of your मासिक investments. You enter how much you invest each month, the number of वर्ष you stay invested, and an expected वार्षिक rate of return, and it projects the corpus you could build.
+
+The figures are estimates. Actual mutual fund returns vary with market conditions, and the कैलकुलेटर does not account for exit loads or a scheme's expense ratio.
+
+## How can a SIP return कैलकुलेटर help you?
+
+Investing through a SIP encourages financial discipline and a regular बचत habit, and it spreads your entry across market highs and lows (rupee-cost averaging). A कैलकुलेटर makes planning easier by showing what those regular investments could grow into.
+
+In particular, it helps you decide how much to invest each month, tracks the कुल you will have contributed over the tenure, and gives an estimate of the returns and final value — in seconds and without manual maths.
+
+## How does this SIP कैलकुलेटर work?
+
+The maturity value of a SIP is calculated with the standard future-value-of-an-annuity formula:
+
+<strong>M = P × ((1 + i)<sup>n</sup> − 1) / i) × (1 + i)</strong>
+
+where <strong>M</strong> is the maturity राशि, <strong>P</strong> is the राशि invested each month, <strong>n</strong> is the number of instalments, and <strong>i</strong> is the periodic (मासिक) rate of return.
+
+The important detail is how <strong>i</strong> is derived. A common mistake is to divide the वार्षिक return by 12 — treating a 12% वार्षिक return as 1% a month. Because returns compound, that overstates the result: 1% compounded for 12 months works out to more than 12% a year.
+
+The correct approach is to convert the वार्षिक return into an effective मासिक return using <code>i = (1 + वार्षिक return)<sup>1/12</sup> − 1</code>. For a 12% वार्षिक return this comes to about 0.95% a month, not 1%, because compounding 0.95% over 12 months returns exactly 12%.
+
+For example, investing ₹1,000 a month for 12 months at 12% a year uses i ≈ 0.0095, giving M = 1,000 × ((1.0095<sup>12</sup> − 1) / 0.0095) × 1.0095 ≈ <strong>₹12,766</strong>. This कैलकुलेटर uses that effective मासिक rate, so its maturity values line up with leading SIP tools.
+
+Remember that the return rate is only an assumption. Real returns rise and fall with the market, so treat the output as a projection rather than a guarantee.
+
+## Advantages of this SIP कैलकुलेटर
+
+You can plan investments around any राशि and tenure, see an estimate of your कुल corpus at the end of the SIP, and switch to lumpsum mode for one-time investments. An optional वार्षिक step-up lets you raise your मासिक राशि each year to keep pace with a rising आय, giving a realistic picture of a growing SIP.

@@ -8,7 +8,8 @@ import CurrencyPicker from './CurrencyPicker.astro';
 <CurrencyPicker variant="chip" label="Display currency" role="data-currency-store" />
 
 <script>
-  import { getActiveCode, setActiveCurrency, subscribeCurrency } from '../lib/currency';
+  import { getActiveCode, setActiveCurrency, subscribeCurrency, CURRENCIES } from '../lib/currency';
+  import { setPreferences } from '../lib/preferences/store';
   import { enhanceCurrencyPickers } from '../lib/currency-picker';
 
   // Ensure the picker is enhanced before we sync it (idempotent).
@@ -24,7 +25,14 @@ import CurrencyPicker from './CurrencyPicker.astro';
   pickers.forEach((p) =>
     p.addEventListener('cur:change', (e) => {
       const code = (e as CustomEvent<{ code: string }>).detail?.code;
-      if (code) setActiveCurrency(code);
+      if (code) {
+        setActiveCurrency(code);
+        // Also update the unified preferences store so localized calculator
+        // widgets (which subscribe to preferences, not the legacy currency
+        // store) re-render with the correct symbol and digit grouping.
+        const def = CURRENCIES.find((c) => c.code === code);
+        setPreferences({ currency: code, numberFormat: def?.locale ?? 'en-US' });
+      }
     }),
   );
   subscribeCurrency((cur) => setUI(cur.code));

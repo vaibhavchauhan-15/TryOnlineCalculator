@@ -1,0 +1,30 @@
+---
+slug: "fuel-cost-calculator"
+category: "travel"
+title: "Spritkostenrechner"
+description: "Berechnen Sie die Spritkosten einer Fahrt anhand von Strecke, Verbrauch und Spritpreis."
+keywords: ["Spritkostenrechner", "Benzinkosten berechnen", "Spritkosten Fahrt", "Tankkosten berechnen", "Fahrtkosten Benzin"]
+calculatorVersion: 1
+seoVersion: 2
+translationVersion: 2
+source: "en"
+translatedFromVersion: 1
+model: "manual-de-v2"
+searchIntent: "Die Spritkosten für eine bestimmte Strecke anhand von Verbrauch und Kraftstoffpreis berechnen."
+readingLevel: "general"
+market: "DE"
+audience: "Autofahrer, die ihre Fahrtkosten im Voraus kalkulieren möchten"
+labels: {"costPerDistance":"Kosten pro km","field.consumption":"Verbrauch","field.distance":"Strecke","field.fuelEconomy":"Kraftstoffverbrauch","field.fuelPrice":"Kraftstoffpreis","field.roundTrip":"Hin- und Rückfahrt","field.unit":"Einheiten","fuelNeeded":"Benötigter Kraftstoff","totalFuelCost":"Gesamte Spritkosten"}
+enums: {"travel.oneWay":"Einfache Fahrt","travel.roundTrip":"Hin- und Rückfahrt","unitSystem.metric":"Metrisch","unitSystem.us":"US (imperial)"}
+hints: {"travel.oneWay":"Einfache Fahrt","unit.gallon":"gal"}
+intro: "Geben Sie die Strecke, den Verbrauch Ihres Fahrzeugs (L/100km) und den aktuellen Spritpreis ein."
+formulaIntro: "Die Spritkosten werden aus Strecke, Verbrauch und Literpreis berechnet."
+formulaItems: [{"name":"Metrisch","expr":"Kosten = (Strecke / 100 * L/100km) * Preis pro Liter"},{"name":"US","expr":"Kosten = (Strecke / MPG) * Preis pro Gallone"}]
+howto: ["Geben Sie die Fahrtstrecke in Kilometern ein.","Geben Sie den Verbrauch Ihres Fahrzeugs in L/100km ein.","Geben Sie den aktuellen Kraftstoffpreis pro Liter in Euro ein.","Wählen Sie einfache Fahrt oder Hin- und Rückfahrt.","Lesen Sie die geschätzten Spritkosten ab."]
+faq: [{"q":"Wo finde ich den Verbrauch meines Autos?","a":"Den Normverbrauch finden Sie im Fahrzeugschein oder in der Herstellerangabe. Der reale Verbrauch liegt oft 10 bis 20 Prozent darüber."},{"q":"Werden Autobahnfahrten anders berechnet?","a":"Die Formel ist identisch. Passen Sie den Verbrauchswert an, da Autobahnfahrten je nach Tempo einen höheren oder niedrigeren Verbrauch haben können."}]
+related: ["mileage-calculator","auto-loan-calculator"]
+---
+
+Planen Sie eine Fahrt und möchten vorher wissen, was Sie an der Tankstelle
+ausgeben? Geben Sie Strecke, Verbrauch und Spritpreis ein und erhalten Sie
+sofort die geschätzten Kraftstoffkosten in Euro.

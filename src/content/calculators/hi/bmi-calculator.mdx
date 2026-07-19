@@ -1,0 +1,35 @@
+---
+slug: "bmi-calculator"
+category: "health"
+title: "BMI कैलकुलेटर"
+description: "Calculate your Body Mass Index with आयु and sex for a clearer, more personal reading of your वजन."
+keywords: ["BMI कैलकुलेटर","body mass index","healthy वजन","body fat percentage","bmi with आयु"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "offline-dictionary-v1"
+searchIntent: "Understand whether my weight is healthy and what a BMI number means for me."
+readingLevel: "general"
+market: "global"
+audience: "adults tracking their weight and health"
+labels: {"bmi":"आपका BMI","category":"श्रेणी","healthyRange":"स्वस्थ वजन सीमा","bodyFat":"Estimated body fat","toHealthyRange":"To reach healthy range","field.unitSystem":"इकाइयाँ","field.sex":"लिंग","field.age":"आयु","field.height":"ऊँचाई","field.weight":"वजन","field.heightFt":"ऊँचाई (feet)","field.heightIn":"ऊँचाई (inches)","field.weightLb":"वजन"}
+enums: {"underweight":"कम वजन","normal":"सामान्य वजन","overweight":"अधिक वजन","obese":"मोटापा","gain":"Gain","lose":"Lose","metric":"मीट्रिक","imperial":"इंपीरियल","male":"पुरुष","female":"महिला"}
+hints: {"bmi.bodyFatMethod":"Deurenberg estimate for adults"}
+chartTitles: {"bmi.gaugeTitle":"Where your BMI falls"}
+intro: "BMI relates your वजन to your ऊँचाई. Add your आयु and sex and we also estimate your body-fat percentage, then plot the result on a visual scale so you can see exactly where you land."
+formulaIntro: "BMI is a simple ratio of वजन to ऊँचाई, with a body-fat estimate layered on top."
+formulaItems: [{"name":"BMI (metric)","expr":"BMI = weight(kg) / height(m)²"},{"name":"BMI (imperial)","expr":"BMI = 703 · weight(lb) / height(in)²"},{"name":"Body fat % (Deurenberg)","expr":"BF% = 1.2·BMI + 0.23·age − 10.8·sex − 5.4","desc":"sex = 1 for male, 0 for female (adult estimate)."}]
+howto: ["Pick metric or imperial units.","Enter your sex and आयु for a more personal reading.","Enter your ऊँचाई and वजन.","Read your BMI, body-fat estimate and category on the scale."]
+faq: [{"q":"Why does the कैलकुलेटर ask for आयु and sex?","a":"BMI itself only uses ऊँचाई and वजन, but आयु and sex let us estimate your body-fat percentage and interpret the number more accurately. At the same BMI, body fat tends to be higher with आयु and higher for women than men."},{"q":"Is BMI accurate for everyone?","a":"BMI is a population screen, not a diagnosis. It can overestimate body fat in muscular people and underestimate it in older adults. The body-fat estimate helps, but treat both as a starting point."},{"q":"What is a healthy BMI?","a":"For most adults a BMI between 18.5 and 24.9 is considered the healthy range."}]
+related: ["bmr-calculator","ideal-weight-calculator","calorie-calculator","tdee-calculator"]
+---
+
+Body Mass Index is the most widely used way to check whether your वजन sits
+in a healthy range for your ऊँचाई. This कैलकुलेटर goes a step further than a
+plain BMI number: by adding your आयु and sex it also estimates your body-fat
+percentage and shows exactly where you fall on the healthy-weight scale.
+
+Use it as a quick screen, not a diagnosis — muscle, frame size and आयु all
+affect what a given number means for you.

@@ -1,0 +1,32 @@
+---
+slug: "grade-calculator"
+category: "education"
+title: "Notenrechner"
+description: "Berechnen Sie Ihre Gesamtnote aus Einzelnoten und deren Gewichtung."
+keywords: ["Notenrechner", "Note berechnen", "gewichtete Note", "Kursnote berechnen", "Notenberechnung"]
+calculatorVersion: 1
+seoVersion: 2
+translationVersion: 2
+source: "en"
+translatedFromVersion: 1
+model: "manual-de-v2"
+searchIntent: "Die Gesamtnote eines Kurses aus gewichteten Teilnoten berechnen."
+readingLevel: "general"
+market: "DE"
+audience: "Schüler und Studenten, die ihre aktuelle Kursnote berechnen möchten"
+labels: {"letterGrade":"Buchstabennote","overallGrade":"Gesamtnote","totalWeight":"Gesamtgewicht"}
+enums: {"a":"A","aMinus":"A-","aPlus":"A+","b":"B","bMinus":"B-","bPlus":"B+","c":"C","cMinus":"C-","cPlus":"C+","d":"D","dMinus":"D-","dPlus":"D+","f":"F"}
+hints: {"grade.letter":"Note"}
+chartTitles: {"grade.gaugeTitle":"Notenbereich"}
+intro: "Geben Sie jede Leistung als Punktzahl, Gewichtung pro Zeile ein. Beide Werte sind Prozentzahlen."
+formulaIntro: "Die Gesamtnote ergibt sich aus dem gewichteten Durchschnitt der Einzelnoten."
+formulaItems: [{"name":"Gewichtete Note","expr":"Gesamtnote = Σ(Punktzahl × Gewichtung) / Σ Gewichtung"}]
+howto: ["Geben Sie jede Leistung auf einer eigenen Zeile ein: Punktzahl, Gewichtung.","Trennen Sie die Werte mit Komma oder Leerzeichen.","Die Gesamtnote wird sofort berechnet."]
+faq: [{"q":"Müssen die Gewichtungen 100 % ergeben?","a":"Nicht zwingend — das Ergebnis wird durch die Summe der Gewichtungen normalisiert. Wenn Sie jedoch alle bewerteten Leistungen eingetragen haben, sollten sie 100 % ergeben."},{"q":"Kann ich das deutsche Notensystem verwenden?","a":"Ja. Geben Sie Ihre Noten als Prozentwerte ein (z. B. 85 für 85 %) und rechnen Sie das Ergebnis in die deutsche Notenskala um."},{"q":"Was ist der Unterschied zum GPA-Rechner?","a":"Der Notenrechner berechnet die Note innerhalb eines Kurses aus gewichteten Teilleistungen. Der GPA-Rechner berechnet den Durchschnitt über mehrere Kurse hinweg."}]
+related: ["final-grade-calculator","gpa-calculator","average-grade-calculator","percentage-calculator"]
+---
+
+Welche Note habe ich aktuell im Kurs? Dieser Notenrechner berechnet Ihre
+gewichtete Gesamtnote aus den Einzelleistungen (Klausuren, Hausaufgaben,
+Referate) und deren jeweiliger Gewichtung. So wissen Sie jederzeit, wo
+Sie stehen.

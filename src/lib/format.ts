@@ -8,6 +8,12 @@ export function num(v: string | number | undefined, fallback = NaN): number {
   if (v === undefined || v === null || v === '') return fallback;
   // strip commas, currency symbols and spaces
   const cleaned = String(v).replace(/[^0-9.\-eE]/g, '');
+  if (cleaned === '' || cleaned === '-' || cleaned === '.') return fallback;
+  // Reject malformed input: multiple dots (not in scientific notation),
+  // multiple minus signs, or minus not at the start.
+  if ((cleaned.match(/\./g) || []).length > 1 && !/[eE]/.test(cleaned)) return fallback;
+  if ((cleaned.match(/-/g) || []).length > 1) return fallback;
+  if (cleaned.indexOf('-') > 0 && !/[eE]/.test(cleaned.slice(0, cleaned.indexOf('-')))) return fallback;
   const n = parseFloat(cleaned);
   return Number.isFinite(n) ? n : fallback;
 }

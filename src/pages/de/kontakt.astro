@@ -1,0 +1,59 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import FaqAccordion from '../../components/FaqAccordion.astro';
+import { faqPageSchema } from '../../lib/seo';
+import { staticPageHreflang } from '../../lib/i18n/seo-head';
+import type { FaqItem } from '../../lib/types';
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Wie kann ich Try Online Calculator kontaktieren?',
+    a: 'Schreiben Sie uns eine E-Mail an <a href="mailto:hello@tryonlinecalculator.com">hello@tryonlinecalculator.com</a>. Wir lesen jede Nachricht zu Fehlern, Rechner-Wünschen und Feedback.',
+  },
+  {
+    q: 'Wie kann ich einen neuen Rechner vorschlagen?',
+    a: 'Senden Sie uns den gewünschten Rechner mit einer kurzen Beschreibung, wie Sie ihn nutzen würden. Beliebte Anfragen rücken auf unserer Entwicklungsliste nach oben.',
+  },
+  {
+    q: 'Wie melde ich ein falsches Ergebnis?',
+    a: 'Geben Sie den Namen des Rechners und die genauen Werte an, die Sie eingegeben haben, damit wir das Problem schnell nachstellen und beheben können.',
+  },
+  {
+    q: 'Wie schnell erhalte ich eine Antwort?',
+    a: 'Wir bemühen uns, auf Feedback und Fehlermeldungen so schnell wie möglich zu antworten. Klare Angaben helfen uns, Ihnen schneller zu antworten.',
+  },
+];
+
+const keywords = [
+  'Try Online Calculator kontaktieren',
+  'Rechner-Fehler melden',
+  'Rechner vorschlagen',
+  'Rechner-Feedback',
+];
+---
+
+<Layout
+  title="Kontakt"
+  description="Nehmen Sie Kontakt mit Try Online Calculator auf – melden Sie einen Fehler oder schlagen Sie einen neuen Rechner vor."
+  path="/de/kontakt"
+  locale="de"
+  alternates={staticPageHreflang('contact')}
+  keywords={keywords}
+  jsonLd={faqPageSchema(faqs)}
+>
+  <div class="container-page prose">
+    <h1>Kontaktieren Sie uns</h1>
+    <p>Wir freuen uns über Ihr Feedback. Ob Sie einen Fehler gefunden haben, einen neuen Rechner vorschlagen möchten oder eine Formel entdeckt haben, die klarer sein könnte – lassen Sie es uns wissen.</p>
+
+    <h2>E-Mail</h2>
+    <p><a class="link" href="mailto:hello@tryonlinecalculator.com">hello@tryonlinecalculator.com</a></p>
+
+    <h2>Einen Rechner vorschlagen</h2>
+    <p>Teilen Sie uns mit, welchen Rechner Sie benötigen, und beschreiben Sie kurz, wie Sie ihn nutzen würden. Beliebte Anfragen rücken auf unserer Entwicklungsliste nach oben.</p>
+
+    <h2>Ein Problem melden</h2>
+    <p>Wenn ein Ergebnis nicht stimmt, geben Sie den Namen des Rechners und die genauen Werte an, die Sie eingegeben haben, damit wir das Problem schnell nachstellen können.</p>
+
+    <FaqAccordion items={faqs} title="Kontakt-FAQ" />
+  </div>
+</Layout>

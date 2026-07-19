@@ -1,0 +1,67 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import FaqAccordion from '../../components/FaqAccordion.astro';
+import { allCalculators } from '../../lib/calculators';
+import { faqPageSchema } from '../../lib/seo';
+import { staticPageHreflang } from '../../lib/i18n/seo-head';
+import type { FaqItem } from '../../lib/types';
+const total = allCalculators.length;
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Ist Try Online Calculator kostenlos?',
+    a: 'Ja. Jeder Rechner auf der Seite ist völlig kostenlos – ohne Anmeldung, ohne Download und ohne Nutzungsbeschränkung.',
+  },
+  {
+    q: 'Muss ich ein Konto erstellen?',
+    a: 'Nein, ein Konto ist nicht erforderlich. Alle Tools funktionieren sofort in Ihrem Browser, sodass Sie mit dem Rechnen beginnen können, sobald die Seite geladen ist.',
+  },
+  {
+    q: 'Sind meine Eingaben privat?',
+    a: 'Ja. Jeder Rechner läuft vollständig auf Ihrem Gerät, sodass die von Ihnen eingegebenen Zahlen niemals an unsere Server gesendet oder dort gespeichert werden.',
+  },
+  {
+    q: 'Wie genau sind die Rechner?',
+    a: 'Jedes Tool verwendet die gleichen Standardformeln, denen Banken, Ärzte, Lehrer und Buchhalter vertrauen. Auf jeder Ergebnisseite werden die Formel und ein Rechenbeispiel angezeigt, damit Sie das Ergebnis nachvollziehen können. Die Ergebnisse sind Schätzungen zur allgemeinen Information und keine professionelle Beratung.',
+  },
+  {
+    q: 'Kann ich einen Rechner vorschlagen, der noch nicht vorhanden ist?',
+    a: 'Auf jeden Fall. Teilen Sie uns auf der <a href="/de/kontakt">Kontaktseite</a> mit, was Sie benötigen, und beliebte Anfragen rücken auf unserer Entwicklungsliste nach oben.',
+  },
+];
+
+const keywords = [
+  'über Try Online Calculator',
+  'kostenloser Online-Rechner',
+  'datenschutzfreundlicher Rechner',
+  'Rechner-Hub',
+  'Online-Rechner',
+];
+---
+
+<Layout
+  title="Über uns"
+  description="Über Try Online Calculator – kostenlose, schnelle und datenschutzfreundliche Rechner für den Alltag."
+  path="/de/ueber-uns"
+  locale="de"
+  alternates={staticPageHreflang('about')}
+  keywords={keywords}
+  jsonLd={faqPageSchema(faqs)}
+>
+  <div class="container-page prose">
+    <h1>Über Try Online Calculator</h1>
+    <p>Try Online Calculator ist eine wachsende Sammlung von {total}+ kostenlosen Rechnern für Finanzen, Gesundheit, Bildung, Mathematik, Gehalt, Einkaufen, Daten und Reisen. Unser Ziel ist einfach: Ihnen mit möglichst wenigen Klicks eine genaue Antwort zu liefern.</p>
+
+    <h2>Was uns unterscheidet</h2>
+    <p>Jeder Rechner läuft vollständig in Ihrem Browser, sodass Ergebnisse sofort beim Tippen erscheinen und Ihre Eingaben Ihr Gerät niemals verlassen. Es gibt kein Konto zu erstellen und nichts zu installieren.</p>
+    <p>Jedes Tool zeigt die verwendete Formel zusammen mit verständlichen Erklärungen, Rechenbeispielen und Antworten auf häufige Fragen – damit Sie dem Ergebnis vertrauen und es verstehen können, anstatt nur eine Zahl zu lesen.</p>
+
+    <h2>Genauigkeit &amp; Haftungsausschluss</h2>
+    <p>Wir arbeiten hart daran, unsere Formeln korrekt und aktuell zu halten. Dennoch liefern diese Tools nur Schätzungen zur allgemeinen Information und ersetzen keine professionelle Finanz-, Gesundheits-, Steuer- oder Rechtsberatung. Bestätigen Sie wichtige Entscheidungen immer mit einem qualifizierten Fachmann.</p>
+
+    <h2>Feedback</h2>
+    <p>Einen Fehler entdeckt oder einen Rechner vermisst, den wir noch nicht haben? Wir freuen uns über Ihre Nachricht auf unserer <a class="link" href="/de/kontakt">Kontaktseite</a>.</p>
+
+    <FaqAccordion items={faqs} title="Über uns & FAQ" />
+  </div>
+</Layout>

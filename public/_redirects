@@ -1,0 +1,174 @@
+# Permanent redirects: legacy non-prefixed English URLs → canonical /en/ paths.
+# Cloudflare Pages processes these at the edge (no round-trip to origin).
+#
+# Static pages
+/about      /en/about      301
+/contact    /en/contact    301
+/privacy    /en/privacy    301
+/terms      /en/terms      301
+
+# Unit converter
+/unit-converter   /en/unit-converter   301
+/unit-converter/:type   /en/unit-converter/:type   301
+
+# Category index pages
+/finance    /en/finance    301
+/health     /en/health     301
+/education  /en/education  301
+/math       /en/math       301
+/salary     /en/salary     301
+/shopping   /en/shopping   301
+/date-time  /en/date-time  301
+/travel     /en/travel     301
+
+# Calculator pages (category/slug pattern)
+/finance/:slug      /en/finance/:slug      301
+/health/:slug       /en/health/:slug       301
+/education/:slug    /en/education/:slug    301
+/math/:slug         /en/math/:slug         301
+/salary/:slug       /en/salary/:slug       301
+/shopping/:slug     /en/shopping/:slug     301
+/date-time/:slug    /en/date-time/:slug    301
+/travel/:slug       /en/travel/:slug       301
+
+# Homepage — handled dynamically by functions/index.ts (browser language
+# detection + saved locale-pref cookie). No static rule here.
+
+# ============================================================================
+# 301 redirects: old English-slug locale URLs → new translated-slug URLs.
+# These ensure any previously indexed or bookmarked URLs (e.g.
+# /de/finance/mortgage-calculator) redirect to the new canonical translated
+# URL (/de/finanzen/hypothekenrechner).
+# ============================================================================
+
+# --- German (de) category redirects ---
+/de/finance     /de/finanzen     301
+/de/health      /de/gesundheit   301
+/de/education   /de/bildung      301
+/de/math        /de/mathematik   301
+/de/salary      /de/gehalt       301
+/de/shopping    /de/einkaufen    301
+/de/date-time   /de/datum-zeit   301
+/de/travel      /de/reise        301
+
+# --- German (de) calculator redirects: finance ---
+/de/finance/mortgage-calculator           /de/finanzen/hypothekenrechner           301
+/de/finance/loan-calculator               /de/finanzen/kreditrechner               301
+/de/finance/auto-loan-calculator          /de/finanzen/autokredit-rechner          301
+/de/finance/car-payment-calculator        /de/finanzen/kfz-ratenrechner            301
+/de/finance/investment-calculator         /de/finanzen/anlagerechner               301
+/de/finance/sip-calculator                /de/finanzen/sip-rechner                 301
+/de/finance/compound-interest-calculator  /de/finanzen/zinseszinsrechner           301
+/de/finance/savings-calculator            /de/finanzen/sparrechner                 301
+/de/finance/apr-calculator                /de/finanzen/effektivzins-rechner        301
+/de/finance/interest-calculator           /de/finanzen/zinsrechner                 301
+/de/finance/retirement-calculator         /de/finanzen/rentenrechner               301
+/de/finance/currency-converter            /de/finanzen/waehrungsrechner            301
+
+# --- German (de) calculator redirects: health ---
+/de/health/bmi-calculator                 /de/gesundheit/bmi-rechner               301
+/de/health/bmr-calculator                 /de/gesundheit/bmr-rechner               301
+/de/health/calorie-calculator             /de/gesundheit/kalorienrechner           301
+/de/health/tdee-calculator                /de/gesundheit/tdee-rechner              301
+/de/health/macro-calculator               /de/gesundheit/makro-rechner             301
+/de/health/ideal-weight-calculator        /de/gesundheit/idealgewicht-rechner      301
+/de/health/water-intake-calculator        /de/gesundheit/wasseraufnahme-rechner    301
+
+# --- German (de) calculator redirects: education ---
+/de/education/gpa-calculator              /de/bildung/gpa-rechner                  301
+/de/education/grade-calculator            /de/bildung/notenrechner                 301
+/de/education/final-grade-calculator      /de/bildung/abschlussnoten-rechner       301
+/de/education/average-grade-calculator    /de/bildung/notendurchschnitt-rechner    301
+
+# --- German (de) calculator redirects: math ---
+/de/math/percentage-calculator            /de/mathematik/prozentrechner             301
+/de/math/fraction-calculator              /de/mathematik/bruchrechner               301
+/de/math/average-calculator               /de/mathematik/durchschnittsrechner       301
+/de/math/scientific-calculator            /de/mathematik/wissenschaftlicher-taschenrechner  301
+/de/math/basic-calculator                 /de/mathematik/einfacher-rechner          301
+
+# --- German (de) calculator redirects: salary ---
+/de/salary/salary-calculator              /de/gehalt/gehaltsrechner                301
+/de/salary/paycheck-calculator            /de/gehalt/lohnrechner                   301
+/de/salary/hourly-wage-calculator         /de/gehalt/stundenlohn-rechner           301
+
+# --- German (de) calculator redirects: shopping ---
+/de/shopping/discount-calculator          /de/einkaufen/rabattrechner              301
+/de/shopping/tip-calculator               /de/einkaufen/trinkgeldrechner           301
+/de/shopping/sales-tax-calculator         /de/einkaufen/mehrwertsteuer-rechner     301
+
+# --- German (de) calculator redirects: date-time ---
+/de/date-time/age-calculator              /de/datum-zeit/altersrechner             301
+/de/date-time/date-difference-calculator  /de/datum-zeit/datumsrechner             301
+/de/date-time/business-days-calculator    /de/datum-zeit/werktagerechner           301
+/de/date-time/working-days-calculator     /de/datum-zeit/arbeitstage-rechner       301
+
+# --- German (de) calculator redirects: travel ---
+/de/travel/fuel-cost-calculator           /de/reise/spritkosten-rechner            301
+/de/travel/mileage-calculator             /de/reise/kilometerrechner               301
+
+# --- Spanish (es) category redirects ---
+/es/finance     /es/finanzas     301
+/es/health      /es/salud        301
+/es/education   /es/educacion    301
+/es/math        /es/matematicas  301
+/es/salary      /es/salario      301
+/es/shopping    /es/compras      301
+/es/date-time   /es/fecha-hora   301
+/es/travel      /es/viajes       301
+
+# --- Spanish (es) calculator redirects: finance ---
+/es/finance/mortgage-calculator           /es/finanzas/calculadora-hipoteca            301
+/es/finance/loan-calculator               /es/finanzas/calculadora-prestamos           301
+/es/finance/auto-loan-calculator          /es/finanzas/calculadora-prestamo-auto       301
+/es/finance/car-payment-calculator        /es/finanzas/calculadora-pago-auto           301
+/es/finance/investment-calculator         /es/finanzas/calculadora-inversiones         301
+/es/finance/sip-calculator                /es/finanzas/calculadora-sip                 301
+/es/finance/compound-interest-calculator  /es/finanzas/calculadora-interes-compuesto   301
+/es/finance/savings-calculator            /es/finanzas/calculadora-ahorros             301
+/es/finance/apr-calculator                /es/finanzas/calculadora-tae                 301
+/es/finance/interest-calculator           /es/finanzas/calculadora-intereses           301
+/es/finance/retirement-calculator         /es/finanzas/calculadora-jubilacion          301
+/es/finance/currency-converter            /es/finanzas/conversor-divisas               301
+
+# --- Spanish (es) calculator redirects: health ---
+/es/health/bmi-calculator                 /es/salud/calculadora-imc                    301
+/es/health/bmr-calculator                 /es/salud/calculadora-tmb                    301
+/es/health/calorie-calculator             /es/salud/calculadora-calorias               301
+/es/health/tdee-calculator                /es/salud/calculadora-tdee                   301
+/es/health/macro-calculator               /es/salud/calculadora-macros                 301
+/es/health/ideal-weight-calculator        /es/salud/calculadora-peso-ideal             301
+/es/health/water-intake-calculator        /es/salud/calculadora-agua                   301
+
+# --- Spanish (es) calculator redirects: education ---
+/es/education/gpa-calculator              /es/educacion/calculadora-gpa                301
+/es/education/grade-calculator            /es/educacion/calculadora-notas              301
+/es/education/final-grade-calculator      /es/educacion/calculadora-nota-final         301
+/es/education/average-grade-calculator    /es/educacion/calculadora-promedio           301
+
+# --- Spanish (es) calculator redirects: math ---
+/es/math/percentage-calculator            /es/matematicas/calculadora-porcentaje       301
+/es/math/fraction-calculator              /es/matematicas/calculadora-fracciones       301
+/es/math/average-calculator               /es/matematicas/calculadora-promedio-numeros 301
+/es/math/scientific-calculator            /es/matematicas/calculadora-cientifica       301
+/es/math/basic-calculator                 /es/matematicas/calculadora-basica           301
+
+# --- Spanish (es) calculator redirects: salary ---
+/es/salary/salary-calculator              /es/salario/calculadora-salario              301
+/es/salary/paycheck-calculator            /es/salario/calculadora-nomina              301
+/es/salary/hourly-wage-calculator         /es/salario/calculadora-salario-hora        301
+
+# --- Spanish (es) calculator redirects: shopping ---
+/es/shopping/discount-calculator          /es/compras/calculadora-descuentos           301
+/es/shopping/tip-calculator               /es/compras/calculadora-propina              301
+/es/shopping/sales-tax-calculator         /es/compras/calculadora-impuestos            301
+
+# --- Spanish (es) calculator redirects: date-time ---
+/es/date-time/age-calculator              /es/fecha-hora/calculadora-edad              301
+/es/date-time/date-difference-calculator  /es/fecha-hora/calculadora-fechas            301
+/es/date-time/business-days-calculator    /es/fecha-hora/calculadora-dias-habiles      301
+/es/date-time/working-days-calculator     /es/fecha-hora/calculadora-dias-laborales    301
+
+# --- Spanish (es) calculator redirects: travel ---
+/es/travel/fuel-cost-calculator           /es/viajes/calculadora-combustible           301
+/es/travel/mileage-calculator             /es/viajes/calculadora-kilometraje           301

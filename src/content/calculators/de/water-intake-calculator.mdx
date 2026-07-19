@@ -1,0 +1,36 @@
+---
+slug: "water-intake-calculator"
+category: "health"
+title: "Wasserbedarfsrechner"
+description: "Berechnen Sie, wie viel Wasser Sie täglich trinken sollten, basierend auf Ihrem Gewicht und Ihrer Aktivität."
+keywords: ["Wasserbedarfsrechner", "Wasserbedarf berechnen", "tägliche Trinkmenge", "wie viel Wasser trinken", "Flüssigkeitsbedarf"]
+calculatorVersion: 1
+seoVersion: 2
+translationVersion: 2
+source: "en"
+translatedFromVersion: 1
+model: "manual-de-v2"
+searchIntent: "Den persönlichen täglichen Wasserbedarf basierend auf Körpergewicht und Aktivität berechnen."
+readingLevel: "general"
+market: "DE"
+audience: "Gesundheitsbewusste Erwachsene, die ihre Flüssigkeitszufuhr optimieren möchten"
+labels: {"bodyWeightNeed":"Bedarf nach Körpergewicht","cups":"Gläser","dailyWater":"Täglicher Wasserbedarf","exerciseTopUp":"Zuschlag für Sport","field.exercise":"Sport (Min./Tag)","field.unitSystem":"Einheiten","field.weight":"Gewicht","field.weightLb":"Gewicht (lb)","fluidOunces":"Flüssigunzen"}
+enums: {"imperial":"Imperial","metric":"Metrisch"}
+hints: {"unit.cups":"Gläser","unit.floz":"fl oz","unit.liters":"Liter"}
+chartTitles: {"water.chartSources":"Quellen der Flüssigkeitszufuhr"}
+intro: "Ein einfaches tägliches Trinkziel basierend auf Ihrem Körpergewicht, mit einem Zuschlag für sportliche Aktivität."
+formulaIntro: "Der Wasserbedarf wird als Grundwert pro Kilogramm Körpergewicht berechnet, plus einem Zuschlag für Bewegung."
+formulaItems: [{"name":"Grundbedarf","expr":"Wasserbedarf = Gewicht(kg) × 35 ml"},{"name":"Sport-Zuschlag","expr":"+ 500—1000 ml pro Stunde intensiver Aktivität"}]
+howto: ["Geben Sie Ihr Körpergewicht ein.","Geben Sie die tägliche Sportdauer in Minuten ein.","Lesen Sie Ihren empfohlenen täglichen Wasserbedarf in Litern ab."]
+faq: [{"q":"Zählen andere Getränke auch?","a":"Ja. Wasser, Tee, Kaffee, Milch und wasserreiche Lebensmittel tragen alle zur Flüssigkeitszufuhr bei. Reines Wasser ist jedoch die effizienteste Quelle."},{"q":"Stimmt die Regel '2 Liter pro Tag'?","a":"Die 2-Liter-Regel ist ein grober Richtwert. Der tatsächliche Bedarf hängt von Körpergewicht, Aktivität, Klima und Ernährung ab. Dieser Rechner berechnet einen individuelleren Wert."},{"q":"Kann man zu viel Wasser trinken?","a":"Ja, aber das ist selten. Bei extremem Wasserkonsum (über 5—6 Liter in kurzer Zeit) kann eine Hyponatriämie auftreten. Für die meisten Menschen besteht eher das Risiko, zu wenig zu trinken."}]
+related: ["calorie-calculator","bmr-calculator","ideal-weight-calculator"]
+---
+
+Ausreichend Wasser zu trinken ist essenziell für Konzentration, Verdauung
+und körperliche Leistungsfähigkeit. Doch wie viel ist genug? Die häufig
+zitierte '2-Liter-Regel" ist nur ein grober Richtwert — Ihr tatsächlicher
+Bedarf hängt von Körpergewicht und Aktivitätslevel ab.
+
+Dieser Wasserbedarfsrechner berechnet eine individuelle Empfehlung basierend
+auf Ihrem Gewicht und passt den Wert nach oben an, wenn Sie regelmäßig Sport
+treiben.

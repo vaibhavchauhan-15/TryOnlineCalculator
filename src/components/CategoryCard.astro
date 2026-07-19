@@ -1,16 +1,19 @@
 ---
 import type { Category } from '../lib/types';
+import { to } from '../lib/i18n/paths';
+import { DEFAULT_LOCALE } from '../lib/i18n/locales';
 import LinkCard from './LinkCard.astro';
 
 interface Props {
   category: Category;
   count?: number;
+  locale?: string;
 }
-const { category, count } = Astro.props;
+const { category, count, locale = DEFAULT_LOCALE } = Astro.props;
 ---
 
 <LinkCard
-  href={category.path}
+  href={to(category.path, locale)}
   title={category.name}
   desc={category.tagline}
   icon={category.icon}

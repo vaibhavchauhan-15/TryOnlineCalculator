@@ -1,0 +1,115 @@
+---
+// Header language selector (Task 8).
+//
+// Maps the CURRENT page to the same page in every enabled locale (slugs are not
+// translated, so this is just a locale-segment swap via switchLocale) and
+// renders one crawlable <a> per language. Because the links are real anchors
+// built at build time, the switcher works with no JavaScript; the client script
+// only records the choice in preferences + fires an analytics event.
+//
+// It renders ONLY on locale-prefixed pages (the staged pilot). On the legacy
+// root pages there is no locale segment, so the switcher is omitted entirely —
+// no dead links to not-yet-migrated localized URLs.
+
+import { enabledLocales } from '../lib/i18n/locales';
+import { splitLocale, switchLocale } from '../lib/i18n/paths';
+
+const path = Astro.url.pathname;
+const { locale: currentLocale } = splitLocale(path);
+const show = Boolean(currentLocale);
+const locales = enabledLocales();
+const current = locales.find((l) => l.code === currentLocale);
+---
+
+{show && (
+  <div class="lang-switch" data-lang-switch>
+    <button
+      type="button"
+      class="lang-btn"
+      aria-haspopup="true"
+      aria-expanded="false"
+      data-lang-toggle
+    >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10Z"></path>
+      </svg>
+      <span class="lang-current">{current?.nativeName ?? currentLocale}</span>
+      <svg class="lang-caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+    </button>
+
+    <ul class="lang-menu" role="menu" data-lang-menu hidden>
+      {locales.map((l) => (
+        <li role="none">
+          <a
+            role="menuitem"
+            href={switchLocale(path, l.code)}
+            hreflang={l.bcp47}
+            lang={l.bcp47}
+            class={`lang-option ${l.code === currentLocale ? 'is-active' : ''}`}
+            data-lang-option={l.code}
+            aria-current={l.code === currentLocale ? 'true' : undefined}
+          >
+            <span>{l.nativeName}</span>
+            <span class="lang-en">{l.englishName}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+)}
+
+<script>
+  import '../lib/i18n/lang-ui';
+</script>
+
+<style>
+  .lang-switch { position: relative; flex-shrink: 0; }
+  .lang-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    height: 36px;
+    padding: 0 0.625rem;
+    font-size: 13px;
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-full, 9999px);
+    background-color: var(--color-canvas);
+    color: var(--color-body);
+    cursor: pointer;
+    transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+  }
+  .lang-btn:hover { color: var(--color-ink); background-color: var(--color-canvas-soft-2); border-color: var(--color-hairline-strong); }
+  .lang-current { font-weight: 500; }
+  .lang-caret { transition: transform 0.15s ease; }
+  .lang-switch.is-open .lang-caret { transform: rotate(180deg); }
+
+  .lang-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    z-index: 60;
+    min-width: 190px;
+    margin: 0;
+    padding: 0.375rem;
+    list-style: none;
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-soft);
+  }
+  .lang-menu[hidden] { display: none; }
+  .lang-option {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.5rem 0.625rem;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    color: var(--color-body);
+  }
+  .lang-option:hover { background-color: var(--color-canvas-soft-2); color: var(--color-ink); }
+  .lang-option.is-active { color: var(--color-ink); font-weight: 600; }
+  .lang-en { font-size: 12px; color: var(--color-mute); }
+</style>

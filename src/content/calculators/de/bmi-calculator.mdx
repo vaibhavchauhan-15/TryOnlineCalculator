@@ -1,0 +1,38 @@
+---
+slug: "bmi-calculator"
+category: "health"
+title: "BMI-Rechner"
+description: "Berechnen Sie Ihren Body-Mass-Index mit Alter und Geschlecht für eine genauere, persönliche Einschätzung Ihres Gewichts."
+keywords: ["BMI-Rechner", "Body Mass Index berechnen", "BMI berechnen", "Idealgewicht", "Körperfettanteil", "BMI Tabelle", "gesundes Gewicht"]
+calculatorVersion: 1
+seoVersion: 2
+translationVersion: 2
+source: "en"
+translatedFromVersion: 1
+model: "manual-de-v2"
+searchIntent: "Herausfinden, ob mein Gewicht gesund ist und was mein BMI-Wert für mich bedeutet."
+readingLevel: "general"
+market: "DE"
+audience: "Erwachsene, die ihr Gewicht und ihre Gesundheit im Blick behalten möchten"
+labels: {"bmi":"Ihr BMI","category":"Kategorie","healthyRange":"Gesunder Gewichtsbereich","bodyFat":"Geschätzter Körperfettanteil","toHealthyRange":"Bis zum gesunden Bereich","field.unitSystem":"Einheiten","field.sex":"Geschlecht","field.age":"Alter","field.height":"Größe","field.weight":"Gewicht","field.heightFt":"Größe (Fuß)","field.heightIn":"Größe (Zoll)","field.weightLb":"Gewicht"}
+enums: {"underweight":"Untergewicht","normal":"Normalgewicht","overweight":"Übergewicht","obese":"Adipositas","gain":"Zunehmen","lose":"Abnehmen","metric":"Metrisch","imperial":"Imperial","male":"Männlich","female":"Weiblich"}
+hints: {"bmi.bodyFatMethod":"Deurenberg-Schätzung für Erwachsene"}
+chartTitles: {"bmi.gaugeTitle":"Wo Ihr BMI liegt"}
+intro: "Der BMI setzt Ihr Gewicht ins Verhältnis zu Ihrer Körpergröße. Geben Sie zusätzlich Alter und Geschlecht ein — so erhalten Sie eine Schätzung Ihres Körperfettanteils und sehen auf einer visuellen Skala, wo genau Sie liegen."
+formulaIntro: "Der BMI ist ein einfaches Verhältnis von Gewicht zu Körpergröße, ergänzt durch eine Körperfett-Schätzung."
+formulaItems: [{"name":"BMI (metrisch)","expr":"BMI = Gewicht (kg) / Größe (m)²"},{"name":"BMI (imperial)","expr":"BMI = 703 · Gewicht (lb) / Größe (in)²"},{"name":"Körperfett % (Deurenberg)","expr":"KF% = 1,2 · BMI + 0,23 · Alter − 10,8 · Geschlecht − 5,4","desc":"Geschlecht = 1 für männlich, 0 für weiblich (Schätzung für Erwachsene)."}]
+howto: ["Wählen Sie metrische oder imperiale Einheiten.","Geben Sie Ihr Geschlecht und Alter für eine persönlichere Auswertung ein.","Geben Sie Ihre Körpergröße und Ihr Gewicht ein.","Lesen Sie Ihren BMI, die Körperfett-Schätzung und die Kategorie auf der Skala ab."]
+faq: [{"q":"Was ist ein guter BMI?","a":"Für die meisten Erwachsenen gilt ein BMI zwischen 18,5 und 24,9 als gesunder Bereich. Dieser Wert basiert auf der WHO-Klassifikation und wird weltweit als Richtwert verwendet."},{"q":"Warum fragt der Rechner nach Alter und Geschlecht?","a":"Der BMI selbst verwendet nur Größe und Gewicht, aber Alter und Geschlecht ermöglichen eine genauere Schätzung des Körperfettanteils. Bei gleichem BMI ist der Körperfettanteil tendenziell höher bei zunehmendem Alter und bei Frauen höher als bei Männern."},{"q":"Ist der BMI für jeden genau?","a":"Der BMI ist ein Bevölkerungs-Screening, keine Diagnose. Er kann bei muskulösen Menschen den Körperfettanteil überschätzen und bei älteren Erwachsenen unterschätzen. Die Körperfett-Schätzung hilft, aber betrachten Sie beide Werte als Ausgangspunkt."},{"q":"Ist der BMI für Kinder geeignet?","a":"Für Kinder und Jugendliche gelten alters- und geschlechtsspezifische BMI-Perzentilen. Dieser Rechner ist für Erwachsene ab 18 Jahren konzipiert."},{"q":"Ist der BMI-Rechner kostenlos?","a":"Ja, dieser BMI-Rechner ist völlig kostenlos, ohne Anmeldung und ohne Nutzungslimits."}]
+related: ["bmr-calculator","ideal-weight-calculator","calorie-calculator","tdee-calculator"]
+---
+
+Der Body-Mass-Index (BMI) ist die weltweit am häufigsten verwendete Methode, um
+festzustellen, ob das eigene Gewicht im gesunden Bereich für die Körpergröße
+liegt. Dieser Rechner geht einen Schritt weiter als eine einfache BMI-Zahl:
+Durch die Eingabe von Alter und Geschlecht schätzt er zusätzlich Ihren
+Körperfettanteil und zeigt auf einer visuellen Skala genau, wo Sie im
+Vergleich zu den WHO-Kategorien stehen.
+
+Nutzen Sie das Ergebnis als schnelle Orientierung, nicht als Diagnose —
+Muskelmasse, Körperbau und Alter beeinflussen, was ein bestimmter BMI-Wert
+für Sie persönlich bedeutet.

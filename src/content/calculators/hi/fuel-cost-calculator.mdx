@@ -1,0 +1,22 @@
+---
+slug: "fuel-cost-calculator"
+category: "travel"
+title: "ईंधन लागत कैलकुलेटर"
+description: "Estimate the fuel cost of a trip from distance, fuel economy and fuel कीमत."
+keywords: ["ईंधन लागत कैलकुलेटर","gas cost","trip fuel"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "offline-dictionary-v1"
+labels: {"costPerDistance":"Cost per distance","field.consumption":"Consumption","field.distance":"दूरी","field.fuelEconomy":"ईंधन दक्षता","field.fuelPrice":"ईंधन की कीमत","field.roundTrip":"आना-जाना","field.unit":"Unit","fuelNeeded":"Fuel needed","totalFuelCost":"कुल ईंधन लागत"}
+enums: {"travel.oneWay":"एक तरफ़ा","travel.roundTrip":"आना-जाना","unitSystem.metric":"मीट्रिक","unitSystem.us":"US (imperial)"}
+hints: {"travel.oneWay":"एक तरफ़ा","unit.gallon":"gal"}
+intro: "Enter your trip distance, your vehicle fuel economy and the कीमत of fuel to estimate the cost."
+formulaItems: [{"name":"US","expr":"cost = (distance ÷ MPG) × price per gallon"},{"name":"मीट्रिक","expr":"cost = (distance ÷ 100 × L/100km) × price per litre"}]
+faq: [{"q":"How do I convert MPG to L/100km?","a":"Divide 235.21 by the MPG value. For example 30 MPG is about 7.84 L/100km."}]
+related: ["mileage-calculator","auto-loan-calculator"]
+---
+
+Enter your trip distance, your vehicle fuel economy and the कीमत of fuel to estimate the cost.

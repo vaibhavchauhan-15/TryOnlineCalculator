@@ -1,0 +1,29 @@
+---
+slug: "percentage-calculator"
+category: "math"
+title: "Calculadora de porcentaje"
+description: "Solve any percentage problem — percent of a number, what percent, and percent change."
+keywords: ["Calculadora de porcentaje","percent of","percent change"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "offline-dictionary-v1"
+searchIntent: "Quickly solve a percentage problem such as a discount, a share, or a change between two numbers."
+readingLevel: "general"
+market: "global"
+audience: "students and shoppers doing everyday percentage math"
+labels: {"result":"Resultado","percentChange":"Percentage change","absoluteChange":"Absolute change","field.mode":"What do you want to work out?","field.a":"Value X","field.b":"Value Y"}
+enums: {"increase":"Increase","decrease":"Decrease","mode.percentOf":"What is X% of Y","mode.whatPercent":"X is what percent of Y","mode.change":"Percent change from X to Y"}
+intro: "Pick the type of percentage question you have and fill in the two known values."
+formulaItems: [{"name":"Percent of","expr":"result = (X / 100) × Y"},{"name":"What percent","expr":"result = (X / Y) × 100"},{"name":"Percent change","expr":"result = (Y − X) / |X| × 100"}]
+faq: [{"q":"How do I find a percentage increase?","a":"Use the \"percentage change\" mode with the original value as X and the new value as Y. A positive result is an increase."}]
+related: ["fraction-calculator","basic-calculator","discount-calculator","sales-tax-calculator"]
+---
+
+A percentage is just a fraction out of one hundred, but the three questions
+people actually ask — "what is X% of Y", "X is what percent of Y", and "what is
+the percent change from X to Y" — trip a lot of us up. This Calculadora handles
+all three: pick the mode, enter your two numbers, and the answer updates as you
+type.

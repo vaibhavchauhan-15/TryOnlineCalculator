@@ -1,0 +1,189 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import UnitConverter from '../../../components/UnitConverter.astro';
+import CurrencyConverter from '../../../components/CurrencyConverter.astro';
+import { converters, converterPageSchemas } from '../../../lib/converters';
+import { enabledLocaleCodes, DEFAULT_LOCALE, isIndexedLocale } from '../../../lib/i18n/locales';
+import { to } from '../../../lib/i18n/paths';
+import { hreflangAlternates } from '../../../lib/i18n/seo-head';
+import { localizedConverterParentSlug, localizedConverterTypeSlug } from '../../../lib/i18n/slugs';
+import { convertersDe, converterPageLabels } from '../../../lib/converters-de';
+
+export function getStaticPaths() {
+  return enabledLocaleCodes().flatMap((locale) =>
+    converters.map((c) => ({
+      params: {
+        locale,
+        converterHub: localizedConverterParentSlug(locale),
+        type: localizedConverterTypeSlug(c.slug, locale),
+      },
+      props: { cfg: c },
+    })),
+  );
+}
+
+const { locale } = Astro.params as { locale: string };
+const isDefault = locale === DEFAULT_LOCALE;
+const isDe = locale === 'de';
+const { cfg } = Astro.props;
+
+// Get localized content
+const deContent = isDe ? convertersDe[cfg.slug] : null;
+const labels = isDe ? converterPageLabels : null;
+
+const title = deContent?.title ?? cfg.title;
+const name = deContent?.name ?? cfg.name;
+const metaTitle = deContent?.metaTitle ?? cfg.metaTitle;
+const metaDesc = deContent?.metaDescription ?? cfg.metaDescription;
+const description = deContent?.description ?? cfg.description;
+const intro = deContent?.intro ?? cfg.intro;
+const about = deContent?.about ?? cfg.about;
+const howto = deContent?.howto ?? cfg.howto;
+const factorRows = deContent?.factorRows ?? cfg.factorRows;
+const faqs = deContent?.faqs ?? cfg.faqs;
+const note = deContent?.note ?? cfg.note;
+const keywords = deContent?.keywords ?? cfg.keywords;
+
+const pagePath = to(`/unit-converter/${cfg.slug}`, locale);
+const schemas = converterPageSchemas(cfg);
+const others = converters.filter((c) => c.slug !== cfg.slug);
+
+// Breadcrumb labels
+const bcHome = labels?.breadcrumbHome ?? 'Home';
+const bcHub = labels?.breadcrumbHub ?? 'Unit Converter';
+const eyebrow = labels?.eyebrow ?? 'Unit converter';
+---
+
+<Layout
+  title={metaTitle}
+  description={metaDesc}
+  path={pagePath}
+  locale={locale}
+  alternates={hreflangAlternates(`/unit-converter/${cfg.slug}`)}
+  keywords={keywords}
+  jsonLd={schemas}
+  noindex={!isIndexedLocale(locale)}
+>
+  <div class="container-page">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href={to('/', locale)}>{bcHome}</a><span aria-hidden="true">/</span>
+      <a href={to('/unit-converter', locale)}>{bcHub}</a><span aria-hidden="true">/</span>
+      <span>{title}</span>
+    </nav>
+    <div class="conv-stage">
+      <div class="conv-hero-text">
+        <span class="eyebrow">{eyebrow}</span>
+        <h1 class="conv-title">{title}</h1>
+        <p class="conv-desc">{description}</p>
+        <p class="conv-intro">{intro}</p>
+      </div>
+      <div class="conv-tool">
+        {cfg.slug === 'currency' ? <CurrencyConverter converter={cfg} /> : <UnitConverter converter={cfg} />}
+        {note && <p class="conv-note">{note}</p>}
+      </div>
+    </div>
+    <div class="conv-body">
+      <div class="conv-content">
+        <section class="prose-section">
+          <h2>{isDe ? `${labels!.aboutPrefix}${name.toLowerCase()}${labels!.aboutSuffix}` : `About the ${cfg.name.toLowerCase()} converter`}</h2>
+          {about.map((p) => <p>{p}</p>)}
+        </section>
+        <section class="prose-section">
+          <h2>{isDe ? `${labels!.howtoPrefix}${name.toLowerCase()}${labels!.howtoSuffix}` : `How to use this ${cfg.name.toLowerCase()} converter`}</h2>
+          <ol class="howto">
+            {howto.map((step) => <li>{step}</li>)}
+          </ol>
+        </section>
+        <section class="prose-section">
+          <h2>{isDe ? `${name}${labels!.factorSuffix}` : `${cfg.name} conversion factors`}</h2>
+          <p>{isDe ? labels!.factorIntro : 'Exact reference factors used by this converter:'}</p>
+          <div class="factor-table">
+            {factorRows.map((row) => (
+              <div class="factor-row">
+                <span class="factor-key">{row.label}</span>
+                <span class="factor-val">{row.value}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+        <section class="prose-section">
+          <h2>{isDe ? `${labels!.supportedPrefix}${name}${labels!.supportedSuffix}` : `Supported ${cfg.name.toLowerCase()} units`}</h2>
+          <ul class="unit-list">
+            {cfg.units.map((u) => (
+              <li><span class="unit-sym">{u.symbol}</span>{u.name}</li>
+            ))}
+          </ul>
+        </section>
+        <section class="prose-section">
+          <h2>{isDe ? labels!.faqTitle : 'Frequently asked questions'}</h2>
+          <div class="faq">
+            {faqs.map((f) => (
+              <details class="faq-item">
+                <summary>{f.q}</summary>
+                <p>{f.a}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+      </div>
+      <aside class="conv-aside">
+        <div class="aside-block">
+          <span class="eyebrow">{isDe ? labels!.otherConverters : 'Other converters'}</span>
+          <ul class="related-list">
+            {others.map((c) => {
+              const otherTitle = isDe ? (convertersDe[c.slug]?.title ?? c.title) : c.title;
+              return <li><a href={to(`/unit-converter/${c.slug}`, locale)}>{otherTitle}</a></li>;
+            })}
+          </ul>
+        </div>
+        <div class="aside-block">
+          <span class="eyebrow">{isDe ? labels!.allTools : 'All tools'}</span>
+          <a href={to('/unit-converter', locale)} class="btn btn-secondary btn-sm aside-cta">{isDe ? labels!.hubCta : 'Unit converter hub'}</a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .breadcrumb { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-top: 1.5rem; font-size: 13px; color: var(--color-mute); }
+  .breadcrumb a { color: var(--color-body); }
+  .breadcrumb a:hover { color: var(--color-ink); }
+  .conv-stage { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(1.5rem, 4vw, 3rem); align-items: start; padding: 1.5rem 0 0; }
+  .conv-hero-text { max-width: 52ch; }
+  .conv-title { margin: 0.5rem 0 0; font-size: clamp(1.9rem, 5vw, 3rem); line-height: 1.05; letter-spacing: -0.03em; }
+  .conv-desc { margin: 1rem 0 0; font-size: clamp(15px, 2vw, 18px); line-height: 1.6; color: var(--color-body); }
+  .conv-intro { margin: 1rem 0 0; font-size: 15px; line-height: 1.7; color: var(--color-mute); }
+  .conv-tool { min-width: 0; position: sticky; top: 80px; }
+  .conv-note { margin: 0.875rem 0 0; font-size: 12.5px; line-height: 1.6; color: var(--color-mute); padding: 0.75rem 0.875rem; background-color: var(--color-canvas-soft); border: 1px dashed var(--color-hairline-strong); border-radius: var(--radius-md); }
+  @media (max-width: 900px) { .conv-stage { grid-template-columns: 1fr; gap: 1.5rem; } .conv-tool { position: static; order: -1; } .conv-hero-text { max-width: none; } .conv-intro { display: none; } }
+  .conv-body { display: grid; grid-template-columns: 1fr 280px; gap: 2.5rem; margin-top: 3rem; }
+  .conv-content { min-width: 0; }
+  .prose-section { margin-bottom: 2.5rem; }
+  .prose-section h2 { font-size: 1.375rem; letter-spacing: -0.02em; margin: 0 0 1rem; }
+  .prose-section p { font-size: 15px; line-height: 1.7; color: var(--color-body); margin: 0 0 0.75rem; }
+  .howto { margin: 0; padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem; }
+  .howto li { font-size: 15px; line-height: 1.6; color: var(--color-body); }
+  .factor-table { display: flex; flex-direction: column; border: 1px solid var(--color-hairline); border-radius: var(--radius-md); overflow: hidden; }
+  .factor-row { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding: 0.75rem 1rem; background-color: var(--color-canvas); }
+  .factor-row + .factor-row { border-top: 1px solid var(--color-hairline); }
+  .factor-key { font-size: 14px; font-weight: 500; color: var(--color-ink); }
+  .factor-val { font-family: var(--font-mono); font-size: 13px; color: var(--color-body); text-align: right; }
+  .unit-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.5rem; }
+  .unit-list li { display: flex; align-items: center; gap: 0.625rem; font-size: 14px; color: var(--color-body); padding: 0.5rem 0.75rem; background-color: var(--color-canvas-soft); border-radius: var(--radius-sm); box-shadow: inset 0 0 0 1px var(--color-hairline); }
+  .unit-sym { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; padding: 2px 6px; font-family: var(--font-mono); font-size: 12px; font-weight: 600; color: var(--color-ink); background-color: var(--color-canvas); border-radius: var(--radius-xs); box-shadow: inset 0 0 0 1px var(--color-hairline); }
+  .faq { display: flex; flex-direction: column; gap: 0.5rem; }
+  .faq-item { border: 1px solid var(--color-hairline); border-radius: var(--radius-md); background-color: var(--color-canvas); overflow: hidden; }
+  .faq-item summary { cursor: pointer; padding: 0.875rem 1rem; font-size: 15px; font-weight: 500; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary::after { content: '+'; color: var(--color-mute); font-size: 18px; flex: 0 0 auto; }
+  .faq-item[open] summary::after { content: '\2212'; }
+  .faq-item p { margin: 0; padding: 0 1rem 1rem; font-size: 14px; line-height: 1.65; color: var(--color-body); }
+  .conv-aside { display: flex; flex-direction: column; gap: 1.5rem; position: sticky; top: 80px; align-self: start; }
+  .aside-block { display: flex; flex-direction: column; }
+  .related-list { list-style: none; margin: 0.75rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+  .related-list a { font-size: 14px; color: var(--color-link); }
+  .related-list a:hover { text-decoration: underline; }
+  .aside-cta { margin-top: 0.75rem; width: 100%; }
+  @media (max-width: 900px) { .conv-body { grid-template-columns: 1fr; gap: 1.5rem; } .conv-aside { position: static; } }
+</style>

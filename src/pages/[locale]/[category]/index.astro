@@ -1,0 +1,171 @@
+---
+// Localized category page — all locales including English.
+//
+// For English: full category page with description, FAQ, structured data.
+// For other locales: clean single-language category landing with translated titles.
+import { getCollection } from 'astro:content';
+import Layout from '../../../layouts/Layout.astro';
+import LinkCard from '../../../components/LinkCard.astro';
+import CalculatorCard from '../../../components/CalculatorCard.astro';
+import FaqAccordion from '../../../components/FaqAccordion.astro';
+import { enabledLocaleCodes, DEFAULT_LOCALE, isIndexedLocale } from '../../../lib/i18n/locales';
+import { uiPack, categoryName } from '../../../lib/i18n/ui-pack';
+import { to } from '../../../lib/i18n/paths';
+import { hreflangAlternates } from '../../../lib/i18n/seo-head';
+import { categories, getCategory } from '../../../lib/categories';
+import { calculatorsByCategory } from '../../../lib/calculators';
+import { calculatorIcon } from '../../../lib/icons';
+import { breadcrumbSchema, faqPageSchema } from '../../../lib/seo';
+import { categoryFaqs, categoryFaqsByLocale } from '../../../lib/faq';
+import { localizedCategorySlug } from '../../../lib/i18n/slugs';
+
+export function getStaticPaths() {
+  return enabledLocaleCodes().flatMap((locale) =>
+    categories.map((c) => ({
+      params: { locale, category: localizedCategorySlug(c.id, locale) },
+      props: { enCategoryId: c.id },
+    })),
+  );
+}
+
+const { locale } = Astro.params as { locale: string; category: string };
+const { enCategoryId } = Astro.props as { enCategoryId: string };
+const isDefault = locale === DEFAULT_LOCALE;
+const cat = getCategory(enCategoryId as any);
+if (!cat) return Astro.redirect('/404');
+
+const chrome = uiPack(locale).chrome ?? {};
+const home = uiPack(locale).home ?? {};
+const catLabel = categoryName(locale, cat.id);
+
+const entries = await getCollection('calculators', (e) => e.id.startsWith(`${locale}/`));
+const titleBySlug = new Map(entries.map((e) => [e.id.slice(locale.length + 1), e.data.title]));
+const locTitle = (slug: string, fallback: string) => titleBySlug.get(slug) ?? fallback;
+
+const calcs = calculatorsByCategory(cat.id);
+const openLabel = home.open ?? 'Open';
+
+// FAQs and structured data — English uses categoryFaqs, other locales use categoryFaqsByLocale
+const faqs = isDefault
+  ? (categoryFaqs[cat.id] ?? [])
+  : (categoryFaqsByLocale[locale]?.[cat.id] ?? []);
+const crumbs = [
+  { name: chrome.home ?? 'Home', path: to('/', locale) },
+  { name: catLabel, path: to(cat.path, locale) },
+];
+const schemas = faqs.length
+  ? [breadcrumbSchema(crumbs), faqPageSchema(faqs)]
+  : [breadcrumbSchema(crumbs)];
+
+// Localized category description from the UI pack
+const catDescriptions: Record<string, Record<string, string>> = {
+  de: {
+    finance: 'Hypotheken-, Kredit-, Anlage- und Zinsrechner, um jede finanzielle Entscheidung mit Zuversicht zu planen.',
+    health: 'BMI-, Kalorien-, Makro- und Körpermaß-Rechner auf Basis bewährter Formeln, die Ärzte und Trainer verwenden.',
+    education: 'Berechnen Sie Ihren GPA, Ihre aktuelle Note und die benötigte Prüfungsnote in Sekunden.',
+    math: 'Einfache, wissenschaftliche, Prozent-, Bruch- und Durchschnittsrechner für Hausaufgaben und Alltag.',
+    salary: 'Rechnen Sie zwischen Stunden-, Wochen-, Monats- und Jahresgehalt um und schätzen Sie Ihr Nettogehalt.',
+    shopping: 'Berechnen Sie Rabatte, Trinkgeld und Mehrwertsteuer, bevor Sie an der Kasse stehen.',
+    'date-time': 'Berechnen Sie Ihr genaues Alter, den Unterschied zwischen zwei Daten und die Anzahl der Arbeitstage.',
+    travel: 'Berechnen Sie Kraftstoffkosten und Kilometerleistung für Ihre nächste Reise.',
+  },
+};
+const localizedCatDesc = !isDefault ? (catDescriptions[locale]?.[cat.id] ?? '') : '';
+
+const catKeywords = isDefault ? Array.from(
+  new Set([
+    `${cat.name.toLowerCase()} calculator`,
+    ...calcs.map((c) => c.title.toLowerCase()),
+    ...calcs.flatMap((c) => c.keywords ?? []),
+  ]),
+).slice(0, 20) : (locale === 'de' ? Array.from(
+  new Set([
+    `${catLabel.toLowerCase()} rechner`,
+    ...entries.map((e) => e.data.title.toLowerCase()),
+    ...entries.flatMap((e) => (e.data.keywords as string[]) ?? []),
+  ]),
+).slice(0, 20) : []);
+---
+
+<Layout
+  title={isDefault
+    ? `${cat.name} Calculators — Free Online ${cat.name} Tools`
+    : `${catLabel} — ${home.metaTitle ?? 'Free Online Calculators'}`}
+  description={isDefault ? cat.description : (localizedCatDesc || home.metaDescription || 'Free, fast, privacy-friendly online calculators.')}
+  path={to(cat.path, locale)}
+  locale={locale}
+  alternates={hreflangAlternates(cat.path)}
+  noindex={!isIndexedLocale(locale)}
+  keywords={catKeywords}
+  jsonLd={schemas}
+>
+  <div class="container-page">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href={to('/', locale)}>{chrome.home ?? 'Home'}</a><span aria-hidden="true">/</span><span>{catLabel}</span>
+    </nav>
+
+    <header class="cat-header">
+      <span class="eyebrow">{calcs.length} {isDefault ? 'calculators' : (locale === 'de' ? 'Rechner' : '')}</span>
+      <h1 class="cat-title">{isDefault ? `${cat.name} Calculators` : catLabel}</h1>
+      {isDefault && cat.description && <p class="cat-desc">{cat.description}</p>}
+      {!isDefault && localizedCatDesc && <p class="cat-desc">{localizedCatDesc}</p>}
+    </header>
+
+    <div class="grid-cards">
+      {isDefault ? (
+        calcs.map((c) => <CalculatorCard calculator={c} />)
+      ) : (
+        calcs.map((c) => (
+          <LinkCard
+            href={to(`/${c.category}/${c.slug}`, locale)}
+            title={locTitle(c.slug, c.title)}
+            desc=""
+            icon={calculatorIcon(c.slug) ?? cat.icon}
+            cta={openLabel}
+          />
+        ))
+      )}
+    </div>
+
+    {isDefault && faqs.length > 0 && (
+      <FaqAccordion items={faqs} title={`${cat.name} calculator FAQs`} />
+    )}
+    {!isDefault && faqs.length > 0 && (
+      <FaqAccordion items={faqs} title={`${catLabel} — ${chrome.faq ?? 'FAQ'}`} />
+    )}
+
+    <section class="other">
+      <span class="eyebrow">{isDefault ? 'Other categories' : (locale === 'de' ? 'Weitere Kategorien' : '')}</span>
+      <div class="other-links">
+        {categories.filter((c) => c.id !== cat.id).map((c) => (
+          <a href={to(c.path, locale)} class="other-pill">{isDefault ? c.name : categoryName(locale, c.id)}</a>
+        ))}
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .breadcrumb { display: flex; gap: 0.5rem; align-items: center; margin-top: 1.5rem; font-size: 13px; color: var(--color-mute); }
+  .breadcrumb a { color: var(--color-body); }
+  .breadcrumb a:hover { color: var(--color-ink); }
+
+  .cat-header { padding: 1.5rem 0 2rem; }
+  .cat-title { margin: 0.5rem 0 0; font-size: clamp(1.75rem, 4vw, 2.5rem); letter-spacing: -0.03em; }
+
+  .grid-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  @media (max-width: 900px) { .grid-cards { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 460px) { .grid-cards { grid-template-columns: 1fr; } }
+
+  .other { margin: 3.5rem 0 2rem; }
+  .other-links { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .other-pill {
+    padding: 0.375rem 0.75rem;
+    font-size: 13px;
+    color: var(--color-body);
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-pill);
+  }
+  .other-pill:hover { border-color: var(--color-hairline-strong); color: var(--color-ink); }
+</style>

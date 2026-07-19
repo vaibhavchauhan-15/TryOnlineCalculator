@@ -164,6 +164,9 @@ html[data-theme='dark'] {
     /* Always reserve the scrollbar track so content never shifts
        sideways when a scrollbar appears on load. */
     scrollbar-gutter: stable;
+    /* Prevent rubber-band overscroll on iOS / Chrome that can feel
+       janky during fast swipes on the homepage. */
+    overscroll-behavior-y: none;
   }
 
   body {
@@ -176,6 +179,9 @@ html[data-theme='dark'] {
     /* No color transition here: the theme flip is applied instantly and the
        animated feel comes from the circular View Transition (see below).
        Transitioning the whole body would stretch out the expensive repaint. */
+    /* Safe area insets for notched phones (iPhone X+) */
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
   }
 
   ::selection {
@@ -203,6 +209,13 @@ html[data-theme='dark'] {
   a {
     color: inherit;
     text-decoration: none;
+  }
+
+  /* Prevent double-tap zoom on interactive elements on mobile;
+     eliminate the 300ms tap delay on older browsers. */
+  button, a, [role="button"], input[type="submit"], input[type="button"] {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -714,6 +727,7 @@ html[data-theme='dark'] {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    width: 100%;
     max-width: 480px;
     margin-inline: auto;
     padding: 1.25rem;
@@ -722,6 +736,8 @@ html[data-theme='dark'] {
     box-shadow: var(--shadow-float);
   }
   .calc-device.is-wide { max-width: 620px; }
+  /* Scientific mode: wider to accommodate 5 columns comfortably */
+  .calc-device[data-mode='scientific'] { max-width: 540px; }
 
   /* Read-out screen */
   .calc-screen {
@@ -920,12 +936,23 @@ html[data-theme='dark'] {
 
   /* Span helpers */
   .calc-key.span-2 { grid-column: span 2; }
+  .calc-key.span-3 { grid-column: span 3; }
+  .calc-key.span-4 { grid-column: span 4; }
   .calc-key.row-2 { grid-row: span 2; }
 
   @media (max-width: 420px) {
     .calc-device { padding: 0.875rem; border-radius: var(--radius-lg); }
     .calc-keys { gap: 0.375rem; }
     .calc-key { min-height: 46px; border-radius: var(--radius-sm); }
+  }
+
+  /* On phones, let the calculator stretch edge-to-edge within the page
+     container so it uses all available width. Keep keys easy to tap. */
+  @media (max-width: 640px) {
+    .calc-device { max-width: 100%; }
+    .calc-device[data-mode='scientific'] { max-width: 100%; }
+    .calc-key { min-height: 48px; }
+    .calc-key.key-fn { font-size: clamp(11px, 2.8vw, 14px); }
   }
 }
 
@@ -1681,5 +1708,56 @@ html[data-theme='dark'] {
 
   @media (max-width: 560px) {
     .edu-card { padding: 1.125rem; }
+  }
+}
+
+/* ---------- Language suggestion banner (dynamically injected → global) ----------
+   A fixed bottom toast. Being position: fixed, showing/hiding it never shifts
+   page content, so it contributes zero CLS (Task 14). */
+@layer components {
+  .lang-banner {
+    position: fixed;
+    left: 50%;
+    bottom: 1rem;
+    z-index: 80;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    max-width: min(560px, calc(100vw - 2rem));
+    padding: 0.75rem 1rem;
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    font-size: 14px;
+    color: var(--color-body);
+    transform: translate(-50%, calc(100% + 1.5rem));
+    opacity: 0;
+    transition: transform 0.24s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.24s ease;
+  }
+  .lang-banner.is-in { transform: translate(-50%, 0); opacity: 1; }
+  .lang-banner-text { flex: 1 1 auto; min-width: 12rem; }
+  .lang-banner-actions { display: inline-flex; align-items: center; gap: 0.5rem; }
+  .lang-banner-view {
+    padding: 0.4rem 0.75rem;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .lang-banner-view:hover { filter: brightness(1.05); }
+  .lang-banner-dismiss {
+    padding: 0.4rem 0.5rem;
+    border: 0;
+    background: transparent;
+    color: var(--color-mute);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .lang-banner-dismiss:hover { color: var(--color-ink); }
+  @media (prefers-reduced-motion: reduce) {
+    .lang-banner { transition: opacity 0.2s ease; transform: translate(-50%, 0); }
   }
 }

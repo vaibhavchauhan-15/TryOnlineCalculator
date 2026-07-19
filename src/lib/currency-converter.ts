@@ -70,7 +70,11 @@ function formatRate(v: number): string {
 
 function parseAmount(raw: string): number {
   const cleaned = raw.trim().replace(/,/g, '');
-  if (cleaned === '' || cleaned === '-' || cleaned === '.') return NaN;
+  if (cleaned === '' || cleaned === '-' || cleaned === '.' || cleaned === '-.') return NaN;
+  // Reject multiple dots or misplaced minus signs
+  if ((cleaned.match(/\./g) || []).length > 1) return NaN;
+  if ((cleaned.match(/-/g) || []).length > 1) return NaN;
+  if (cleaned.lastIndexOf('-') > 0) return NaN;
   const n = Number(cleaned);
   return Number.isFinite(n) ? n : NaN;
 }

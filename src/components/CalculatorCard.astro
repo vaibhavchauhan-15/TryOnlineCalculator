@@ -2,13 +2,16 @@
 import type { Calculator } from '../lib/types';
 import { getCategory } from '../lib/categories';
 import { calculatorIcon } from '../lib/icons';
+import { to } from '../lib/i18n/paths';
+import { DEFAULT_LOCALE } from '../lib/i18n/locales';
 import LinkCard from './LinkCard.astro';
 
 interface Props {
   calculator: Calculator;
+  locale?: string;
 }
-const { calculator } = Astro.props;
-const href = `/${calculator.category}/${calculator.slug}`;
+const { calculator, locale = DEFAULT_LOCALE } = Astro.props;
+const href = to(`/${calculator.category}/${calculator.slug}`, locale);
 // Prefer the tool-specific icon; fall back to the category icon if unmapped.
 const icon = calculatorIcon(calculator.slug) ?? getCategory(calculator.category)?.icon;
 ---

@@ -1,0 +1,29 @@
+---
+slug: "gpa-calculator"
+category: "education"
+title: "GPA-Rechner"
+description: "Berechnen Sie Ihren gewichteten Notendurchschnitt (GPA) aus Noten und Credit-Stunden."
+keywords: ["GPA Rechner", "Notendurchschnitt", "GPA berechnen", "gewichteter Notendurchschnitt", "Credit Points"]
+calculatorVersion: 1
+seoVersion: 2
+translationVersion: 2
+source: "en"
+translatedFromVersion: 1
+model: "manual-de-v2"
+searchIntent: "Den gewichteten Notendurchschnitt (GPA) aus Kursen und Credits berechnen."
+readingLevel: "general"
+market: "DE"
+audience: "Studenten, die ihren GPA berechnen möchten, insbesondere für US-Universitäten"
+labels: {"course":"Kurs","gpa":"GPA","qualityPoints":"Leistungspunkte","totalCredits":"Credits gesamt"}
+enums: {"a":"A","aMinus":"A-","aPlus":"A+","b":"B","bMinus":"B-","bPlus":"B+","c":"C","cMinus":"C-","cPlus":"C+","d":"D","dMinus":"D-","dPlus":"D+","f":"F","fair":"Ausreichend","good":"Gut","great":"Sehr gut","low":"Verbesserungsbedarf"}
+chartTitles: {"gpa.gaugeTitle":"GPA-Skala"}
+intro: "Geben Sie pro Zeile eine Note und die zugehörigen Credits ein, z. B. A, 3."
+formulaItems: [{"name":"Gewichteter GPA","expr":"GPA = Summe(Notenpunkte * Credits) / Summe(Credits)"}]
+howto: ["Geben Sie jeden Kurs in einer eigenen Zeile ein: Note, Credits.","Trennen Sie Note und Credits durch ein Komma oder Leerzeichen.","Ihr gewichteter GPA wird sofort berechnet."]
+faq: [{"q":"Welche Skala wird verwendet?","a":"Es wird die US-amerikanische 4,0-Skala verwendet, bei der A = 4,0 und F = 0,0. Plus- und Minusnoten werden berücksichtigt."},{"q":"Wie werden Credits gewichtet?","a":"Kurse mit mehr Credits zählen stärker in den GPA. Jeder Kurs trägt Notenpunkte mal Credit-Stunden bei."}]
+related: ["grade-calculator","final-grade-calculator","average-grade-calculator"]
+---
+
+Berechnen Sie Ihren gewichteten GPA (Grade Point Average) auf der
+US-amerikanischen 4,0-Skala. Geben Sie einfach Ihre Kurse mit Note und
+Credits ein und sehen Sie sofort das Ergebnis.

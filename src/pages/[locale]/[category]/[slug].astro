@@ -1,0 +1,255 @@
+---
+import { render, getCollection } from 'astro:content';
+import Layout from '../../../layouts/Layout.astro';
+import { enabledLocaleCodes, DEFAULT_LOCALE, isIndexedLocale } from '../../../lib/i18n/locales';
+import { getEngine } from '../../../lib/calculator-engine';
+import { getCalculatorContent, uiPack, categoryName } from '../../../lib/i18n/content';
+import { regionDefaultsForLocale } from '../../../lib/i18n/region-defaults';
+import { hreflangAlternates } from '../../../lib/i18n/seo-head';
+import { localizedCalculatorPageSchemas } from '../../../lib/i18n/seo-schema';
+import { to } from '../../../lib/i18n/paths';
+import { getCategory } from '../../../lib/categories';
+import { getCalculator } from '../../../lib/calculators';
+import { localizedCategorySlug, localizedCalculatorSlug } from '../../../lib/i18n/slugs';
+import LocalizedCalculatorWidget from '../../../components/LocalizedCalculatorWidget.astro';
+import KeypadCalculator from '../../../components/KeypadCalculator.astro';
+
+export async function getStaticPaths() {
+  // Build paths for every enabled locale (including the default 'en') from the
+  // English MDX collection. URL params use LOCALIZED slugs; English originals
+  // are passed as props so the page can still load content by canonical ID.
+  const enEntries = await getCollection('calculators', (e) => e.id.startsWith('en/'));
+  const paths = [];
+  for (const locale of enabledLocaleCodes()) {
+    for (const entry of enEntries) {
+      const enSlug = entry.id.replace(/^en\//, '');
+      const enCategory = entry.data.category as string;
+      paths.push({
+        params: {
+          locale,
+          category: localizedCategorySlug(enCategory, locale),
+          slug: localizedCalculatorSlug(enSlug, locale),
+        },
+        props: { enSlug, enCategory },
+      });
+    }
+  }
+  return paths;
+}
+
+const { locale } = Astro.params as { locale: string; category: string; slug: string };
+const { enSlug, enCategory } = Astro.props as { enSlug: string; enCategory: string };
+
+const content = await getCalculatorContent(enSlug, locale);
+const engine = getEngine(enSlug);
+const calculator = getCalculator(enSlug);
+if (!content || !engine) return Astro.redirect('/404');
+
+const fm = content.entry.data;
+const cat = getCategory(fm.category);
+const categoryLabel = categoryName(locale, fm.category);
+
+// Formatting context seeded from this locale's default region. The widget's
+// client re-renders live from the visitor's real preferences.
+const ctx = regionDefaultsForLocale(locale);
+const chrome = uiPack(locale).chrome ?? {};
+
+// Localized MDX body.
+const { Content } = await render(content.entry);
+
+// SEO: self-canonical + reciprocal hreflang alternates + x-default.
+// pathNoLocale uses ENGLISH slugs — the hreflang builder localizes per locale.
+const pathNoLocale = `/${enCategory}/${enSlug}`;
+const alternates = hreflangAlternates(pathNoLocale);
+
+// Localized structured data (breadcrumb + WebApplication + FAQ + HowTo).
+const jsonLd = localizedCalculatorPageSchemas(locale, {
+  homeLabel: chrome.home ?? 'Home',
+  categoryId: fm.category,
+  categoryPath: cat?.path ?? `/${fm.category}`,
+  title: fm.title,
+  description: fm.description,
+  pagePath: pathNoLocale,
+  faq: fm.faq,
+  howto: fm.howto,
+});
+---
+
+<Layout
+  title={fm.title}
+  description={fm.description}
+  path={to(pathNoLocale, locale)}
+  keywords={fm.keywords}
+  locale={locale}
+  alternates={alternates}
+  jsonLd={jsonLd}
+  noindex={!isIndexedLocale(locale)}
+>
+  <div class="container-page">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href={to('/', locale)}>{chrome.home ?? 'Home'}</a><span aria-hidden="true">/</span>
+      {cat && <><a href={to(cat.path, locale)}>{categoryLabel}</a><span aria-hidden="true">/</span></>}
+      <span>{fm.title}</span>
+    </nav>
+
+    <header class="calc-header">
+      <h1 class="calc-title">{fm.title}</h1>
+      <p class="calc-desc">{fm.description}</p>
+    </header>
+
+    {fm.intro && <p class="calc-intro">{fm.intro}</p>}
+
+    <section class="calc-widget-section" aria-label={fm.title}>
+    {engine.fields && engine.parseInput ? (
+      <LocalizedCalculatorWidget
+        slug={enSlug}
+        pack={content.pack}
+        fallback={content.fallback}
+        ctx={ctx}
+        chrome={chrome}
+      />
+    ) : calculator?.visual === 'basic' || calculator?.visual === 'scientific' ? (
+      <KeypadCalculator calculator={calculator} variant={calculator.visual} />
+    ) : (
+      <div class="calc-visual-note">
+        <p>
+          <a href={to(`/${enCategory}/${enSlug}`, DEFAULT_LOCALE)} class="btn btn-primary">
+            {chrome.openCalculator ?? 'Open interactive calculator'}
+          </a>
+        </p>
+      </div>
+    )}
+    </section>
+
+    <div class="calc-body">
+      <div class="calc-content">
+        <article class="prose-section">
+          <Content />
+        </article>
+
+        {fm.howto.length > 0 && (
+          <section class="prose-section">
+            <h2>{chrome.howToUse ?? 'How to use'}</h2>
+            <ol class="howto">{fm.howto.map((step) => <li>{step}</li>)}</ol>
+          </section>
+        )}
+
+        {fm.formulaItems.length > 0 && (
+          <section class="prose-section">
+            <h2>{chrome.formula ?? 'Formula'}</h2>
+            {fm.formulaIntro && <p>{fm.formulaIntro}</p>}
+            <div class="formula-list">
+              {fm.formulaItems.map((f) => (
+                <div class="formula">
+                  <span class="formula-name">{f.name}</span>
+                  <code class="formula-expr">{f.expr}</code>
+                  {f.desc && <span class="formula-desc">{f.desc}</span>}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {fm.faq.length > 0 && (
+          <section class="prose-section">
+            <h2>{chrome.faq ?? 'Frequently asked questions'}</h2>
+            <div class="faq">
+              {fm.faq.map((f) => (
+                <details class="faq-item">
+                  <summary>{f.q}</summary>
+                  <p>{f.a}</p>
+                </details>
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .breadcrumb { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-top: 1.5rem; font-size: 13px; color: var(--color-mute); }
+  .breadcrumb a { color: var(--color-body); }
+  .breadcrumb a:hover { color: var(--color-ink); }
+
+  .calc-header { padding: 1.5rem 0 0; }
+  .calc-title { margin: 0; font-size: clamp(1.75rem, 4vw, 2.5rem); letter-spacing: -0.03em; text-wrap: balance; }
+  .calc-desc { margin: 0.625rem 0 0; font-size: 17px; line-height: 1.6; color: var(--color-body); max-width: 62ch; text-wrap: pretty; }
+  .calc-intro { margin: 1rem 0 1.5rem; font-size: 15px; line-height: 1.6; color: var(--color-mute); max-width: 68ch; }
+
+  /* The calculator widget section: centered, responsive, fills available width on mobile */
+  .calc-widget-section {
+    margin: 1.5rem 0 0;
+    display: flex;
+    justify-content: center;
+  }
+  @media (max-width: 640px) {
+    .calc-widget-section {
+      margin-inline: -1rem; /* bleed to page edges on phones */
+    }
+  }
+
+  .calc-visual-note { margin: 1.5rem 0; }
+
+  .calc-body { display: grid; grid-template-columns: 1fr; gap: 2.5rem; margin-top: 3rem; }
+  .calc-content { min-width: 0; }
+  .prose-section { margin-bottom: 2.5rem; }
+  .prose-section h2 { font-size: 1.375rem; letter-spacing: -0.02em; margin: 0 0 1rem; }
+  .prose-section p { font-size: 15px; line-height: 1.7; color: var(--color-body); }
+  .prose-section :global(h2) { font-size: 1.375rem; letter-spacing: -0.02em; margin: 2.25rem 0 1rem; }
+  .prose-section :global(h2:first-child) { margin-top: 0; }
+  .prose-section :global(p) { font-size: 15px; line-height: 1.7; color: var(--color-body); margin: 0 0 1rem; }
+  .prose-section :global(code) { font-family: var(--font-mono); font-size: 0.92em; background-color: var(--color-canvas-soft-2); padding: 0.1rem 0.35rem; border-radius: var(--radius-sm); }
+
+  .howto { margin: 0; padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem; }
+  .howto li { font-size: 15px; line-height: 1.6; color: var(--color-body); }
+
+  .formula-list { display: flex; flex-direction: column; gap: 0.75rem; }
+  .formula {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    padding: 1rem 1.125rem;
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+  }
+  .formula-name { font-size: 13px; font-weight: 600; }
+  .formula-expr {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--color-ink);
+    background-color: var(--color-canvas-soft-2);
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-sm);
+    overflow-x: auto;
+  }
+  .formula-desc { font-size: 13px; color: var(--color-mute); }
+
+  .faq { display: flex; flex-direction: column; gap: 0.5rem; }
+  .faq-item {
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
+    background-color: var(--color-canvas);
+    overflow: hidden;
+  }
+  .faq-item summary {
+    cursor: pointer;
+    padding: 0.875rem 1rem;
+    font-size: 15px;
+    font-weight: 500;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary::after { content: '+'; color: var(--color-mute); font-size: 18px; }
+  .faq-item[open] summary::after { content: '−'; }
+  .faq-item p { margin: 0; padding: 0 1rem 1rem; font-size: 14px; line-height: 1.65; color: var(--color-body); }
+
+  @media (max-width: 900px) {
+    .calc-body { grid-template-columns: 1fr; gap: 1.5rem; }
+  }
+</style>

@@ -1,97 +1,13 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import CalculatorCard from '../../components/CalculatorCard.astro';
-import FaqAccordion from '../../components/FaqAccordion.astro';
+// Legacy category index — permanently redirects to /en/[category].
+// In production Cloudflare Pages handles this via public/_redirects at the edge;
+// this file ensures the redirect works in local dev too.
 import { categories } from '../../lib/categories';
-import { calculatorsByCategory } from '../../lib/calculators';
-import { breadcrumbSchema, faqPageSchema } from '../../lib/seo';
-import { categoryFaqs } from '../../lib/faq';
 
 export function getStaticPaths() {
-  return categories.map((c) => ({ params: { category: c.id }, props: { category: c } }));
+  return categories.map((c) => ({ params: { category: c.id } }));
 }
 
-const { category } = Astro.props;
-const calcs = calculatorsByCategory(category.id);
-
-const crumbs = [
-  { name: 'Home', path: '/' },
-  { name: category.name, path: category.path },
-];
-
-const faqs = categoryFaqs[category.id] ?? [];
-const schemas = faqs.length
-  ? [breadcrumbSchema(crumbs), faqPageSchema(faqs)]
-  : [breadcrumbSchema(crumbs)];
-
-// Build a keyword list from the calculators in this category (deduped).
-const catKeywords = Array.from(
-  new Set([
-    `${category.name.toLowerCase()} calculator`,
-    ...calcs.map((c) => c.title.toLowerCase()),
-    ...calcs.flatMap((c) => c.keywords ?? []),
-  ]),
-).slice(0, 20);
+const { category } = Astro.params;
+return Astro.redirect(`/en/${category}`, 301);
 ---
-
-<Layout
-  title={`${category.name} Calculators — Free Online ${category.name} Tools`}
-  description={category.description}
-  path={category.path}
-  keywords={catKeywords}
-  jsonLd={schemas}
->
-  <div class="container-page">
-    <nav class="breadcrumb" aria-label="Breadcrumb">
-      <a href="/">Home</a><span aria-hidden="true">/</span><span>{category.name}</span>
-    </nav>
-
-    <header class="cat-header">
-      <span class="eyebrow">{calcs.length} calculators</span>
-      <h1 class="cat-title">{category.name} Calculators</h1>
-      <p class="cat-desc">{category.description}</p>
-    </header>
-
-    <div class="grid-cards">
-      {calcs.map((c) => <CalculatorCard calculator={c} />)}
-    </div>
-
-    <FaqAccordion items={faqs} title={`${category.name} calculator FAQs`} />
-
-    <section class="other">
-      <span class="eyebrow">Other categories</span>
-      <div class="other-links">
-        {categories.filter((c) => c.id !== category.id).map((c) => (
-          <a href={c.path} class="other-pill">{c.name}</a>
-        ))}
-      </div>
-    </section>
-  </div>
-</Layout>
-
-<style>
-  .breadcrumb { display: flex; gap: 0.5rem; align-items: center; margin-top: 1.5rem; font-size: 13px; color: var(--color-mute); }
-  .breadcrumb a { color: var(--color-body); }
-  .breadcrumb a:hover { color: var(--color-ink); }
-
-  .cat-header { padding: 1.5rem 0 2rem; max-width: 60ch; }
-  .cat-title { margin: 0.5rem 0 0; font-size: clamp(1.75rem, 4vw, 2.5rem); letter-spacing: -0.03em; }
-  .cat-desc { margin: 0.75rem 0 0; font-size: 17px; line-height: 1.6; color: var(--color-body); }
-
-  .grid-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
-
-  .other { margin: 3.5rem 0 2rem; }
-  .other-links { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.875rem; }
-  .other-pill {
-    padding: 0.375rem 0.75rem;
-    font-size: 13px;
-    color: var(--color-body);
-    background-color: var(--color-canvas);
-    border: 1px solid var(--color-hairline);
-    border-radius: var(--radius-pill);
-  }
-  .other-pill:hover { border-color: var(--color-hairline-strong); color: var(--color-ink); }
-
-  @media (max-width: 900px) { .grid-cards { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 460px) { .grid-cards { grid-template-columns: 1fr; } }
-</style>

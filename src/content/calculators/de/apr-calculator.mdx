@@ -1,0 +1,29 @@
+---
+slug: "apr-calculator"
+category: "finance"
+title: "Effektivzins-Rechner (APR)"
+description: "Berechnen Sie den effektiven Jahreszins eines Kredits unter Berücksichtigung aller Gebühren."
+keywords: ["Effektivzins Rechner", "effektiver Jahreszins", "APR berechnen", "tatsächliche Kreditkosten", "Effektivzins berechnen"]
+calculatorVersion: 1
+seoVersion: 2
+translationVersion: 2
+source: "en"
+translatedFromVersion: 1
+model: "manual-de-v2"
+searchIntent: "Den effektiven Jahreszins eines Kredits inklusive Gebühren berechnen."
+readingLevel: "general"
+market: "DE"
+audience: "Kreditnehmer, die die tatsächlichen Kosten verschiedener Kreditangebote vergleichen möchten"
+labels: {"amountBorrowed":"Kreditbetrag","apr":"Effektivzins","fees":"Gebühren","field.loanAmount":"Kreditbetrag","field.rate":"Nominalzins","field.term":"Laufzeit","field.upfrontFees":"Einmalige Gebühren","interest":"Zinsen","monthlyPayment":"Monatsrate","nominalRate":"Nominalzins","totalFees":"Gebühren gesamt"}
+chartTitles: {"apr.pieTitle":"Tilgung vs. Zinsen vs. Gebühren"}
+intro: "Der effektive Jahreszins (APR) spiegelt die tatsächlichen jährlichen Kosten eines Kredits wider, indem er Gebühren in den Zinssatz einrechnet."
+formulaIntro: "Der Effektivzins berücksichtigt, dass Gebühren den tatsächlich erhaltenen Betrag reduzieren, während die Raten gleich bleiben."
+formulaItems: [{"name":"Effektivzins (APR)","expr":"Löse nach i: (Betrag - Gebühren) = Rate * (1 - (1+i)^-n) / i","desc":"APR = 12 * i, wobei die Rate auf dem Nominalzins basiert."}]
+howto: ["Geben Sie den Kreditbetrag ein.","Geben Sie den Nominalzins ein.","Geben Sie die Laufzeit in Monaten oder Jahren ein.","Geben Sie einmalige Gebühren ein (z. B. Bearbeitungsgebühr).","Lesen Sie den effektiven Jahreszins ab."]
+faq: [{"q":"Warum ist der Effektivzins höher als der Nominalzins?","a":"Weil Gebühren den tatsächlich ausgezahlten Betrag reduzieren, während Ihre Raten auf dem vollen Kreditbetrag basieren. Der Effektivzins drückt diese höheren realen Kosten aus."},{"q":"Sollte ich Kredite nach dem Effektivzins vergleichen?","a":"Ja. Der Effektivzins ist die beste Einzelkennzahl zum Vergleich ähnlicher Kredite, da er alle Kosten einbezieht. Er setzt allerdings voraus, dass Sie den Kredit bis zum Ende der Laufzeit behalten."},{"q":"Ist der Effektivzins dasselbe wie der Sollzins?","a":"Nein. Der Sollzins (Nominalzins) ist der reine Zinssatz ohne Gebühren. Der Effektivzins enthält zusätzlich alle Nebenkosten und ist daher immer mindestens so hoch."}]
+related: ["loan-calculator","mortgage-calculator","interest-calculator"]
+---
+
+Der effektive Jahreszins zeigt die wahren Kosten eines Kredits, indem er
+Gebühren und Nebenkosten in den Zinssatz einrechnet. Vergleichen Sie
+Kreditangebote fair, indem Sie den APR statt nur den Nominalzins betrachten.

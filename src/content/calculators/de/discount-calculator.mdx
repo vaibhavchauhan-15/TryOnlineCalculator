@@ -1,0 +1,33 @@
+---
+slug: "discount-calculator"
+category: "shopping"
+title: "Rabattrechner"
+description: "Berechnen Sie den Verkaufspreis und Ihre Ersparnis bei einem prozentualen Rabatt."
+keywords: ["Rabattrechner", "Rabatt berechnen", "Prozent Rabatt", "Ersparnis berechnen", "Verkaufspreis berechnen", "Sale Rechner"]
+calculatorVersion: 1
+seoVersion: 2
+translationVersion: 2
+source: "en"
+translatedFromVersion: 1
+model: "manual-de-v2"
+searchIntent: "Den Endpreis nach Rabatt und die Ersparnis schnell berechnen."
+readingLevel: "general"
+market: "DE"
+audience: "Käufer, die vor dem Kauf ihren tatsächlichen Preis nach Rabatt wissen möchten"
+labels: {"field.discount":"Rabatt","field.extra":"Zusätzlicher Rabatt","field.price":"Originalpreis","finalPrice":"Endpreis","savings":"Ersparnis","youPay":"Sie zahlen","youSave":"Sie sparen"}
+hints: {"discount.savingsPct":"Gesamtrabatt in Prozent"}
+chartTitles: {"discount.pieTitle":"Preis- und Rabattanteil"}
+intro: "Geben Sie den Originalpreis und den Rabattprozentsatz ein, um sofort den Endpreis und Ihre Ersparnis zu sehen."
+formulaIntro: "Die Rabattberechnung ist eine einfache Prozentrechnung."
+formulaItems: [{"name":"Endpreis","expr":"Endpreis = Originalpreis × (1 − Rabatt / 100)"},{"name":"Ersparnis","expr":"Ersparnis = Originalpreis − Endpreis"},{"name":"Gestaffelte Rabatte","expr":"Endpreis = Preis × (1 − R₁/100) × (1 − R₂/100)","desc":"Bei mehreren Rabatten wird jeder auf den bereits reduzierten Preis angewandt."}]
+howto: ["Geben Sie den Originalpreis ein.","Geben Sie den Rabattprozentsatz ein.","Optional: Fügen Sie einen zusätzlichen Rabatt hinzu (z. B. Newsletter-Gutschein).","Lesen Sie den Endpreis und Ihre Ersparnis ab."]
+faq: [{"q":"Wie funktionieren gestaffelte Rabatte?","a":"Ein zweiter Rabatt wird auf den bereits reduzierten Preis angewandt, nicht auf den Originalpreis. Deshalb ergibt 25 % Rabatt + 10 % extra nicht 35 % Gesamtrabatt, sondern 32,5 %."},{"q":"Wie berechne ich den Rabatt in Euro?","a":"Multiplizieren Sie den Originalpreis mit dem Rabattprozentsatz und teilen Sie durch 100. Beispiel: 20 % Rabatt auf 80 € = 80 × 20 / 100 = 16 € Ersparnis."},{"q":"Wie finde ich den Originalpreis aus dem reduzierten Preis?","a":"Teilen Sie den reduzierten Preis durch (1 − Rabatt/100). Beispiel: Endpreis 60 € bei 25 % Rabatt → Originalpreis = 60 / 0,75 = 80 €."},{"q":"Ist der Rabattrechner kostenlos?","a":"Ja, dieser Rabattrechner ist völlig kostenlos und ohne Anmeldung nutzbar."}]
+related: ["sales-tax-calculator","tip-calculator","percentage-calculator"]
+---
+
+Ob Schlussverkauf, Black Friday oder ein Gutscheincode — mit diesem
+Rabattrechner sehen Sie sofort, wie viel Sie tatsächlich zahlen und wie
+viel Sie sparen. Geben Sie einfach den Originalpreis und den Rabattprozentsatz
+ein. Bei gestaffelten Rabatten (z. B. '20 % Sale + 10 % Newsletter-Gutschein")
+können Sie den zweiten Rabatt zusätzlich eingeben und sehen den kumulierten
+Endpreis.

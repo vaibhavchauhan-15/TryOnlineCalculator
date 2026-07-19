@@ -1,0 +1,65 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import FaqAccordion from '../../components/FaqAccordion.astro';
+import { faqPageSchema } from '../../lib/seo';
+import { staticPageHreflang } from '../../lib/i18n/seo-head';
+import type { FaqItem } from '../../lib/types';
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Sind die Rechnerergebnisse eine professionelle Beratung?',
+    a: 'Nein. Die Rechner liefern Schätzungen nur zur allgemeinen Information und dürfen nicht als Finanz-, Gesundheits-, Steuer-, Rechts- oder sonstige professionelle Beratung herangezogen werden. Bestätigen Sie wichtige Entscheidungen immer mit einem qualifizierten Fachmann.',
+  },
+  {
+    q: 'Sind die Ergebnisse garantiert korrekt?',
+    a: 'Wir streben nach Genauigkeit und zeigen die Formel hinter jedem Tool, aber die Seite wird „wie besehen" ohne Gewährleistung bereitgestellt, und wir garantieren nicht, dass jedes Ergebnis fehlerfrei ist. Sie nutzen die Tools auf eigenes Risiko.',
+  },
+  {
+    q: 'Kann ich diese Rechner für kommerzielle Zwecke nutzen?',
+    a: 'Sie können die Tools gerne für alltägliche und berufliche Berechnungen verwenden. Sie stimmen zu, die Seite nicht zu missbrauchen, nicht zu stören oder in einer Weise zu scrapen, die den Dienst für andere beeinträchtigt.',
+  },
+  {
+    q: 'Ändern sich die Nutzungsbedingungen?',
+    a: 'Wir können diese Bedingungen von Zeit zu Zeit aktualisieren. Die weitere Nutzung der Seite bedeutet, dass Sie die aktuellen Bedingungen akzeptieren.',
+  },
+];
+
+const keywords = [
+  'Try Online Calculator Nutzungsbedingungen',
+  'Allgemeine Geschäftsbedingungen',
+  'Rechner Haftungsausschluss',
+  'Nutzungsbedingungen',
+];
+---
+
+<Layout
+  title="Nutzungsbedingungen"
+  description="Die Nutzungsbedingungen für die kostenlosen Online-Tools von Try Online Calculator."
+  path="/de/nutzungsbedingungen"
+  locale="de"
+  alternates={staticPageHreflang('terms')}
+  keywords={keywords}
+  jsonLd={faqPageSchema(faqs)}
+>
+  <div class="container-page prose">
+    <h1>Nutzungsbedingungen</h1>
+    <p class="prose-meta">Zuletzt aktualisiert: {new Date().toLocaleDateString('de-DE', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+
+    <h2>Nur Schätzungen</h2>
+    <p>Die Rechner und Inhalte auf dieser Seite dienen ausschließlich der allgemeinen Information. Sie liefern Schätzungen und dürfen nicht als Finanz-, Gesundheits-, Steuer-, Rechts- oder sonstige professionelle Beratung herangezogen werden.</p>
+
+    <h2>Keine Gewährleistung</h2>
+    <p>Wir stellen die Seite „wie besehen" ohne jegliche Gewährleistung zur Verfügung. Obwohl wir nach Genauigkeit streben, garantieren wir nicht, dass jedes Ergebnis fehlerfrei ist. Sie nutzen die Tools auf eigenes Risiko.</p>
+
+    <h2>Haftungsbeschränkung</h2>
+    <p>Im größtmöglichen gesetzlich zulässigen Umfang haftet Try Online Calculator nicht für Verluste oder Schäden, die aus Ihrer Nutzung dieser Seite oder dem Vertrauen auf deren Inhalte entstehen.</p>
+
+    <h2>Zulässige Nutzung</h2>
+    <p>Sie stimmen zu, die Seite nicht zu missbrauchen, nicht zu versuchen sie zu stören oder in einer Weise zu scrapen, die den Dienst für andere beeinträchtigt.</p>
+
+    <h2>Änderungen</h2>
+    <p>Wir können diese Bedingungen von Zeit zu Zeit aktualisieren. Die weitere Nutzung der Seite bedeutet, dass Sie die aktuellen Bedingungen akzeptieren.</p>
+
+    <FaqAccordion items={faqs} title="FAQ zu den Nutzungsbedingungen" />
+  </div>
+</Layout>

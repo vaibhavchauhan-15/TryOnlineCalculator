@@ -1,6 +1,8 @@
 // JSON-LD schema builders for structured data.
 import type { Calculator, Category, FaqItem } from './types';
 import { getCategory } from './categories';
+import { to } from './i18n/paths';
+import { DEFAULT_LOCALE } from './i18n/locales';
 
 const SITE = 'https://tryonlinecalculator.com';
 
@@ -47,7 +49,7 @@ export function calculatorSchema(calc: Calculator) {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
     name: calc.title,
-    url: `${SITE}/${calc.category}/${calc.slug}`,
+    url: `${SITE}${to(`/${calc.category}/${calc.slug}`, DEFAULT_LOCALE)}`,
     applicationCategory: 'UtilityApplication',
     operatingSystem: 'Any',
     browserRequirements: 'Requires JavaScript',
@@ -69,7 +71,7 @@ export function websiteSchema() {
     inLanguage: 'en',
     potentialAction: {
       '@type': 'SearchAction',
-      target: { '@type': 'EntryPoint', urlTemplate: `${SITE}/?q={search_term_string}` },
+      target: { '@type': 'EntryPoint', urlTemplate: `${SITE}/en/?q={search_term_string}` },
       'query-input': 'required name=search_term_string',
     },
   };
@@ -103,9 +105,9 @@ export function itemListSchema(items: { name: string; path: string }[]) {
 export function calculatorPageSchemas(calc: Calculator) {
   const cat: Category | undefined = getCategory(calc.category);
   const crumbs = [
-    { name: 'Home', path: '/' },
-    { name: cat?.name ?? calc.category, path: cat?.path ?? `/${calc.category}` },
-    { name: calc.title, path: `/${calc.category}/${calc.slug}` },
+    { name: 'Home', path: to('/', DEFAULT_LOCALE) },
+    { name: cat?.name ?? calc.category, path: to(cat?.path ?? `/${calc.category}`, DEFAULT_LOCALE) },
+    { name: calc.title, path: to(`/${calc.category}/${calc.slug}`, DEFAULT_LOCALE) },
   ];
   const schemas: Record<string, unknown>[] = [breadcrumbSchema(crumbs), calculatorSchema(calc)];
   if (calc.faq.length) schemas.push(faqSchema(calc));

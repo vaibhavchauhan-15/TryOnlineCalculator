@@ -13,6 +13,126 @@ export interface FaqSection {
   items: FaqItem[];
 }
 
+// ---------------------------------------------------------------------------
+// German homepage FAQ — SEO-optimised for German-language search queries.
+// Links point to /de/ locale-prefixed paths.
+// ---------------------------------------------------------------------------
+const homeFaqSectionsDe: FaqSection[] = [
+  {
+    title: 'Nutzung der Rechner',
+    items: [
+      {
+        q: 'Sind diese Online-Rechner kostenlos?',
+        a: 'Ja. Jeder Rechner auf Try Online Calculator ist völlig kostenlos — ohne Anmeldung, ohne Download und ohne Nutzungslimits.',
+      },
+      {
+        q: 'Sind Online-Rechner genau?',
+        a: 'Ja. Jedes Tool verwendet die gleichen Standardformeln, auf die Banken, Ärzte, Lehrer und Buchhalter vertrauen. Jede Ergebnisseite zeigt die Formel und ein Rechenbeispiel, damit Sie das Ergebnis selbst prüfen können.',
+      },
+    ],
+  },
+  {
+    title: 'Mathematik & Prozentrechnung',
+    items: [
+      {
+        q: 'Wie berechne ich Prozentsätze?',
+        a: 'Multiplizieren Sie die Zahl mit dem Prozentsatz und teilen Sie durch 100 — zum Beispiel: 20 % von 150 = 150 × 20 ÷ 100 = 30. Der <a href="/de/math/percentage-calculator">Prozentrechner</a> erledigt alle Varianten und zeigt die Schritte.',
+      },
+      {
+        q: 'Wie berechne ich eine prozentuale Steigerung?',
+        a: 'Ziehen Sie den alten Wert vom neuen ab, teilen Sie durch den alten Wert und multiplizieren Sie mit 100. Beispiel: Von 40 auf 50 ergibt (50 − 40) ÷ 40 × 100 = 25 % Steigerung. Nutzen Sie den <a href="/de/math/percentage-calculator">Prozentrechner</a>.',
+      },
+    ],
+  },
+  {
+    title: 'Kredite, Hypotheken & Finanzen',
+    items: [
+      {
+        q: 'Wie berechne ich Hypothekenzahlungen?',
+        a: 'Eine Hypothekenzahlung setzt sich aus Tilgung, Zinsen, Grundsteuer und Versicherung zusammen. Der <a href="/de/finance/mortgage-calculator">Hypothekenrechner</a> schlüsselt Ihre monatliche Rate und die Gesamtzinsen über die Laufzeit auf.',
+      },
+      {
+        q: 'Wie berechne ich EMI oder monatliche Kreditraten?',
+        a: 'Geben Sie Kreditbetrag, Zinssatz und Laufzeit in den <a href="/de/finance/loan-calculator">Kreditrechner</a> ein — er liefert die monatliche Rate (EMI) und die Gesamtzinsen über die Laufzeit.',
+      },
+      {
+        q: 'Wie berechne ich Zinseszins?',
+        a: 'Zinseszins nutzt die Formel A = P(1 + r/n)^(nt), wobei P das Kapital, r der Jahreszins, n die Zinsperioden pro Jahr und t die Jahre sind. Der <a href="/de/finance/compound-interest-calculator">Zinseszinsrechner</a> erledigt die Berechnung und zeigt das Wachstum grafisch.',
+      },
+    ],
+  },
+  {
+    title: 'Gesundheit & Fitness',
+    items: [
+      {
+        q: 'Wie berechne ich meinen BMI?',
+        a: 'Der BMI ist Ihr Gewicht in Kilogramm geteilt durch das Quadrat Ihrer Körpergröße in Metern (kg ÷ m²). Der <a href="/de/health/bmi-calculator">BMI-Rechner</a> rechnet in metrischen oder imperialen Einheiten und zeigt die Kategorie an.',
+      },
+      {
+        q: 'Wie viele Kalorien sollte ich pro Tag essen?',
+        a: 'Ihr täglicher Kalorienbedarf entspricht Ihrem TDEE — den Kalorien, die Sie verbrennen, um Ihr aktuelles Gewicht zu halten. Der <a href="/de/health/calorie-calculator">Kalorienrechner</a> schätzt diesen Wert und passt ihn für Ab-, Zunehmen oder Halten an.',
+      },
+    ],
+  },
+  {
+    title: 'Noten & Bildung',
+    items: [
+      {
+        q: 'Wie berechne ich meinen Notendurchschnitt (GPA)?',
+        a: 'Multiplizieren Sie jede Kursnote mit den Kreditstunden, addieren Sie die Notenpunkte und teilen Sie durch die Gesamtkredits. Der <a href="/de/education/gpa-calculator">GPA-Rechner</a> berechnet diesen gewichteten Durchschnitt für Sie.',
+      },
+    ],
+  },
+  {
+    title: 'Datum & Zeit',
+    items: [
+      {
+        q: 'Wie berechne ich mein Alter?',
+        a: 'Ziehen Sie Ihr Geburtsdatum vom heutigen Datum ab, um Ihr Alter in Jahren, Monaten und Tagen zu erhalten. Der <a href="/de/date-time/age-calculator">Altersrechner</a> berücksichtigt Schaltjahre und unterschiedliche Monatslängen automatisch.',
+      },
+      {
+        q: 'Wie berechne ich die Tage zwischen zwei Daten?',
+        a: 'Zählen Sie die Kalendertage vom früheren zum späteren Datum. Der <a href="/de/date-time/date-difference-calculator">Datumsrechner</a> gibt die genaue Anzahl der Tage, Wochen und Monate zwischen zwei Daten zurück.',
+      },
+    ],
+  },
+  {
+    title: 'Einkaufen & Trinkgeld',
+    items: [
+      {
+        q: 'Wie berechne ich Rabatte?',
+        a: 'Multiplizieren Sie den Preis mit dem Rabattprozentsatz und ziehen Sie das Ergebnis vom Originalpreis ab — 25 % Rabatt auf 80 € spart 20 €, Endpreis 60 €. Der <a href="/de/shopping/discount-calculator">Rabattrechner</a> zeigt den Verkaufspreis und Ihre Ersparnis.',
+      },
+      {
+        q: 'Wie viel Trinkgeld sollte ich geben?',
+        a: 'In Deutschland sind 5–10 % des Rechnungsbetrags bei gutem Service üblich. Der <a href="/de/shopping/tip-calculator">Trinkgeldrechner</a> berechnet den Betrag und teilt die Summe pro Person auf.',
+      },
+    ],
+  },
+];
+
+// ---------------------------------------------------------------------------
+// Locale-indexed FAQ map + accessor
+// ---------------------------------------------------------------------------
+const homeFaqByLocale: Record<string, FaqSection[]> = {
+  de: homeFaqSectionsDe,
+};
+
+/**
+ * Return homepage FAQ sections for the given locale.
+ * Falls back to English when no translation exists.
+ */
+export function getHomeFaqSections(locale: string): FaqSection[] {
+  return homeFaqByLocale[locale] ?? homeFaqSections;
+}
+
+/**
+ * Return the flat FAQ items list for a given locale (used for JSON-LD).
+ */
+export function getHomeFaqItems(locale: string): FaqItem[] {
+  return getHomeFaqSections(locale).flatMap((s) => s.items);
+}
+
 export const homeFaqSections: FaqSection[] = [
   {
     title: 'Using the calculators',
@@ -295,6 +415,41 @@ export const categoryFaqs: Record<CategoryId, FaqItem[]> = {
   ],
 };
 
+/**
+ * Per-category FAQ blocks for localized category pages.
+ * Keyed by locale, then by category ID.
+ */
+export const categoryFaqsByLocale: Record<string, Partial<Record<CategoryId, FaqItem[]>>> = {
+  de: {
+    finance: [
+      {
+        q: 'Wofür werden Finanzrechner verwendet?',
+        a: 'Finanzrechner verwandeln alltägliche Geldfragen in klare Zahlen — eine monatliche Kreditrate, die Zinsen auf ein Sparkonto oder den zukünftigen Wert einer Geldanlage. Starten Sie mit dem <a href="/de/finance/mortgage-calculator">Hypothekenrechner</a>, <a href="/de/finance/loan-calculator">Kreditrechner</a> oder <a href="/de/finance/investment-calculator">Anlagerechner</a>.',
+      },
+      {
+        q: 'Welchen Finanzrechner sollte ich für eine Immobilienfinanzierung nutzen?',
+        a: 'Verwenden Sie den <a href="/de/finance/mortgage-calculator">Hypothekenrechner</a>, um eine vollständige monatliche Rate inklusive Tilgung, Zinsen, Steuer und Versicherung zu schätzen, und den <a href="/de/finance/loan-calculator">Kreditrechner</a> für die monatliche Rate und Gesamtzinsen bei jedem anderen Darlehen.',
+      },
+      {
+        q: 'Wie berechne ich, wie viel Zinsen ich zahle oder verdiene?',
+        a: 'Der <a href="/de/finance/interest-calculator">Zinsrechner</a> berechnet sowohl einfache als auch Zinseszinsen, während der <a href="/de/finance/compound-interest-calculator">Zinseszinsrechner</a> zeigt, wie ein Guthaben wächst, wenn Zinsen auf bereits erwirtschaftete Zinsen berechnet werden.',
+      },
+      {
+        q: 'Sind diese Finanzrechner kostenlos und genau?',
+        a: 'Ja. Alle Finanztools sind kostenlos ohne Anmeldung, laufen vollständig in Ihrem Browser und verwenden die gleichen Standard-Tilgungs- und Zinsformeln, auf die Banken und Kreditgeber vertrauen. Jede Ergebnisseite zeigt die verwendete Formel und ein Rechenbeispiel.',
+      },
+      {
+        q: 'Kann ich diese Tools für die Altersvorsorge und Anlageplanung nutzen?',
+        a: 'Ja. Der <a href="/de/finance/investment-calculator">Anlagerechner</a> projiziert das Wachstum aus einer Einmalanlage und monatlichen Beiträgen, und der <a href="/de/finance/retirement-calculator">Rentenrechner</a> zeigt, ob Ihre Sparrate auf dem richtigen Weg zu Ihrem Ziel ist.',
+      },
+      {
+        q: 'Wie berechne ich die monatliche Rate für einen Autokredit?',
+        a: 'Nutzen Sie den <a href="/de/finance/auto-loan-calculator">Autokredit-Rechner</a> für eine vollständige Berechnung mit Anzahlung, Inzahlungnahme und Steuer, oder den <a href="/de/finance/car-payment-calculator">Autoraten-Rechner</a>, wenn Sie den Finanzierungsbetrag bereits kennen.',
+      },
+    ],
+  },
+};
+
 /** FAQ block for the unit converter hub (/unit-converter). */
 export const unitConverterFaqs: FaqItem[] = [
   {
@@ -318,3 +473,35 @@ export const unitConverterFaqs: FaqItem[] = [
     a: 'Yes. Every converter is free with no sign-up, and all conversions run in your browser, so the values you enter never leave your device.',
   },
 ];
+
+/** German FAQ block for the unit converter hub (/de/einheitenumrechner). */
+export const unitConverterFaqsDe: FaqItem[] = [
+  {
+    q: 'Was ist ein Einheitenumrechner?',
+    a: 'Ein Einheitenumrechner wandelt eine Messung von einer Einheit in eine andere um — etwa Kilometer in Meilen oder Kilogramm in Pfund — durch Multiplikation mit dem korrekten Umrechnungsfaktor. Diese Seite bietet eigene Umrechner für <a href="/de/einheitenumrechner/laenge">Länge</a>, <a href="/de/einheitenumrechner/gewicht">Gewicht</a>, <a href="/de/einheitenumrechner/temperatur">Temperatur</a>, <a href="/de/einheitenumrechner/geschwindigkeit">Geschwindigkeit</a>, <a href="/de/einheitenumrechner/volumen">Volumen</a>, <a href="/de/einheitenumrechner/flaeche">Fläche</a> und <a href="/de/einheitenumrechner/waehrung">Währung</a>.',
+  },
+  {
+    q: 'Wie rechne ich zwischen metrischen und imperialen Einheiten um?',
+    a: 'Wählen Sie den Umrechner für Ihren Messtyp, geben Sie einen Wert ein und wählen Sie die Ausgangs- und Zieleinheit. Das Ergebnis wird sofort mit exakten Umrechnungsfaktoren angezeigt — keine eigene Berechnung nötig.',
+  },
+  {
+    q: 'Sind die Umrechnungen genau?',
+    a: 'Ja. Jeder Umrechner verwendet offizielle, veröffentlichte Umrechnungsfaktoren und zeigt eine Referenztabelle der exakten Faktoren an, sodass Sie jedes Ergebnis selbst überprüfen können.',
+  },
+  {
+    q: 'Wie rechne ich kg in Pfund oder Celsius in Fahrenheit um?',
+    a: 'Verwenden Sie den <a href="/de/einheitenumrechner/gewicht">Gewichtsumrechner</a> für Kilogramm und Pfund und den <a href="/de/einheitenumrechner/temperatur">Temperaturumrechner</a> für Celsius, Fahrenheit und Kelvin. Beide rechnen in beide Richtungen um, während Sie tippen.',
+  },
+  {
+    q: 'Ist der Einheitenumrechner kostenlos und privat?',
+    a: 'Ja. Jeder Umrechner ist kostenlos ohne Anmeldung und alle Umrechnungen laufen in Ihrem Browser — Ihre Eingaben verlassen nie Ihr Gerät.',
+  },
+];
+
+/**
+ * Return the unit converter hub FAQs for a given locale.
+ */
+export function getUnitConverterFaqs(locale: string): FaqItem[] {
+  if (locale === 'de') return unitConverterFaqsDe;
+  return unitConverterFaqs;
+}

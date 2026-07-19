@@ -87,6 +87,10 @@ function clampNumberInputs(form: HTMLFormElement, values: Values): void {
     if (!Number.isFinite(n)) return;
     const min = el.min !== '' ? Number(el.min) : -Infinity;
     const max = el.max !== '' ? Number(el.max) : Infinity;
+    // Guard: if min or max parsed to NaN (malformed attribute), skip clamping
+    // entirely — writing NaN to the values would corrupt the calculation.
+    if (!Number.isFinite(min) && min !== -Infinity) return;
+    if (!Number.isFinite(max) && max !== Infinity) return;
     const clamped = Math.min(max, Math.max(min, n));
     if (clamped !== n) values[el.name] = String(clamped);
   });

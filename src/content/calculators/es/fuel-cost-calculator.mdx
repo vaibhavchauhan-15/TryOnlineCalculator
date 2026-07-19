@@ -1,0 +1,22 @@
+---
+slug: "fuel-cost-calculator"
+category: "travel"
+title: "Calculadora de coste de combustible"
+description: "Estimate the fuel cost of a trip from distance, fuel economy and fuel Precio."
+keywords: ["Calculadora de coste de combustible","gas cost","trip fuel"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "offline-dictionary-v1"
+labels: {"costPerDistance":"Cost per distance","field.consumption":"Consumption","field.distance":"Distancia","field.fuelEconomy":"Consumo de combustible","field.fuelPrice":"Precio del combustible","field.roundTrip":"Ida y vuelta","field.unit":"Unit","fuelNeeded":"Fuel needed","totalFuelCost":"Coste total de combustible"}
+enums: {"travel.oneWay":"Solo ida","travel.roundTrip":"Ida y vuelta","unitSystem.metric":"Métrico","unitSystem.us":"US (imperial)"}
+hints: {"travel.oneWay":"Solo ida","unit.gallon":"gal"}
+intro: "Enter your trip distance, your vehicle fuel economy and the Precio of fuel to estimate the cost."
+formulaItems: [{"name":"US","expr":"cost = (distance ÷ MPG) × price per gallon"},{"name":"Métrico","expr":"cost = (distance ÷ 100 × L/100km) × price per litre"}]
+faq: [{"q":"How do I convert MPG to L/100km?","a":"Divide 235.21 by the MPG value. For example 30 MPG is about 7.84 L/100km."}]
+related: ["mileage-calculator","auto-loan-calculator"]
+---
+
+Enter your trip distance, your vehicle fuel economy and the Precio of fuel to estimate the cost.

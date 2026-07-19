@@ -1,0 +1,29 @@
+---
+slug: "investment-calculator"
+category: "finance"
+title: "Anlagerechner"
+description: "Berechnen Sie den zukünftigen Wert einer Geldanlage mit regelmäßigen Einzahlungen und Zinseszins."
+keywords: ["Anlagerechner", "Geldanlage berechnen", "Investitionsrechner", "Kapitalwachstum", "monatliche Einzahlung"]
+calculatorVersion: 1
+seoVersion: 2
+translationVersion: 2
+source: "en"
+translatedFromVersion: 1
+model: "manual-de-v2"
+searchIntent: "Den zukünftigen Wert einer Geldanlage mit regelmäßigen Einzahlungen und Rendite berechnen."
+readingLevel: "general"
+market: "DE"
+audience: "Anleger, die wissen möchten, wie sich ihr Kapital über die Zeit entwickelt"
+labels: {"balance":"Guthaben","contributed":"Eingezahlt","field.annualReturn":"Jährliche Rendite","field.initialInvestment":"Anfangsinvestition","field.monthlyContribution":"Monatliche Einzahlung","field.years":"Jahre","futureValue":"Endwert","growth":"Wertzuwachs","growthMultiple":"Wachstumsfaktor","interestEarned":"Zinserträge","totalContributed":"Gesamt eingezahlt"}
+chartTitles: {"investment.growthTitle":"Wachstumsverlauf","investment.pieTitle":"Einzahlungen vs. Erträge"}
+intro: "Sehen Sie, wie eine Anfangsinvestition mit monatlichen Einzahlungen bei einer erwarteten Jahresrendite wächst."
+formulaIntro: "Der Endwert kombiniert Zinseszins auf die Anfangsinvestition mit dem Zuwachs durch regelmäßige Einzahlungen."
+formulaItems: [{"name":"Endwert","expr":"FV = P(1+r)^n + C * ((1+r)^n - 1) / r","desc":"P = Anfangsinvestition, C = monatliche Einzahlung, r = monatliche Rendite, n = Monate."}]
+howto: ["Geben Sie Ihre Anfangsinvestition ein.","Geben Sie die monatliche Einzahlung ein.","Setzen Sie die erwartete jährliche Rendite und den Anlagezeitraum.","Lesen Sie den Endwert, die Gesamteinzahlungen und die Erträge ab."]
+faq: [{"q":"Welche Rendite sollte ich annehmen?","a":"Ein breit gestreutes Aktienportfolio hat historisch etwa 7 bis 10 Prozent vor Inflation erzielt. Nutzen Sie einen konservativen Wert und bedenken Sie, dass vergangene Renditen keine Garantie sind."},{"q":"Wird die Inflation berücksichtigt?","a":"Nein. Um die Kaufkraft in heutigen Euro zu sehen, ziehen Sie die erwartete Inflation (ca. 2 bis 3 Prozent) von Ihrer Renditeannahme ab."},{"q":"Ist dieser Rechner auch für ETF-Sparpläne geeignet?","a":"Ja. Der Rechner funktioniert genau wie ein Sparplan-Rechner, wenn Sie die monatliche Einzahlung und erwartete Rendite eingeben."}]
+related: ["sip-calculator","compound-interest-calculator","savings-calculator","retirement-calculator"]
+---
+
+Wie viel ist Ihre Geldanlage in 10, 20 oder 30 Jahren wert? Dieser
+Anlagerechner zeigt Ihnen den Endwert unter Berücksichtigung von
+Anfangsinvestition, monatlicher Einzahlung und Zinseszins.

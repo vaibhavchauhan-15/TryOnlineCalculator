@@ -1,0 +1,32 @@
+---
+slug: "sip-calculator"
+category: "finance"
+title: "SIP / Sparplan-Rechner"
+description: "Berechnen Sie den Endwert und die geschätzten Erträge eines monatlichen Sparplans oder einer Einmalanlage."
+keywords: ["Sparplan Rechner", "Sparplan berechnen", "ETF Sparplan", "monatlich investieren", "Sparplan Rendite"]
+calculatorVersion: 1
+seoVersion: 2
+translationVersion: 2
+source: "en"
+translatedFromVersion: 1
+model: "manual-de-v2"
+searchIntent: "Den Endwert eines monatlichen Sparplans oder einer Einmalanlage mit Zinseszins berechnen."
+readingLevel: "general"
+market: "DE"
+audience: "Anleger, die einen ETF- oder Fondssparplan planen und das mögliche Ergebnis berechnen möchten"
+labels: {"estReturns":"Geschätzte Erträge","field.annualStepUp":"Jährliche Erhöhung","field.expectedReturn":"Erwartete Rendite","field.investmentAmount":"Anlagebetrag","field.investmentType":"Anlagetyp","field.timePeriod":"Anlagedauer","invested":"Eingezahlt","investedAmount":"Eingezahlter Betrag","monthlyInvestment":"Monatliche Einzahlung","totalValue":"Gesamtwert","wealthGainMultiple":"Wachstumsfaktor"}
+enums: {"mode.lumpsum":"Einmalanlage","mode.sip":"Monatlicher Sparplan"}
+hints: {"sip.endOfPlanHint":"Am Ende der Laufzeit","sip.stepUpHelp":"Jährliche Erhöhung der monatlichen Rate"}
+chartTitles: {"sip.growthTitle":"Wachstumsverlauf","sip.pieTitle":"Einzahlungen vs. Erträge"}
+intro: "Ein Sparplan investiert regelmäßig einen festen Betrag und profitiert vom Zinseszins und dem Durchschnittskosteneffekt. Wechseln Sie zur Einmalanlage für eine einmalige Investition oder aktivieren Sie die jährliche Erhöhung."
+formulaIntro: "Der Sparplan ist eine Reihe monatlicher Investitionen, die Einmalanlage ein einzelner Betrag mit Zinseszins."
+formulaItems: [{"name":"Sparplan-Endwert","expr":"M = P * ((1 + i)^n - 1) / i * (1 + i)","desc":"P = monatlicher Betrag, i = effektiver Monatszins, n = Anzahl der Raten."},{"name":"Effektiver Monatszins","expr":"i = (1 + r)^(1/12) - 1","desc":"r = erwartete Jahresrendite."},{"name":"Einmalanlage","expr":"FV = P * (1 + r)^t","desc":"P = Anlagebetrag, r = Jahresrendite, t = Jahre."},{"name":"Jährliche Erhöhung","expr":"Monatsbetrag *= (1 + g) jedes Jahr","desc":"g = jährliche Erhöhung in Prozent, wird nach jeweils 12 Raten angewendet."}]
+howto: ["Wählen Sie Sparplan für monatliche Einzahlungen oder Einmalanlage.","Geben Sie den Betrag, die erwartete Jahresrendite und die Laufzeit ein.","Optional: Aktivieren Sie die jährliche Erhöhung, um die Rate jedes Jahr zu steigern.","Lesen Sie den eingezahlten Betrag, die geschätzten Erträge und den Gesamtwert ab."]
+faq: [{"q":"Was ist der Unterschied zwischen Sparplan und Einmalanlage?","a":"Ein Sparplan investiert monatlich einen festen Betrag und verteilt den Einstieg über verschiedene Kursniveaus (Durchschnittskosteneffekt). Eine Einmalanlage investiert den gesamten Betrag auf einmal."},{"q":"Welche Rendite sollte ich annehmen?","a":"Breit gestreute Aktien-ETFs haben historisch etwa 7 bis 10 Prozent pro Jahr vor Inflation erzielt. Nutzen Sie einen konservativen Wert und bedenken Sie, dass vergangene Renditen keine Garantie sind."},{"q":"Sind die Erträge garantiert?","a":"Nein. Dieser Rechner rechnet mit einer konstanten Rendite zur Veranschaulichung. Echte Renditen schwanken und können in einzelnen Jahren negativ sein."},{"q":"Was ist die jährliche Erhöhung?","a":"Die jährliche Erhöhung steigert Ihre monatliche Rate jedes Jahr um einen Prozentsatz — z. B. 5 Prozent. So wächst Ihr Sparplan mit Ihrem Einkommen mit."}]
+related: ["investment-calculator","compound-interest-calculator","retirement-calculator","savings-calculator"]
+---
+
+Berechnen Sie, wie sich ein monatlicher Sparplan oder eine Einmalanlage über
+die Zeit entwickelt. Geben Sie Betrag, Rendite und Laufzeit ein und sehen
+Sie sofort den geschätzten Endwert. Mit optionaler jährlicher Erhöhung
+wächst Ihre Rate jedes Jahr automatisch mit.

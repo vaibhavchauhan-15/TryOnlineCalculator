@@ -604,10 +604,10 @@ export function getConverter(slug: string): ConverterConfig | undefined {
 
 /** JSON-LD schemas for a single converter page (breadcrumb + app + FAQ). */
 export function converterPageSchemas(cfg: ConverterConfig) {
-  const path = `/unit-converter/${cfg.slug}`;
+  const path = `/en/unit-converter/${cfg.slug}`;
   const crumbs = [
-    { name: 'Home', path: '/' },
-    { name: 'Unit Converter', path: '/unit-converter' },
+    { name: 'Home', path: '/en' },
+    { name: 'Unit Converter', path: '/en/unit-converter' },
     { name: cfg.title, path },
   ];
   const app = {

@@ -1,12 +1,34 @@
 ---
 import { categories } from '../lib/categories';
 import Search from './Search.astro';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+import { categoryName, uiPack } from '../lib/i18n/ui-pack';
+import { splitLocale, to } from '../lib/i18n/paths';
+import { DEFAULT_LOCALE } from '../lib/i18n/locales';
+
+interface Props {
+  locale?: string;
+}
+
+// Derive the locale: prefer the explicit prop, otherwise infer from URL.
+const { locale: localeProp } = Astro.props;
+const { locale: urlLocale } = splitLocale(Astro.url.pathname);
+const locale = localeProp ?? urlLocale ?? DEFAULT_LOCALE;
+const chrome = uiPack(locale).chrome ?? {};
+
+// Locale-aware internal links.
+const link = (path: string) => to(path, locale);
+
+// Show first 4 categories inline, rest in a "More" dropdown
+const primaryCategories = categories.slice(0, 4);
+const secondaryCategories = categories.slice(4);
 ---
 
 <header class="site-header">
   <div class="container-page header-inner">
-    <a href="/" class="brand" aria-label="Try Online Calculator home">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <!-- Brand -->
+    <a href={link('/')} class="brand" aria-label="Try Online Calculator home">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <rect x="4" y="2" width="16" height="20" rx="2"></rect>
         <line x1="8" y1="6" x2="16" y2="6"></line>
         <line x1="8" y1="10" x2="8" y2="10"></line>
@@ -20,69 +42,158 @@ import Search from './Search.astro';
       <span class="brand-name">Try Online Calculator</span>
     </a>
 
+    <!-- Navigation (desktop) -->
+    <nav class="header-nav" aria-label="Calculator categories" data-menu>
+      {primaryCategories.map((c) => (
+        <a href={link(c.path)} class="nav-link">{categoryName(locale, c.id)}</a>
+      ))}
+
+      <!-- More dropdown for secondary categories -->
+      <div class="nav-more" data-nav-more>
+        <button type="button" class="nav-link nav-more-btn" aria-expanded="false" aria-haspopup="true" data-nav-more-toggle>
+          <span>{chrome.more ?? 'More'}</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+        </button>
+        <div class="nav-more-menu" data-nav-more-menu hidden>
+          {secondaryCategories.map((c) => (
+            <a href={link(c.path)} class="nav-more-item">{categoryName(locale, c.id)}</a>
+          ))}
+          <div class="nav-more-divider"></div>
+          <a href={link('/unit-converter')} class="nav-more-item">{chrome.converters ?? 'Converters'}</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Search (desktop) -->
     <div class="header-search">
       <Search variant="bar" />
     </div>
 
-    <nav class="header-nav" aria-label="Calculator categories" data-menu>
-      {categories.map((c) => (
-        <a href={c.path} class="nav-link">{c.name}</a>
-      ))}
-      <a href="/unit-converter" class="nav-link">Converters</a>
-    </nav>
+    <!-- Right-side actions -->
+    <div class="header-actions">
+      <!-- Phone search trigger -->
+      <button
+        class="icon-btn search-toggle"
+        type="button"
+        aria-label="Search calculators"
+        aria-expanded="false"
+        aria-controls="header-search-panel"
+        data-search-toggle
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path>
+        </svg>
+      </button>
 
-    <button
-      class="search-toggle"
-      type="button"
-      aria-label="Search calculators"
-      aria-expanded="false"
-      aria-controls="header-search-panel"
-      data-search-toggle
-    >
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path>
-      </svg>
-    </button>
+      <LanguageSwitcher />
 
-    <button class="theme-toggle" type="button" aria-label="Toggle color theme" data-theme-toggle>
-      <svg class="theme-icon theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <circle cx="12" cy="12" r="4"></circle>
-        <path d="M12 2v2"></path><path d="M12 20v2"></path>
-        <path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path>
-        <path d="M2 12h2"></path><path d="M20 12h2"></path>
-        <path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path>
-      </svg>
-      <svg class="theme-icon theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
-      </svg>
-    </button>
+      <!-- Theme toggle -->
+      <button class="icon-btn theme-toggle" type="button" aria-label="Toggle color theme" data-theme-toggle>
+        <svg class="theme-icon theme-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2"></path><path d="M12 20v2"></path>
+          <path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path>
+          <path d="M2 12h2"></path><path d="M20 12h2"></path>
+          <path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path>
+        </svg>
+        <svg class="theme-icon theme-icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+        </svg>
+      </button>
 
-    <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false" data-menu-toggle>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-        <line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line>
-      </svg>
-    </button>
+      <!-- Mobile menu toggle -->
+      <button class="icon-btn menu-toggle" aria-label="Toggle menu" aria-expanded="false" data-menu-toggle>
+        <svg class="menu-icon-open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="18" x2="20" y2="18"></line>
+        </svg>
+        <svg class="menu-icon-close" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="display:none">
+          <path d="M18 6 6 18"></path><path d="m6 6 12 12"></path>
+        </svg>
+      </button>
+    </div>
   </div>
 
-  <!-- Collapsible search surfaced by the phone search icon. Kept out of the
-       hamburger menu so search is one tap away from every page. -->
+  <!-- Collapsible mobile search panel -->
   <div class="header-search-panel" id="header-search-panel" data-search-panel hidden>
     <div class="container-page">
       <Search variant="bar" placeholder="Search calculators…" />
     </div>
   </div>
+
+  <!-- Mobile nav drawer -->
+  <div class="mobile-nav" data-mobile-nav hidden>
+    <div class="container-page mobile-nav-inner">
+      {categories.map((c) => (
+        <a href={link(c.path)} class="mobile-nav-link">{categoryName(locale, c.id)}</a>
+      ))}
+      <div class="mobile-nav-divider"></div>
+      <a href={link('/unit-converter')} class="mobile-nav-link">{chrome.converters ?? 'Converters'}</a>
+    </div>
+  </div>
 </header>
 
 <script>
+  import { setPreference } from '../lib/preferences/store';
+
+  // Mobile menu toggle
   const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
-  const menu = document.querySelector<HTMLElement>('[data-menu]');
+  const mobileNav = document.querySelector<HTMLElement>('[data-mobile-nav]');
+  const openIcon = toggle?.querySelector<SVGElement>('.menu-icon-open');
+  const closeIcon = toggle?.querySelector<SVGElement>('.menu-icon-close');
+
   toggle?.addEventListener('click', () => {
-    const open = menu?.classList.toggle('is-open');
-    toggle.setAttribute('aria-expanded', String(!!open));
+    const isOpen = mobileNav?.hidden === false;
+    if (mobileNav) mobileNav.hidden = isOpen;
+    toggle.setAttribute('aria-expanded', String(!isOpen));
+    if (openIcon) openIcon.style.display = isOpen ? '' : 'none';
+    if (closeIcon) closeIcon.style.display = isOpen ? 'none' : '';
   });
 
-  // Phone search icon → slide the search bar open/closed. Opening focuses the
-  // input; Escape or an outside tap closes it again.
+  // "More" dropdown on desktop – open on hover
+  const moreToggle = document.querySelector<HTMLButtonElement>('[data-nav-more-toggle]');
+  const moreMenu = document.querySelector<HTMLElement>('[data-nav-more-menu]');
+  const moreWrapper = document.querySelector<HTMLElement>('[data-nav-more]');
+  let moreCloseTimer: ReturnType<typeof setTimeout> | null = null;
+
+  const openMore = () => {
+    if (moreCloseTimer) { clearTimeout(moreCloseTimer); moreCloseTimer = null; }
+    if (moreMenu) moreMenu.hidden = false;
+    moreToggle?.setAttribute('aria-expanded', 'true');
+  };
+
+  const closeMore = () => {
+    if (moreMenu) moreMenu.hidden = true;
+    moreToggle?.setAttribute('aria-expanded', 'false');
+  };
+
+  // Open on hover (with small delay on close to allow moving to dropdown)
+  moreWrapper?.addEventListener('mouseenter', openMore);
+  moreWrapper?.addEventListener('mouseleave', () => {
+    moreCloseTimer = setTimeout(closeMore, 150);
+  });
+
+  // Also toggle on click for touch devices
+  moreToggle?.addEventListener('click', () => {
+    const isOpen = moreMenu?.hidden === false;
+    if (isOpen) closeMore(); else openMore();
+  });
+
+  // Close "More" dropdown when clicking outside
+  document.addEventListener('click', (e) => {
+    if (moreMenu && !moreMenu.hidden && !moreWrapper?.contains(e.target as Node)) {
+      closeMore();
+    }
+  });
+
+  // Close "More" on Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && moreMenu && !moreMenu.hidden) {
+      closeMore();
+      moreToggle?.focus();
+    }
+  });
+
+  // Phone search icon toggle
   const searchToggle = document.querySelector<HTMLButtonElement>('[data-search-toggle]');
   const searchPanel = document.querySelector<HTMLElement>('[data-search-panel]');
   const searchField = searchPanel?.querySelector<HTMLInputElement>('[data-search-input]');
@@ -93,13 +204,11 @@ import Search from './Search.astro';
     searchToggle.setAttribute('aria-expanded', String(open));
     searchToggle.classList.toggle('is-active', open);
     if (open) {
-      // Wait for the panel to un-hide before moving focus.
       requestAnimationFrame(() => searchField?.focus());
     }
   };
 
   searchToggle?.addEventListener('click', () => {
-    // `.hidden` is typed boolean | "until-found"; coerce to a plain boolean.
     setSearchOpen(Boolean(searchPanel?.hidden ?? true));
   });
 
@@ -118,8 +227,7 @@ import Search from './Search.astro';
     }
   });
 
-  // Theme toggle — persists the choice, keeps the browser UI colour in sync,
-  // and reveals the new theme with a circular View Transition wipe.
+  // Theme toggle with View Transition
   const root = document.documentElement;
   const themeToggle = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
   const themeColorMeta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
@@ -131,15 +239,18 @@ import Search from './Search.astro';
   };
   syncThemeUi(root.getAttribute('data-theme') ?? 'dark');
 
-  // The synchronous part of the swap: cheap attribute + storage writes only.
   const commitTheme = (next: string) => {
     root.setAttribute('data-theme', next);
     syncThemeUi(next);
+    // Persist to both the legacy key (read by the pre-paint script) and the
+    // unified preferences store so other modules (e.g. language switcher) don't
+    // overwrite the choice when they call setPreferences().
     try {
       localStorage.setItem('theme', next);
     } catch {
-      /* storage unavailable (private mode / disabled) — ignore */
+      /* storage unavailable */
     }
+    setPreference('theme', next as 'light' | 'dark');
   };
 
   themeToggle?.addEventListener('click', (event) => {
@@ -148,17 +259,14 @@ import Search from './Search.astro';
 
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // Fallback: no View Transitions support or reduced motion → instant swap.
     if (!('startViewTransition' in document) || prefersReduced) {
       commitTheme(next);
       return;
     }
 
-    // Circle originates from the click point, falling back to the button centre.
     const rect = themeToggle.getBoundingClientRect();
     const x = event.clientX || rect.left + rect.width / 2;
     const y = event.clientY || rect.top + rect.height / 2;
-    // Radius that reaches the farthest viewport corner.
     const endRadius = Math.hypot(
       Math.max(x, window.innerWidth - x),
       Math.max(y, window.innerHeight - y),
@@ -187,6 +295,7 @@ import Search from './Search.astro';
 </script>
 
 <style>
+  /* ===== Header Shell ===== */
   .site-header {
     position: sticky;
     top: 0;
@@ -195,128 +304,160 @@ import Search from './Search.astro';
     backdrop-filter: saturate(180%) blur(12px);
     border-bottom: 1px solid var(--color-hairline);
   }
+
   .header-inner {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    height: 64px;
+    gap: 0.75rem;
+    height: 56px;
   }
+
+  /* ===== Brand ===== */
   .brand {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
     font-weight: 600;
-    font-size: 15px;
+    font-size: 14px;
     letter-spacing: -0.02em;
     white-space: nowrap;
     flex-shrink: 0;
+    color: var(--color-ink);
   }
-  /* min-width: 0 lets the search shrink with the viewport instead of pushing
-     the nav off-screen; it widens on roomy desktops and narrows on tablets. */
-  .header-search { flex: 1; min-width: 0; max-width: 380px; }
-  @media (min-width: 1280px) { .header-search { max-width: 460px; } }
-  @media (max-width: 720px) { .header-search { max-width: 260px; } }
+  .brand svg {
+    flex-shrink: 0;
+  }
+
+  /* ===== Navigation ===== */
   .header-nav {
     display: flex;
     align-items: center;
+    gap: 0.125rem;
+  }
+
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
     gap: 0.25rem;
+    padding: 0.375rem 0.75rem;
+    font-size: 13px;
+    font-weight: 450;
+    color: var(--color-body);
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: color 0.15s ease, background-color 0.15s ease, transform 0.1s ease;
+  }
+  .nav-link:hover {
+    color: var(--color-ink);
+    background-color: var(--color-canvas-soft-2);
+  }
+  .nav-link:active { transform: scale(0.95); }
+
+  /* "More" dropdown */
+  .nav-more {
+    position: relative;
+  }
+  .nav-more-btn {
+    cursor: pointer;
+    border: none;
+    background: none;
+  }
+  .nav-more-menu {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 180px;
+    padding: 0.375rem;
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-float);
+    animation: dropdown-in 0.12s ease;
+  }
+  .nav-more-menu[hidden] { display: none; }
+  .nav-more-item {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    font-size: 13px;
+    color: var(--color-body);
+    border-radius: var(--radius-xs);
+    transition: color 0.12s ease, background-color 0.12s ease;
+  }
+  .nav-more-item:hover {
+    color: var(--color-ink);
+    background-color: var(--color-canvas-soft-2);
+  }
+  .nav-more-divider {
+    height: 1px;
+    margin: 0.25rem 0.75rem;
+    background-color: var(--color-hairline);
+  }
+
+  @keyframes dropdown-in {
+    from { opacity: 0; transform: translateX(-50%) translateY(-4px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+
+  /* ===== Search (inline desktop) ===== */
+  .header-search {
+    flex: 1;
+    min-width: 0;
+    max-width: 320px;
     margin-left: auto;
   }
-  .nav-link {
-    padding: 0.375rem 0.625rem;
-    font-size: 14px;
-    color: var(--color-body);
-    border-radius: var(--radius-full, 9999px);
-    transition: background-color 0.15s ease, color 0.15s ease;
-  }
-  .nav-link:hover { color: var(--color-ink); background-color: var(--color-canvas-soft-2); }
-  .menu-toggle {
-    display: none;
+
+  /* ===== Right-side actions ===== */
+  .header-actions {
+    display: flex;
     align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border: 1px solid var(--color-hairline);
-    border-radius: var(--radius-sm);
-    background-color: var(--color-canvas);
-    color: var(--color-ink);
-    cursor: pointer;
-  }
-  /* Phone-only search trigger. Hidden on wider screens where the inline
-     header search bar is already visible. */
-  .search-toggle {
-    display: none;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
+    gap: 0.375rem;
     flex-shrink: 0;
-    border: 1px solid var(--color-hairline);
-    border-radius: var(--radius-full, 9999px);
-    background-color: var(--color-canvas);
-    color: var(--color-body);
-    cursor: pointer;
-    transition: color 0.15s ease, background-color 0.15s ease,
-      border-color 0.15s ease, transform 0.15s ease;
-  }
-  .search-toggle:hover {
-    color: var(--color-ink);
-    background-color: var(--color-canvas-soft-2);
-    border-color: var(--color-hairline-strong);
-  }
-  .search-toggle:active { transform: scale(0.92); }
-  .search-toggle.is-active {
-    color: var(--color-ink);
-    background-color: var(--color-canvas-soft-2);
-    border-color: var(--color-hairline-strong);
-  }
-  .search-toggle svg { display: block; }
-
-  /* Collapsible search bar revealed by the phone search icon. */
-  .header-search-panel {
-    border-bottom: 1px solid var(--color-hairline);
-    background-color: color-mix(in srgb, var(--color-canvas) 92%, transparent);
-    backdrop-filter: saturate(180%) blur(12px);
-    padding: 0.625rem 0;
-    animation: header-search-drop 0.16s ease;
-  }
-  .header-search-panel[hidden] { display: none; }
-  @keyframes header-search-drop {
-    from { opacity: 0; transform: translateY(-6px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .header-search-panel { animation: none; }
   }
 
-  .theme-toggle {
-    position: relative;
+  /* Unified icon button style */
+  .icon-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     width: 36px;
     height: 36px;
     flex-shrink: 0;
-    overflow: hidden;
     border: 1px solid var(--color-hairline);
     border-radius: var(--radius-full, 9999px);
-    background-color: var(--color-canvas);
+    background-color: transparent;
     color: var(--color-body);
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
     transition: color 0.15s ease, background-color 0.15s ease,
-      border-color 0.15s ease, transform 0.15s ease;
+      border-color 0.15s ease, transform 0.1s ease;
   }
-  .theme-toggle:hover {
+  .icon-btn:hover {
     color: var(--color-ink);
     background-color: var(--color-canvas-soft-2);
     border-color: var(--color-hairline-strong);
   }
-  .theme-toggle:active {
-    transform: scale(0.92);
+  .icon-btn:active {
+    transform: scale(0.93);
+  }
+  .icon-btn svg { display: block; }
+
+  /* Search toggle (phone only) */
+  .search-toggle { display: none; }
+  .search-toggle.is-active {
+    color: var(--color-ink);
+    background-color: var(--color-canvas-soft-2);
+    border-color: var(--color-hairline-strong);
   }
 
-  /* Both icons stay in the DOM, stacked and centred, and crossfade with a
-     rotate + scale. Only the icon for the theme you can switch TO is shown. */
+  /* ===== Theme toggle icon swap ===== */
+  .theme-toggle {
+    position: relative;
+    overflow: hidden;
+  }
   .theme-icon {
     position: absolute;
     top: 50%;
@@ -331,51 +472,96 @@ import Search from './Search.astro';
     opacity: 1;
     transform: translate(-50%, -50%) rotate(0deg) scale(1);
   }
-
   @media (prefers-reduced-motion: reduce) {
     .theme-icon { transition: none; }
-    .theme-toggle:active { transform: none; }
+    .icon-btn:active { transform: none; }
   }
 
+  /* ===== Menu toggle (mobile only) ===== */
+  .menu-toggle { display: none; }
+
+  /* ===== Mobile search panel ===== */
+  .header-search-panel {
+    border-bottom: 1px solid var(--color-hairline);
+    background-color: color-mix(in srgb, var(--color-canvas) 92%, transparent);
+    backdrop-filter: saturate(180%) blur(12px);
+    padding: 0.625rem 0;
+    animation: search-drop 0.14s ease;
+  }
+  .header-search-panel[hidden] { display: none; }
+  @keyframes search-drop {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .header-search-panel { animation: none; }
+  }
+  /* Only show on mobile */
+  @media (min-width: 641px) {
+    .header-search-panel { display: none !important; }
+  }
+
+  /* ===== Mobile nav drawer ===== */
+  .mobile-nav {
+    border-bottom: 1px solid var(--color-hairline);
+    background-color: var(--color-canvas);
+    box-shadow: var(--shadow-soft);
+    animation: nav-drop 0.14s ease;
+  }
+  .mobile-nav[hidden] { display: none; }
+  .mobile-nav-inner {
+    display: flex;
+    flex-direction: column;
+    padding-block: 0.5rem;
+  }
+  .mobile-nav-link {
+    padding: 0.625rem 0.75rem;
+    font-size: 14px;
+    font-weight: 450;
+    color: var(--color-body);
+    border-radius: var(--radius-sm);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: color 0.12s ease, background-color 0.12s ease, transform 0.1s ease;
+  }
+  .mobile-nav-link:hover {
+    color: var(--color-ink);
+    background-color: var(--color-canvas-soft-2);
+  }
+  .mobile-nav-link:active {
+    transform: scale(0.97);
+    background-color: var(--color-canvas-soft-2);
+  }
+  .mobile-nav-divider {
+    height: 1px;
+    margin: 0.375rem 0.75rem;
+    background-color: var(--color-hairline);
+  }
+  @keyframes nav-drop {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mobile-nav { animation: none; }
+  }
+
+  /* ===== Responsive breakpoints ===== */
+
+  /* Tablet: hide brand text */
   @media (max-width: 1024px) {
     .brand-name { display: none; }
   }
-  @media (max-width: 860px) {
+
+  /* Medium screens: collapse nav into mobile drawer */
+  @media (max-width: 768px) {
+    .header-nav { display: none; }
     .menu-toggle { display: inline-flex; }
-    /* Nav collapses into the dropdown, so pin the toggle group to the right. */
-    .theme-toggle { margin-left: auto; }
-    .header-nav {
-      position: absolute;
-      top: 64px;
-      left: 0;
-      right: 0;
-      flex-direction: column;
-      align-items: stretch;
-      gap: 0;
-      padding: 0.5rem;
-      background-color: var(--color-canvas);
-      border-bottom: 1px solid var(--color-hairline);
-      box-shadow: var(--shadow-soft);
-      display: none;
-    }
-    .header-nav.is-open { display: flex; }
-    .nav-link { padding: 0.75rem; border-radius: var(--radius-sm); }
   }
-  /* Above the phone breakpoint the inline search bar handles everything, so
-     the collapsible panel should never linger open. */
-  @media (min-width: 521px) {
-    .header-search-panel { display: none !important; }
-  }
-  @media (max-width: 520px) {
+
+  /* Small screens: hide inline search, show search icon */
+  @media (max-width: 640px) {
     .brand-name { display: inline; }
     .header-search { display: none; }
-    /* Search now lives behind its own icon to the left of the theme toggle.
-       It becomes the first item of the right-hand cluster, so it takes over
-       the auto margin that pins the group to the right. */
-    .search-toggle { display: inline-flex; margin-left: auto; }
-    .theme-toggle { margin-left: 0; }
-    /* Comfortable tap targets on phones. */
-    .theme-toggle { width: 40px; height: 40px; }
-    .menu-toggle { width: 42px; height: 42px; }
+    .search-toggle { display: inline-flex; }
   }
 </style>

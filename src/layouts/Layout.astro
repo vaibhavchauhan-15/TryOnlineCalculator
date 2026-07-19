@@ -4,6 +4,9 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Agentation from '../components/Agentation.astro';
 
+import { getLocale } from '../lib/i18n/locales';
+import { ogLocale } from '../lib/i18n/seo-head';
+
 interface Props {
   title: string;
   description: string;
@@ -13,6 +16,8 @@ interface Props {
   keywords?: string[]; // page-level keyword hints
   ogType?: string; // Open Graph type, defaults to "website"
   ogImage?: string; // absolute or site-relative social share image
+  locale?: string; // content locale (drives <html lang> + og:locale)
+  alternates?: { hreflang: string; href: string }[]; // hreflang link set
 }
 
 const {
@@ -24,7 +29,13 @@ const {
   keywords = [],
   ogType = 'website',
   ogImage: ogImageProp,
+  locale = 'en',
+  alternates = [],
 } = Astro.props;
+const localeDef = getLocale(locale);
+const htmlLang = localeDef?.bcp47 ?? 'en';
+const htmlDir = localeDef?.dir ?? 'ltr';
+const ogLocaleValue = ogLocale(htmlLang, localeDef?.defaultRegion);
 const site = Astro.site?.toString().replace(/\/$/, '') ?? 'https://tryonlinecalculator.com';
 const canonical = `${site}${path}`;
 const fullTitle = title.includes('Try Online Calculator') ? title : `${title} | Try Online Calculator`;
@@ -37,10 +48,10 @@ const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 ---
 
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang={htmlLang} dir={htmlDir} data-theme="dark">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-WKXRCW8RFV"></script>
@@ -59,6 +70,8 @@ const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
           var stored = localStorage.getItem('theme');
           var theme = stored === 'light' || stored === 'dark' ? stored : 'dark';
           document.documentElement.setAttribute('data-theme', theme);
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', theme === 'dark' ? '#000000' : '#ffffff');
         } catch (e) {
           document.documentElement.setAttribute('data-theme', 'dark');
         }
@@ -85,6 +98,9 @@ const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     {keywordsContent && <meta name="keywords" content={keywordsContent} />}
     <meta name="author" content="Try Online Calculator" />
     <link rel="canonical" href={canonical} />
+    {alternates.map((a) => (
+      <link rel="alternate" hreflang={a.hreflang} href={a.href} />
+    ))}
     {noindex
       ? <meta name="robots" content="noindex, nofollow" />
       : <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />}
@@ -93,7 +109,7 @@ const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     <!-- Open Graph -->
     <meta property="og:type" content={ogType} />
     <meta property="og:site_name" content="Try Online Calculator" />
-    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale" content={ogLocaleValue} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
@@ -116,11 +132,11 @@ const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
   </head>
   <body>
     <a href="#main" class="skip-link">Skip to content</a>
-    <Header />
+    <Header locale={locale} />
     <main id="main">
       <slot />
     </main>
-    <Footer />
+    <Footer locale={locale} />
     <Agentation />
     <script>
       // Enhance every native <select> site-wide into a theme-aware custom dropdown.

@@ -1,0 +1,122 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { converters } from '../../../lib/converters';
+import { breadcrumbSchema, itemListSchema, faqPageSchema } from '../../../lib/seo';
+import { getUnitConverterFaqs } from '../../../lib/faq';
+import FaqAccordion from '../../../components/FaqAccordion.astro';
+import LinkCard from '../../../components/LinkCard.astro';
+import { enabledLocaleCodes, DEFAULT_LOCALE, isIndexedLocale } from '../../../lib/i18n/locales';
+import { to } from '../../../lib/i18n/paths';
+import { hreflangAlternates } from '../../../lib/i18n/seo-head';
+import { localizedConverterParentSlug } from '../../../lib/i18n/slugs';
+import { convertersDe, converterHubDe } from '../../../lib/converters-de';
+
+export function getStaticPaths() {
+  return enabledLocaleCodes().map((locale) => ({
+    params: { locale, converterHub: localizedConverterParentSlug(locale) },
+  }));
+}
+
+const { locale } = Astro.params as { locale: string };
+const isDefault = locale === DEFAULT_LOCALE;
+const isDe = locale === 'de';
+
+// Localized hub strings
+const hub = isDe ? converterHubDe : null;
+const faqItems = getUnitConverterFaqs(locale);
+
+const crumbs = [
+  { name: isDe ? 'Startseite' : 'Home', path: to('/', locale) },
+  { name: isDe ? 'Einheitenumrechner' : 'Unit Converter', path: to('/unit-converter', locale) },
+];
+const listSchema = itemListSchema(
+  converters.map((c) => ({
+    name: isDe ? (convertersDe[c.slug]?.title ?? c.title) : c.title,
+    path: to(`/unit-converter/${c.slug}`, locale),
+  })),
+);
+const icons: Record<string, string> = {
+  length: 'M2 12h20 M6 9v6 M10 9v6 M14 9v6 M18 9v6',
+  weight: 'M12 3a2 2 0 0 0-2 2H6l-3 14h18L18 5h-4a2 2 0 0 0-2-2Z',
+  temperature: 'M14 4v10.5a4 4 0 1 1-4 0V4a2 2 0 1 1 4 0Z M12 10v6',
+  speed: 'M12 12l4-4 M3 12a9 9 0 0 1 18 0 M12 21a9 9 0 0 0 9-9',
+  volume: 'M5 3h14l-2 16a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 3Z M6 9h12',
+  area: 'M3 3h18v18H3Z M3 9h18 M9 3v18',
+  currency: 'M12 2v20 M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6',
+};
+const keywords = isDe
+  ? ['einheitenumrechner', 'umrechnungsrechner', 'maßeinheiten umrechnen', ...converters.flatMap((c) => (convertersDe[c.slug]?.keywords ?? c.keywords).slice(0, 2))]
+  : ['unit converter', 'conversion calculator', 'measurement converter', ...converters.flatMap((c) => c.keywords.slice(0, 2))];
+
+const pageTitle = hub?.metaTitle ?? 'Unit Converter — Free Online Conversion Calculator';
+const pageDesc = hub?.metaDescription ?? 'Free unit converter and conversion calculator: length, weight, temperature, speed, volume, area and currency. Fast, accurate conversions with no sign-up.';
+---
+
+<Layout
+  title={pageTitle}
+  description={pageDesc}
+  path={to('/unit-converter', locale)}
+  locale={locale}
+  alternates={hreflangAlternates('/unit-converter')}
+  keywords={keywords}
+  jsonLd={[breadcrumbSchema(crumbs), listSchema, faqPageSchema(faqItems)]}
+  noindex={!isIndexedLocale(locale)}
+>
+  <div class="container-page">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href={to('/', locale)}>{isDe ? 'Startseite' : 'Home'}</a><span aria-hidden="true">/</span><span>{isDe ? 'Einheitenumrechner' : 'Unit Converter'}</span>
+    </nav>
+    <header class="hub-header">
+      <span class="eyebrow">{hub?.eyebrowCount ?? `${converters.length} converters`}</span>
+      <h1 class="hub-title">{hub?.title ?? 'Unit Converter'}</h1>
+      <p class="hub-desc">{hub?.description ?? 'A fast, free conversion calculator hub. Pick a converter below to switch between metric and imperial units instantly — no sign-up, no clutter, results the moment you type.'}</p>
+    </header>
+    <div class="hub-grid">
+      {converters.map((c) => {
+        const deContent = convertersDe[c.slug];
+        return (
+          <LinkCard
+            href={to(`/unit-converter/${c.slug}`, locale)}
+            title={isDe ? (deContent?.title ?? c.title) : c.title}
+            desc={isDe ? (deContent?.description ?? c.description) : c.description}
+            icon={icons[c.slug]}
+          />
+        );
+      })}
+    </div>
+    <section class="hub-prose">
+      <h2>{hub?.proseTitle ?? 'One converter for every everyday measurement'}</h2>
+      <p>{hub?.proseIntro ?? 'Whether you are following a recipe, planning a trip, reading a product spec or doing homework, you often need to switch a value from one unit to another. This unit converter brings the most common conversions into one place, with a dedicated tool for each measurement type so every page stays focused and simple. Each converter runs entirely in your browser, so results are instant and your inputs never leave your device.'}</p>
+      <ul class="hub-links">
+        {converters.map((c) => {
+          const deContent = convertersDe[c.slug];
+          return (
+            <li>
+              <a href={to(`/unit-converter/${c.slug}`, locale)}>{isDe ? (deContent?.title ?? c.title) : c.title}</a> — {isDe ? (deContent?.description ?? c.description) : c.description}
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+    <FaqAccordion items={faqItems} title={hub?.faqTitle ?? 'Unit converter FAQs'} />
+  </div>
+</Layout>
+
+<style>
+  .breadcrumb { display: flex; gap: 0.5rem; align-items: center; margin-top: 1.5rem; font-size: 13px; color: var(--color-mute); }
+  .breadcrumb a { color: var(--color-body); }
+  .breadcrumb a:hover { color: var(--color-ink); }
+  .hub-header { padding: 1.5rem 0 2rem; max-width: 60ch; }
+  .hub-title { margin: 0.5rem 0 0; font-size: clamp(1.9rem, 5vw, 2.75rem); letter-spacing: -0.03em; }
+  .hub-desc { margin: 0.75rem 0 0; font-size: 17px; line-height: 1.6; color: var(--color-body); }
+  .hub-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .hub-prose { max-width: 72ch; margin: 3.5rem 0 2rem; }
+  .hub-prose h2 { font-size: clamp(1.375rem, 3vw, 1.75rem); letter-spacing: -0.02em; margin: 0 0 1rem; }
+  .hub-prose p { font-size: 15px; line-height: 1.75; color: var(--color-body); margin: 0 0 1rem; }
+  .hub-links { margin: 0; padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem; }
+  .hub-links li { font-size: 14px; line-height: 1.6; color: var(--color-mute); }
+  .hub-links a { color: var(--color-link); font-weight: 500; }
+  .hub-links a:hover { text-decoration: underline; }
+  @media (max-width: 900px) { .hub-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 460px) { .hub-grid { grid-template-columns: 1fr; } }
+</style>

@@ -1,0 +1,23 @@
+---
+slug: "grade-calculator"
+category: "education"
+title: "ग्रेड कैलकुलेटर"
+description: "Calculate your overall course grade from assignment scores and their weights."
+keywords: ["ग्रेड कैलकुलेटर","weighted grade","course grade"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "offline-dictionary-v1"
+labels: {"letterGrade":"Letter grade","overallGrade":"Overall grade","totalWeight":"कुल वजन"}
+enums: {"a":"A","aMinus":"A-","aPlus":"A+","b":"B","bMinus":"B-","bPlus":"B+","c":"C","cMinus":"C-","cPlus":"C+","d":"D","dMinus":"D-","dPlus":"D+","f":"F"}
+hints: {"grade.letter":"Letter"}
+chartTitles: {"grade.gaugeTitle":"Gauge title"}
+intro: "Enter each assignment as \"score, वजन\" per line. Scores and weights are percentages."
+formulaItems: [{"name":"Weighted grade","expr":"Grade = Σ(score × weight) / Σ weight"}]
+faq: [{"q":"Do the weights need to add up to 100%?","a":"Not for the calculation — the result is normalised by the कुल वजन. But if you have entered every graded item, the weights should कुल 100%."}]
+related: ["final-grade-calculator","gpa-calculator","average-grade-calculator","percentage-calculator"]
+---
+
+Enter each assignment as "score, वजन" per line. Scores and weights are percentages.

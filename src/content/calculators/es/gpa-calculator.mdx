@@ -1,0 +1,23 @@
+---
+slug: "gpa-calculator"
+category: "education"
+title: "Calculadora de GPA"
+description: "Calculate your weighted grade point average from your course grades and credit hours."
+keywords: ["Calculadora de GPA","grade point average","college gpa"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "offline-dictionary-v1"
+labels: {"course":"Course","gpa":"Gpa","qualityPoints":"Quality points","totalCredits":"Total credits"}
+enums: {"a":"A","aMinus":"A-","aPlus":"A+","b":"B","bMinus":"B-","bPlus":"B+","c":"C","cMinus":"C-","cPlus":"C+","d":"D","dMinus":"D-","dPlus":"D+","f":"F","fair":"Fair","good":"Good","great":"Excellent","low":"Needs work"}
+chartTitles: {"gpa.gaugeTitle":"Gauge title"}
+intro: "Enter one course per line as \"grade, credits\" — for example \"A, 3\". Letter grades from A+ to F are supported."
+formulaItems: [{"name":"Weighted GPA","expr":"GPA = Σ(grade points × credits) / Σ credits"}]
+howto: ["Enter each course on its own line as grade then credits.","Separate the grade and credits with a comma or space.","Your weighted GPA updates instantly."]
+faq: [{"q":"What scale is this?","a":"It uses the standard US unweighted 4.0 scale where A = 4.0 and F = 0.0, including plus and minus grades."},{"q":"How are credits weighted?","a":"Courses worth more credits count more toward your GPA. Each course contributes grade points times its credit hours."}]
+related: ["grade-calculator","final-grade-calculator","average-grade-calculator"]
+---
+
+Enter one course per line as "grade, credits" — for example "A, 3". Letter grades from A+ to F are supported.

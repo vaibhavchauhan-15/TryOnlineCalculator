@@ -1,0 +1,10 @@
+{
+  "_comment": "Sample Search Console + CrUX metrics for the live pilot locales (en/de/hi/es), one snapshot per locale. Replace with real exported data before running the gate for a rollout decision. ctrTrendPct is the CTR change vs the previous period (>=0 means stable/up).",
+  "capturedAt": "2026-07-18",
+  "locales": {
+    "en": { "indexedPct": 99, "hreflangErrors": 0, "duplicatePages": 0, "cwvPassPct": 98, "ctrTrendPct": 2.4, "crawlAnomalies": 0 },
+    "de": { "indexedPct": 97, "hreflangErrors": 0, "duplicatePages": 0, "cwvPassPct": 96, "ctrTrendPct": 1.1, "crawlAnomalies": 0 },
+    "hi": { "indexedPct": 96, "hreflangErrors": 0, "duplicatePages": 0, "cwvPassPct": 97, "ctrTrendPct": 0.3, "crawlAnomalies": 0 },
+    "es": { "indexedPct": 98, "hreflangErrors": 0, "duplicatePages": 0, "cwvPassPct": 97, "ctrTrendPct": 1.8, "crawlAnomalies": 0 }
+  }
+}

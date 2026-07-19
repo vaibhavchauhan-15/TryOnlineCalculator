@@ -1,0 +1,65 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import FaqAccordion from '../../components/FaqAccordion.astro';
+import { faqPageSchema } from '../../lib/seo';
+import { staticPageHreflang } from '../../lib/i18n/seo-head';
+import type { FaqItem } from '../../lib/types';
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Speichert Try Online Calculator die Zahlen, die ich eingebe?',
+    a: 'Nein. Alle Rechner laufen lokal in Ihrem Browser, sodass die von Ihnen eingegebenen Werte auf Ihrem Gerät verarbeitet und niemals an unsere Server gesendet oder dort gespeichert werden.',
+  },
+  {
+    q: 'Verkaufen Sie meine Daten?',
+    a: 'Nein. Wir verkaufen Ihre Daten nicht und nutzen die eingegebenen Zahlen nicht, um Werbeprofile zu erstellen.',
+  },
+  {
+    q: 'Verwenden Sie Cookies?',
+    a: 'Wir verwenden lokalen Speicher nur, um Einstellungen wie Ihre Einheitenwahl zu speichern, sowie datenschutzfreundliche, aggregierte Analysen, um zu sehen, welche Rechner beliebt sind. Diese Daten sind anonymisiert.',
+  },
+  {
+    q: 'Ist die Seite sicher ohne ein Konto nutzbar?',
+    a: 'Ja. Es gibt kein Konto zu erstellen und nichts, wofür Sie sich anmelden müssen. Sie können jeden Rechner anonym verwenden.',
+  },
+];
+
+const keywords = [
+  'Try Online Calculator Datenschutzrichtlinie',
+  'Rechner Datenschutz',
+  'Datenschutz',
+  'keine Datenspeicherung',
+];
+---
+
+<Layout
+  title="Datenschutzrichtlinie"
+  description="Wie Try Online Calculator mit Ihren Daten umgeht. Kurzfassung: Ihre Rechnereingaben bleiben auf Ihrem Gerät."
+  path="/de/datenschutz"
+  locale="de"
+  alternates={staticPageHreflang('privacy')}
+  keywords={keywords}
+  jsonLd={faqPageSchema(faqs)}
+>
+  <div class="container-page prose">
+    <h1>Datenschutzrichtlinie</h1>
+    <p class="prose-meta">Zuletzt aktualisiert: {new Date().toLocaleDateString('de-DE', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+
+    <h2>Ihre Berechnungen bleiben auf Ihrem Gerät</h2>
+    <p>Alle Rechner laufen lokal in Ihrem Browser. Die von Ihnen eingegebenen Zahlen werden auf Ihrem Gerät verarbeitet und niemals an unsere Server gesendet oder dort gespeichert.</p>
+
+    <h2>Analysen</h2>
+    <p>Wir verwenden möglicherweise datenschutzfreundliche, aggregierte Analysen, um zu verstehen, welche Rechner beliebt sind und wie die Seite funktioniert. Diese Daten sind anonymisiert und werden niemals mit den Werten verknüpft, die Sie in einen Rechner eingeben.</p>
+
+    <h2>Cookies &amp; lokaler Speicher</h2>
+    <p>Wir verwenden lokalen Speicher nur, um Einstellungen wie Ihre Einheitenwahl zu speichern. Wir verkaufen Ihre Daten nicht und nutzen sie nicht für Werbeprofile.</p>
+
+    <h2>Links zu Drittanbietern</h2>
+    <p>Einige Seiten verlinken möglicherweise auf externe Websites. Wir sind nicht für die Datenschutzpraktiken dieser Seiten verantwortlich.</p>
+
+    <h2>Kontakt</h2>
+    <p>Fragen zum Datenschutz? Erreichen Sie uns über die <a class="link" href="/de/kontakt">Kontaktseite</a>.</p>
+
+    <FaqAccordion items={faqs} title="Datenschutz-FAQ" />
+  </div>
+</Layout>

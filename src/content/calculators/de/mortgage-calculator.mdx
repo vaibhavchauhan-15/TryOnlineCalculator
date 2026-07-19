@@ -1,0 +1,34 @@
+---
+slug: "mortgage-calculator"
+category: "finance"
+title: "Hypothekenrechner"
+description: "Berechnen Sie Ihre monatliche Hypothekenrate inklusive Kapital, Zinsen, Grundsteuer und Gebäudeversicherung."
+keywords: ["Hypothekenrechner","Immobilienkredit","monatliche Hypothekenrate","PITI"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 2
+source: "en"
+translatedFromVersion: 1
+model: "manual-de-v2"
+searchIntent: "Berechnen Sie die monatlichen Gesamtkosten einer Hypothek und die Zinsen über die gesamte Laufzeit."
+readingLevel: "general"
+market: "DE"
+audience: "Hauskäufer, die verschiedene Kreditszenarien vergleichen"
+labels: {"monthlyPayment":"Monatliche Rate","principalInterest":"Kapital & Zinsen","taxInsurance":"Steuer + Versicherung","totalInterest":"Gezahlte Gesamtzinsen","totalPayments":"Summe aller Zahlungen","loanAmount":"Kreditbetrag","downPayment":"Anzahlung","payments":"Tilgungsdauer","propertyTax":"Grundsteuer","homeInsurance":"Gebäudeversicherung","balance":"Saldo","totalPaid":"Gesamtkosten","field.homePrice":"Kaufpreis","field.downPayment":"Anzahlung","field.rate":"Zinssatz","field.term":"Laufzeit","field.tax":"Grundsteuer (jährlich)","field.insurance":"Gebäudeversicherung (jährlich)"}
+hints: {"mortgage.pitiHint":"Kapital, Zinsen, Steuer & Versicherung","mortgage.downPaymentPct":"{pct}% des Kaufpreises"}
+chartTitles: {"mortgage.pieTitle":"Aufschlüsselung der Monatsrate","mortgage.balanceTitle":"Saldo & Zinsen über die Laufzeit"}
+intro: "Geben Sie Ihren Kaufpreis, die Anzahlung, den Zinssatz und die Laufzeit ein, um die vollständige monatliche Rate und die gesamten Zinsen über die Kreditlaufzeit zu sehen."
+formulaIntro: "Eine Hypothek verwendet die Standard-Annuitätendarlehen-Formel."
+formulaItems: [{"name":"Monatliche Rate","expr":"M = P · r(1 + r)^n / ((1 + r)^n − 1)","desc":"P = Kreditbetrag, r = monatlicher Zinssatz, n = Anzahl der Monate."}]
+howto: ["Geben Sie den Kaufpreis und Ihre geplante Anzahlung ein.","Fügen Sie den jährlichen Zinssatz und die Kreditlaufzeit in Jahren hinzu.","Optional können Sie die jährliche Grundsteuer und Versicherung für eine vollständige PITI-Zahlung angeben.","Lesen Sie Ihre geschätzte monatliche Rate und die Gesamtzinsen unten ab."]
+faq: [{"q":"Was ist in der monatlichen Rate enthalten?","a":"Die angezeigte Zahl ist eine vollständige PITI-Zahlung — Kapital und Zinsen des Kredits plus ein Zwölftel Ihrer jährlichen Grundsteuer und Gebäudeversicherung."},{"q":"Wie hoch sollte meine Anzahlung sein?","a":"Eine höhere Anzahlung senkt den Kreditbetrag und die Zinsen, die Sie zahlen. Zwanzig Prozent sind ein übliches Ziel, da damit in der Regel eine private Hypothekenversicherung vermieden wird, aber jeder Betrag reduziert Ihre monatlichen Kosten."}]
+related: ["loan-calculator","interest-calculator","compound-interest-calculator"]
+---
+
+Eine Hypothekenrate besteht aus mehr als Kapital und Zinsen: Grundsteuer und
+Gebäudeversicherung werden in der Regel ebenfalls einbezogen, weshalb der
+'PITI"-Gesamtbetrag, den dieser Rechner anzeigt, näher an dem liegt, was Sie
+tatsächlich jeden Monat zahlen. Passen Sie den Kaufpreis, die Anzahlung, den
+Zinssatz und die Laufzeit an, um verschiedene Szenarien zu vergleichen, und
+beobachten Sie, wie ein niedrigerer Zinssatz oder eine höhere Anzahlung die
+Gesamtzinsen über die Kreditlaufzeit reduziert.

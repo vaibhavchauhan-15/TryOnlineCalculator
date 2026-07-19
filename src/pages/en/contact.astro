@@ -1,0 +1,59 @@
+﻿---
+import Layout from '../../layouts/Layout.astro';
+import FaqAccordion from '../../components/FaqAccordion.astro';
+import { faqPageSchema } from '../../lib/seo';
+import { staticPageHreflang } from '../../lib/i18n/seo-head';
+import type { FaqItem } from '../../lib/types';
+
+const faqs: FaqItem[] = [
+  {
+    q: 'How do I contact Try Online Calculator?',
+    a: 'Email us at <a href="mailto:hello@tryonlinecalculator.com">hello@tryonlinecalculator.com</a>. We read every message about bugs, calculator requests and feedback.',
+  },
+  {
+    q: 'How do I request a new calculator?',
+    a: 'Send us the calculator you need with a quick note on how you would use it. Popular requests move to the top of our build list.',
+  },
+  {
+    q: 'How do I report a wrong result?',
+    a: 'Include the calculator name and the exact values you entered so we can reproduce the issue quickly and fix it.',
+  },
+  {
+    q: 'How soon will I get a reply?',
+    a: 'We aim to respond to feedback and bug reports as quickly as we can. Clear details help us get back to you faster.',
+  },
+];
+
+const keywords = [
+  'contact try online calculator',
+  'report calculator bug',
+  'request a calculator',
+  'calculator feedback',
+];
+---
+
+<Layout
+  title="Contact"
+  description="Get in touch with Try Online Calculator ΓÇö report a bug or request a new calculator."
+  path="/en/contact"
+  locale="en"
+  alternates={staticPageHreflang('contact')}
+  keywords={keywords}
+  jsonLd={faqPageSchema(faqs)}
+>
+  <div class="container-page prose">
+    <h1>Contact us</h1>
+    <p>We would love your feedback. Whether you have found a bug, want to suggest a new calculator, or spotted a formula that could be clearer, let us know.</p>
+
+    <h2>Email</h2>
+    <p><a class="link" href="mailto:hello@tryonlinecalculator.com">hello@tryonlinecalculator.com</a></p>
+
+    <h2>Requesting a calculator</h2>
+    <p>Tell us the calculator you need and a quick note on how you would use it. Popular requests move to the top of our build list.</p>
+
+    <h2>Reporting an issue</h2>
+    <p>If a result looks off, include the calculator name and the exact values you entered so we can reproduce it quickly.</p>
+
+    <FaqAccordion items={faqs} title="Contact FAQ" />
+  </div>
+</Layout>

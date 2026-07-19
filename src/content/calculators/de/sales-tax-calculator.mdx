@@ -1,0 +1,37 @@
+---
+slug: "sales-tax-calculator"
+category: "shopping"
+title: "Mehrwertsteuer-Rechner"
+description: "Berechnen Sie die Mehrwertsteuer (MwSt) auf einen Nettobetrag oder ermitteln Sie den Nettobetrag aus einem Bruttobetrag."
+keywords: ["Mehrwertsteuer-Rechner", "MwSt berechnen", "Umsatzsteuer Rechner", "Netto Brutto Rechner", "MwSt ausrechnen", "19 Prozent Mehrwertsteuer"]
+calculatorVersion: 1
+seoVersion: 2
+translationVersion: 2
+source: "en"
+translatedFromVersion: 1
+model: "manual-de-v2"
+searchIntent: "Mehrwertsteuer auf einen Preis aufschlagen oder den Nettoanteil aus einem Bruttobetrag herausrechnen."
+readingLevel: "general"
+market: "DE"
+audience: "Selbstständige, Unternehmer und Verbraucher, die MwSt berechnen müssen"
+labels: {"field.mode":"Modus","field.price":"Betrag","field.rate":"MwSt-Satz","preTaxPrice":"Nettobetrag","salesTax":"Mehrwertsteuer","taxAmount":"MwSt-Betrag","totalWithTax":"Bruttobetrag"}
+enums: {"mode.gross":"Brutto → Netto","mode.pretax":"Netto → Brutto"}
+chartTitles: {"salesTax.pieTitle":"Netto- und MwSt-Anteil"}
+intro: "Geben Sie einen Betrag und den MwSt-Satz ein, um sofort den Steuerbetrag und den Endbetrag zu sehen. In Deutschland gelten 19 % (Regelsteuersatz) und 7 % (ermäßigter Satz)."
+formulaIntro: "Die Mehrwertsteuer wird auf den Nettobetrag aufgeschlagen oder aus dem Bruttobetrag herausgerechnet."
+formulaItems: [{"name":"Netto → Brutto","expr":"Brutto = Netto × (1 + MwSt-Satz / 100)"},{"name":"Brutto → Netto","expr":"Netto = Brutto / (1 + MwSt-Satz / 100)"},{"name":"MwSt-Betrag","expr":"MwSt = Brutto − Netto"}]
+howto: ["Wählen Sie den Modus: Netto → Brutto oder Brutto → Netto.","Geben Sie den Betrag ein.","Der MwSt-Satz ist auf 19 % voreingestellt (Regelsteuersatz in Deutschland). Passen Sie ihn bei Bedarf an (z. B. 7 % für Lebensmittel).","Lesen Sie den MwSt-Betrag und den Endbetrag ab."]
+faq: [{"q":"Wie hoch ist die Mehrwertsteuer in Deutschland?","a":"Der Regelsteuersatz beträgt 19 %. Für bestimmte Waren und Dienstleistungen wie Lebensmittel, Bücher und öffentlichen Nahverkehr gilt ein ermäßigter Satz von 7 %."},{"q":"Wie rechne ich die MwSt aus einem Bruttobetrag heraus?","a":"Wechseln Sie in den Modus 'Brutto → Netto'. Der Rechner teilt durch (1 + Steuersatz), um den ursprünglichen Nettobetrag zu ermitteln."},{"q":"Was ist der Unterschied zwischen Umsatzsteuer und Mehrwertsteuer?","a":"In Deutschland sind die Begriffe synonym. 'Umsatzsteuer' ist der gesetzliche Fachbegriff, 'Mehrwertsteuer' der im Alltag gebräuchlichere Begriff."},{"q":"Muss ich als Kleinunternehmer MwSt berechnen?","a":"Kleinunternehmer nach § 19 UStG sind von der Umsatzsteuerpflicht befreit, sofern ihr Umsatz bestimmte Grenzen nicht überschreitet. Sie dürfen dann keine MwSt auf Rechnungen ausweisen."}]
+related: ["discount-calculator","tip-calculator","percentage-calculator"]
+---
+
+Die Mehrwertsteuer (MwSt) ist in Deutschland allgegenwärtig: Sie fällt auf
+fast alle Waren und Dienstleistungen an. Der Regelsteuersatz beträgt 19 %,
+der ermäßigte Satz 7 % (unter anderem für Lebensmittel, Bücher und
+Zeitschriften). Dieser Rechner hilft Ihnen, schnell den MwSt-Betrag auf
+einen Nettobetrag aufzuschlagen oder aus einem Bruttobetrag den Nettoanteil
+herauszurechnen.
+
+Ob Sie eine Rechnung prüfen, Preise kalkulieren oder eine Steuererklärung
+vorbereiten — geben Sie einfach den Betrag und den Steuersatz ein und
+erhalten Sie das Ergebnis sofort.

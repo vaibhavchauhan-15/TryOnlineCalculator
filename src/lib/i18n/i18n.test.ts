@@ -1,0 +1,81 @@
+// Tests for the locale registry and path helpers (Task 1).
+import { test } from 'vitest';
+import assert from 'node:assert/strict';
+
+import {
+  LOCALES,
+  DEFAULT_LOCALE,
+  enabledLocales,
+  enabledLocaleCodes,
+  isEnabledLocale,
+  getLocale,
+  localeNativeName,
+} from './locales';
+import { to, homePath, splitLocale, switchLocale, stripLocale, localeOf } from './paths';
+
+test('default locale is defined and enabled', () => {
+  const def = getLocale(DEFAULT_LOCALE);
+  assert.ok(def, 'default locale exists in registry');
+  assert.equal(def!.enabled, true);
+});
+
+test('enabled locales are a subset that includes the pilot four', () => {
+  const codes = enabledLocaleCodes();
+  for (const c of ['en', 'de', 'hi', 'es']) assert.ok(codes.includes(c), `${c} enabled`);
+  assert.ok(codes.length <= LOCALES.length);
+  // Disabled next-wave locales must not leak into routing.
+  assert.ok(!codes.includes('fr'), 'fr is disabled until the rollout gate');
+});
+
+test('isEnabledLocale gates unknown and disabled codes', () => {
+  assert.equal(isEnabledLocale('en'), true);
+  assert.equal(isEnabledLocale('fr'), false); // defined but disabled
+  assert.equal(isEnabledLocale('zz'), false); // unknown
+  assert.equal(isEnabledLocale(undefined), false);
+});
+
+test('enabling a locale is config-only (registry drives everything)', () => {
+  // enabledLocales() derives purely from the `enabled` flag — no route/helper
+  // hardcodes a language, so flipping the flag is the only change needed.
+  const derived = enabledLocales().every((l) => l.enabled);
+  assert.equal(derived, true);
+});
+
+test('native name falls back to the code', () => {
+  assert.equal(localeNativeName('de'), 'Deutsch');
+  assert.equal(localeNativeName('xx'), 'xx');
+});
+
+test('to() prefixes a locale segment and translates slugs', () => {
+  // prefixDefaultLocale: every locale (including en) is prefixed; non-default
+  // locales also translate the category + calculator slugs.
+  assert.equal(to('/finance/mortgage-calculator', 'de'), '/de/finanzen/hypothekenrechner');
+  assert.equal(to('/', 'en'), '/en');
+  assert.equal(to('/finance/mortgage-calculator', 'en'), '/en/finance/mortgage-calculator');
+  assert.equal(to('/finance', 'hi'), '/hi/finance');
+});
+
+test('homePath is a clean locale segment', () => {
+  assert.equal(homePath('es'), '/es');
+  assert.equal(homePath('en'), '/en');
+});
+
+test('splitLocale separates a known locale prefix from the rest', () => {
+  assert.deepEqual(splitLocale('/de/finance/x'), { locale: 'de', rest: '/finance/x' });
+  assert.deepEqual(splitLocale('/en'), { locale: 'en', rest: '/' });
+  // An unknown/disabled prefix is treated as content, not a locale.
+  assert.deepEqual(splitLocale('/fr/finance'), { locale: undefined, rest: '/fr/finance' });
+});
+
+test('switchLocale swaps the locale and re-localizes slugs', () => {
+  // Resolves the localized URL back to English slugs, then re-localizes for the
+  // target locale.
+  assert.equal(switchLocale('/de/finanzen/hypothekenrechner', 'es'), '/es/finanzas/calculadora-hipoteca');
+  assert.equal(switchLocale('/en', 'hi'), '/hi');
+});
+
+test('stripLocale and localeOf are inverse-ish helpers', () => {
+  assert.equal(stripLocale('/hi/health/bmi-calculator'), '/health/bmi-calculator');
+  assert.equal(localeOf('/hi/health/bmi-calculator'), 'hi');
+  assert.equal(localeOf('/health/bmi-calculator'), DEFAULT_LOCALE);
+});

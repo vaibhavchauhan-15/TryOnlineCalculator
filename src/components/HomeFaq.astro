@@ -1,17 +1,26 @@
 ---
-import { homeFaqSections } from '../lib/faq';
+import { getHomeFaqSections } from '../lib/faq';
+import { uiPack } from '../lib/i18n/ui-pack';
+
+interface Props {
+  locale?: string;
+}
+
+const { locale = 'en' } = Astro.props;
+const sections = getHomeFaqSections(locale);
+const home = uiPack(locale).home ?? {};
 ---
 
 <section class="container-page section faq-section">
   <div class="section-head">
     <div>
-      <span class="eyebrow">Answers</span>
-      <h2 class="section-title">Frequently asked questions</h2>
+      <span class="eyebrow">{home.faqEyebrow ?? 'Answers'}</span>
+      <h2 class="section-title">{home.faqTitle ?? 'Frequently asked questions'}</h2>
     </div>
   </div>
 
   <div class="faq-groups">
-    {homeFaqSections.map((group) => (
+    {sections.map((group) => (
       <div class="faq-group">
         <h3 class="faq-group-title">{group.title}</h3>
         <div class="faq">

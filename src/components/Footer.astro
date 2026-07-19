@@ -1,6 +1,21 @@
 ---
 import { categories } from '../lib/categories';
 import { calculatorsByCategory } from '../lib/calculators';
+import { categoryName, uiPack } from '../lib/i18n/ui-pack';
+import { splitLocale, to } from '../lib/i18n/paths';
+import { DEFAULT_LOCALE } from '../lib/i18n/locales';
+
+interface Props {
+  locale?: string;
+}
+
+const { locale: localeProp } = Astro.props;
+const { locale: urlLocale } = splitLocale(Astro.url.pathname);
+const locale = localeProp ?? urlLocale ?? DEFAULT_LOCALE;
+const chrome = uiPack(locale).chrome ?? {};
+const footer = uiPack(locale).footer ?? {};
+
+const link = (path: string) => to(path, locale);
 
 const year = new Date().getFullYear();
 const cols = categories.slice(0, 4).map((c) => ({
@@ -13,36 +28,36 @@ const cols = categories.slice(0, 4).map((c) => ({
   <div class="container-page footer-inner">
     <div class="footer-brand">
       <span class="footer-logo">Try Online Calculator</span>
-      <p class="footer-tagline">Fast, free, privacy-friendly calculators for finance, health, math and everyday life. No sign-up, no tracking of your inputs.</p>
+      <p class="footer-tagline">{footer.tagline ?? 'Fast, free, privacy-friendly calculators for finance, health, math and everyday life. No sign-up, no tracking of your inputs.'}</p>
     </div>
 
     {cols.map((col) => (
-      <nav class="footer-col" aria-label={col.cat.name}>
-        <span class="footer-heading">{col.cat.name}</span>
+      <nav class="footer-col" aria-label={categoryName(locale, col.cat.id)}>
+        <span class="footer-heading">{categoryName(locale, col.cat.id)}</span>
         <ul>
           {col.items.map((calc) => (
-            <li><a href={`/${calc.category}/${calc.slug}`}>{calc.title.replace(' Calculator', '')}</a></li>
+            <li><a href={link(`/${calc.category}/${calc.slug}`)}>{calc.title.replace(' Calculator', '').replace('-Rechner', '').replace('rechner', '')}</a></li>
           ))}
-          <li><a href={col.cat.path} class="footer-all">All {col.cat.name.toLowerCase()} →</a></li>
+          <li><a href={link(col.cat.path)} class="footer-all">{footer.allPrefix ?? 'All'} {categoryName(locale, col.cat.id).toLowerCase()} →</a></li>
         </ul>
       </nav>
     ))}
 
-    <nav class="footer-col" aria-label="Company">
-      <span class="footer-heading">Site</span>
+    <nav class="footer-col" aria-label={footer.siteHeading ?? 'Site'}>
+      <span class="footer-heading">{footer.siteHeading ?? 'Site'}</span>
       <ul>
-        <li><a href="/unit-converter">Unit Converter</a></li>
-        <li><a href="/about">About</a></li>
-        <li><a href="/contact">Contact</a></li>
-        <li><a href="/privacy">Privacy</a></li>
-        <li><a href="/terms">Terms</a></li>
+        <li><a href={link('/unit-converter')}>{chrome.converters ?? 'Unit Converter'}</a></li>
+        <li><a href={link('/about')}>{footer.about ?? 'About'}</a></li>
+        <li><a href={link('/contact')}>{footer.contact ?? 'Contact'}</a></li>
+        <li><a href={link('/privacy')}>{footer.privacy ?? 'Privacy'}</a></li>
+        <li><a href={link('/terms')}>{footer.terms ?? 'Terms'}</a></li>
       </ul>
     </nav>
   </div>
 
   <div class="container-page footer-bottom">
     <span>© {year} Try Online Calculator</span>
-    <span class="footer-note">Estimates only — not financial, medical or tax advice.</span>
+    <span class="footer-note">{footer.disclaimer ?? 'Estimates only — not financial, medical or tax advice.'}</span>
   </div>
 </footer>
 

@@ -1,0 +1,461 @@
+---
+// Localized home page — all locales including English live here now.
+//
+// Every locale renders the full, rich homepage with the interactive scientific
+// calculator hero, category grid, popular section, featured sections, trust band
+// and FAQ. Translated strings come from the locale's ui-pack; English text is
+// the fallback when a translation is missing.
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Search from '../../components/Search.astro';
+import LinkCard from '../../components/LinkCard.astro';
+import CategoryCard from '../../components/CategoryCard.astro';
+import CalculatorCard from '../../components/CalculatorCard.astro';
+import KeypadCalculator from '../../components/KeypadCalculator.astro';
+import HomeFaq from '../../components/HomeFaq.astro';
+import { enabledLocaleCodes, DEFAULT_LOCALE, isIndexedLocale } from '../../lib/i18n/locales';
+import { uiPack, categoryName } from '../../lib/i18n/ui-pack';
+import { to } from '../../lib/i18n/paths';
+import { hreflangAlternates } from '../../lib/i18n/seo-head';
+import { categories, getCategory } from '../../lib/categories';
+import { allCalculators, popularCalculators, calculatorsByCategory, getCalculator } from '../../lib/calculators';
+import { calculatorIcon } from '../../lib/icons';
+import { websiteSchema, organizationSchema, itemListSchema, faqPageSchema, calculatorSchema } from '../../lib/seo';
+import { homeFaqItems, getHomeFaqItems } from '../../lib/faq';
+
+export function getStaticPaths() {
+  return enabledLocaleCodes().map((locale) => ({ params: { locale } }));
+}
+
+const { locale } = Astro.params as { locale: string };
+const isDefault = locale === DEFAULT_LOCALE;
+
+const chrome = uiPack(locale).chrome ?? {};
+const home = uiPack(locale).home ?? {};
+
+// Localized calculator titles from this locale's MDX content.
+const entries = await getCollection('calculators', (e) => e.id.startsWith(`${locale}/`));
+const titleBySlug = new Map(entries.map((e) => [e.id.slice(locale.length + 1), e.data.title]));
+const locTitle = (slug: string, fallback: string) => titleBySlug.get(slug) ?? fallback;
+
+const popular = popularCalculators(8);
+const openLabel = home.open ?? 'Open';
+const total = allCalculators.length;
+
+// Hero calculator + pills for all locales
+const heroCalc = getCalculator('scientific-calculator')!;
+const heroPills = popularCalculators(10);
+const featured = ['finance', 'health', 'math'] as const;
+
+const popularListSchema = itemListSchema(
+  popular.map((c) => ({ name: c.title, path: to(`/${c.category}/${c.slug}`, locale) })),
+);
+
+const homeKeywords = isDefault ? [
+  'calculator', 'online calculator', 'calculator online', 'free calculator',
+  'calculator app', 'scientific calculator', 'loan calculator', 'emi calculator',
+  'mortgage calculator', 'bmi calculator', 'age calculator', 'percentage calculator',
+  'investment calculator', 'sip calculator', 'compound interest calculator',
+  'interest calculator', 'gpa calculator', 'grade calculator', 'calorie calculator',
+  'salary calculator', 'date calculator', 'math solver', 'unit converter',
+] : locale === 'de' ? [
+  'Rechner', 'Online-Rechner', 'kostenloser Rechner', 'Taschenrechner online',
+  'wissenschaftlicher Taschenrechner', 'Kreditrechner', 'Hypothekenrechner',
+  'BMI-Rechner', 'Prozentrechner', 'Zinsrechner', 'Zinseszinsrechner',
+  'Kalorienrechner', 'Gehaltsrechner', 'Altersrechner', 'GPA-Rechner',
+  'Notenrechner', 'Datumsrechner', 'Einheitenumrechner', 'Anlagerechner',
+] : [];
+---
+
+<Layout
+  title={isDefault
+    ? 'Calculator — Free Online Calculator for Finance, Health & Math'
+    : (home.metaTitle ?? 'Free Online Calculators')}
+  description={isDefault
+    ? `Free online calculator hub with ${total}+ fast, accurate tools: mortgage, loan/EMI, SIP, BMI, calorie, percentage, scientific, GPA, age and compound interest calculators. No sign-up required.`
+    : (home.metaDescription ?? 'Free, fast, privacy-friendly online calculators.')}
+  path={to('/', locale)}
+  locale={locale}
+  alternates={hreflangAlternates('/')}
+  noindex={!isIndexedLocale(locale)}
+  keywords={homeKeywords}
+  jsonLd={isDefault ? [websiteSchema(), organizationSchema(), calculatorSchema(heroCalc), popularListSchema, faqPageSchema(homeFaqItems)] : [popularListSchema, ...(getHomeFaqItems(locale).length > 0 ? [faqPageSchema(getHomeFaqItems(locale))] : [])]}
+>
+    <section class="hero">
+      <div class="hero-glow" aria-hidden="true"></div>
+      <div class="container-page hero-inner">
+        <div class="hero-copy">
+          <span class="hero-badge reveal" style="--i: 0">
+            <span class="hero-dot" aria-hidden="true"></span>
+            {home.badge ?? `${total}+ calculators · always free`}
+          </span>
+          <h1 class="hero-title reveal" style="--i: 1">{home.heroTitle ?? 'Every calculation,'}<br /><span class="mesh-text">{home.heroHighlight ?? 'in one place.'}</span></h1>
+          <p class="hero-lead reveal" style="--i: 2">
+            {home.heroLead ?? `Start crunching numbers right away with the free scientific calculator, then explore ${total}+ fast, accurate tools for finance, health, education and math. No sign-up, no clutter — just answers.`}
+          </p>
+        </div>
+
+        <div class="hero-calc reveal" style="--i: 3">
+          <div class="hero-calc-head">
+            <h2 class="hero-calc-title">{home.scientificCalc ?? 'Scientific calculator'}</h2>
+            <a href={to('/math/scientific-calculator', locale)} class="hero-calc-link">
+              {home.fullPage ?? 'Full page'}
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+            </a>
+          </div>
+          <KeypadCalculator calculator={heroCalc} variant="scientific" />
+        </div>
+
+        <div class="hero-tools">
+          <div class="hero-search reveal" style="--i: 4">
+            <Search variant="hero" placeholder={home.searchPlaceholder ?? 'Search mortgage, BMI, percentage…'} />
+          </div>
+          <div class="hero-pills reveal" style="--i: 5">
+            <span class="hero-pills-label">{home.popularLabel ?? 'Popular'}</span>
+            {heroPills.slice(0, 10).map((c) => (
+              <a href={to(`/${c.category}/${c.slug}`, locale)} class="hero-pill">{locTitle(c.slug, c.title).replace(' Calculator', '').replace(' Rechner', '')}</a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="container-page section">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">{home.browse ?? 'Browse'}</span>
+          <h2 class="section-title">{home.exploreByCategory ?? 'Explore by category'}</h2>
+        </div>
+      </div>
+      <div class="grid-categories">
+        {categories.map((c) => (
+          <CategoryCard category={{...c, name: categoryName(locale, c.id)}} count={calculatorsByCategory(c.id).length} locale={locale} />
+        ))}
+      </div>
+    </section>
+
+    <section class="container-page section">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">{home.mostUsed ?? 'Most used'}</span>
+          <h2 class="section-title">{home.popular ?? 'Popular calculators'}</h2>
+        </div>
+      </div>
+      <div class="grid-cards">
+        {popular.map((c) => <CalculatorCard calculator={{...c, title: locTitle(c.slug, c.title)}} locale={locale} />)}
+      </div>
+    </section>
+
+    {featured.map((id) => {
+      const cat = categories.find((c) => c.id === id)!;
+      const calcs = calculatorsByCategory(id).slice(0, 6);
+      return (
+        <section class="container-page section">
+          <div class="section-head">
+            <div>
+              <span class="eyebrow">{categoryName(locale, cat.id)}</span>
+              <h2 class="section-title">{cat.tagline}</h2>
+            </div>
+            <a href={to(cat.path, locale)} class="btn btn-secondary btn-sm">{home.viewAll ?? 'View all'}</a>
+          </div>
+          <div class="grid-cards">
+            {calcs.map((c) => <CalculatorCard calculator={{...c, title: locTitle(c.slug, c.title)}} locale={locale} />)}
+          </div>
+        </section>
+      );
+    })}
+
+    <section class="container-page section">
+      <div class="trust card-lg">
+        <div class="trust-item">
+          <h3>{home.trustSpeed ?? 'Built for speed'}</h3>
+          <p>{home.trustSpeedDesc ?? 'Static pages and instant, in-browser math. Results appear the moment you type.'}</p>
+        </div>
+        <div class="trust-item">
+          <h3>{home.trustPrivacy ?? 'Private by default'}</h3>
+          <p>{home.trustPrivacyDesc ?? 'Your numbers never leave your device. There is no account and nothing to sign up for.'}</p>
+        </div>
+        <div class="trust-item">
+          <h3>{home.trustFormulas ?? 'Verified formulas'}</h3>
+          <p>{home.trustFormulasDesc ?? 'Each tool shows the formula it uses, worked examples and clear explanations.'}</p>
+        </div>
+      </div>
+    </section>
+
+    {isDefault && (
+    <section class="container-page section">
+      <div class="seo-prose">
+        <h2>The free online calculator for everyday math and big decisions</h2>
+        <p>
+          Try Online Calculator is a free online calculator hub that brings every calculation you
+          need into one fast, clutter-free place. Instead of hunting for a different website every
+          time, you get {total}+ purpose-built tools — from a simple online calculator for quick
+          sums to a full <a href={to('/math/scientific-calculator', locale)}>scientific calculator</a> for
+          trigonometry, logarithms and exponents. It behaves like a proper calculator app right in
+          your tab: no install, no download, and no account. Every calculator runs instantly in your
+          browser, works on phones and desktops, and never asks you to share your data.
+        </p>
+
+        <h3>Finance, loan and mortgage calculators</h3>
+        <p>
+          Planning money decisions is easier with the right numbers in front of you. Use the
+          <a href={to('/finance/mortgage-calculator', locale)}>mortgage calculator</a> to estimate a monthly home
+          payment with principal, interest, tax and insurance, or check what you can afford before
+          you shop. The <a href={to('/finance/loan-calculator', locale)}>loan calculator</a> doubles as an EMI
+          calculator, working out the equated monthly instalment on any personal loan, while the
+          <a href={to('/finance/auto-loan-calculator', locale)}>auto loan calculator</a> and
+          <a href={to('/finance/car-payment-calculator', locale)}>car payment calculator</a> show the true cost of
+          financing a vehicle, interest included. Looking further ahead? The
+          <a href={to('/finance/investment-calculator', locale)}>investment calculator</a> and
+          <a href={to('/finance/compound-interest-calculator', locale)}>compound interest calculator</a> work as an
+          SIP calculator too, projecting how regular monthly deposits and compounding grow your
+          savings over time, while the
+          <a href={to('/finance/interest-calculator', locale)}>interest calculator</a> shows exactly how much
+          interest you pay or earn on any balance.
+        </p>
+
+        <h3>Health, BMI and calorie calculators</h3>
+        <p>
+          Take charge of your wellbeing with trusted health tools. The free
+          <a href={to('/health/bmi-calculator', locale)}>BMI calculator</a> tells you where your body mass index
+          sits, and the <a href={to('/health/calorie-calculator', locale)}>calorie calculator</a> and
+          <a href={to('/health/tdee-calculator', locale)}>TDEE calculator</a> estimate the daily energy you burn so
+          you can plan weight loss, maintenance or gain. Pair them with the
+          <a href={to('/health/bmr-calculator', locale)}>BMR</a> and <a href={to('/health/macro-calculator', locale)}>macro</a>
+          calculators to fine-tune nutrition. Every formula follows the same equations used by
+          clinicians and coaches, and each result page explains what the numbers mean.
+        </p>
+
+        <h3>Education, GPA and grade calculators</h3>
+        <p>
+          Students rely on our <a href={to('/education/gpa-calculator', locale)}>GPA calculator</a> to track college
+          performance, the <a href={to('/education/grade-calculator', locale)}>grade calculator</a> to score a test
+          or assignment, and the <a href={to('/education/final-grade-calculator', locale)}>final grade calculator</a>
+          to find out exactly what they need on the final exam to hit a target. It removes the
+          last-minute guesswork before results day.
+        </p>
+
+        <h3>Math, dates, salary and more</h3>
+        <p>
+          For homework and quick checks, use our tools as a lightweight math solver: the
+          <a href={to('/math/percentage-calculator', locale)}>percentage calculator</a>,
+          <a href={to('/math/fraction-calculator', locale)}>fraction calculator</a> and
+          <a href={to('/math/average-calculator', locale)}>average calculator</a> break every step down for you.
+          Need a date answer? The
+          <a href={to('/date-time/age-calculator', locale)}>age calculator</a> gives your exact age by date of
+          birth, and the <a href={to('/date-time/date-difference-calculator', locale)}>date calculator</a> and
+          working-days tools measure any span between two dates. Working
+          professionals use the <a href={to('/salary/salary-calculator', locale)}>salary calculator</a> and
+          <a href={to('/salary/paycheck-calculator', locale)}>paycheck calculator</a> to convert between hourly,
+          weekly, monthly and annual pay and estimate take-home earnings, while shopping tools handle
+          discounts, tips and sales tax. Need to switch units? The
+          <a href={to('/unit-converter', locale)}>unit converter</a> handles length, weight, temperature, speed,
+          volume, area and currency conversions in one place.
+        </p>
+
+        <p>
+          Whether you need a scientific calculator, a mortgage calculator, a percentage calculator or
+          a simple free calculator for everyday sums, everything here is fast, accurate and free to
+          use. Bookmark Try Online Calculator and keep the calculator you need one click away.
+        </p>
+      </div>
+    </section>
+    )}
+
+    {!isDefault && home.seoTitle && (
+    <section class="container-page section">
+      <div class="seo-prose">
+        <h2>{home.seoTitle}</h2>
+        <p set:html={home.seoIntro} />
+
+        <h3>{home.seoFinanceTitle}</h3>
+        <p set:html={home.seoFinance} />
+
+        <h3>{home.seoHealthTitle}</h3>
+        <p set:html={home.seoHealth} />
+
+        <h3>{home.seoEducationTitle}</h3>
+        <p set:html={home.seoEducation} />
+
+        <h3>{home.seoMathTitle}</h3>
+        <p set:html={home.seoMath} />
+
+        <p>{home.seoClosing}</p>
+      </div>
+    </section>
+    )}
+
+    <HomeFaq locale={locale} />
+</Layout>
+
+<style>
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    padding: clamp(1.75rem, 5vw, 3.25rem) 0 clamp(2rem, 5vw, 3.5rem);
+    border-bottom: 1px solid var(--color-hairline);
+    background-color: var(--color-canvas-soft);
+  }
+  @media (min-width: 900px) {
+    .hero { min-height: calc(100svh - 64px); }
+  }
+  .hero-glow {
+    position: absolute;
+    inset: -35% -20% auto -20%;
+    height: 160%;
+    z-index: -2;
+    pointer-events: none;
+    will-change: transform, opacity;
+    transform: translateZ(0);
+    background-image:
+      radial-gradient(32% 55% at 16% 4%, color-mix(in oklab, var(--color-grad-develop-start) 55%, transparent), transparent 72%),
+      radial-gradient(28% 50% at 36% 0%, color-mix(in oklab, var(--color-cyan) 48%, transparent), transparent 72%),
+      radial-gradient(32% 55% at 54% 6%, color-mix(in oklab, var(--color-grad-preview-start) 46%, transparent), transparent 72%),
+      radial-gradient(30% 52% at 72% 0%, color-mix(in oklab, var(--color-grad-preview-end) 48%, transparent), transparent 72%),
+      radial-gradient(34% 55% at 90% 6%, color-mix(in oklab, var(--color-grad-ship-end) 46%, transparent), transparent 72%);
+    -webkit-mask-image: radial-gradient(120% 95% at 50% -12%, #000 22%, transparent 80%);
+    mask-image: radial-gradient(120% 95% at 50% -12%, #000 22%, transparent 80%);
+    opacity: 0.6;
+    animation: hero-drift 22s ease-in-out infinite alternate;
+  }
+  :global(html[data-theme='dark']) .hero-glow { opacity: 0.5; }
+  @keyframes hero-drift {
+    0%   { transform: translate3d(-3%, -1%, 0) scale(1);     opacity: var(--glow-lo, 0.5); }
+    50%  { transform: translate3d(2%, 1.5%, 0) scale(1.08);  opacity: var(--glow-hi, 0.68); }
+    100% { transform: translate3d(4%, -1%, 0) scale(1.04);   opacity: var(--glow-lo, 0.5); }
+  }
+  :global(html[data-theme='dark']) .hero { --glow-lo: 0.42; --glow-hi: 0.58; }
+  .hero-inner {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 1fr;
+    grid-template-areas: 'copy' 'calc' 'tools';
+    gap: clamp(1.5rem, 5vw, 2.5rem);
+    align-items: center;
+  }
+  .hero-copy { grid-area: copy; display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .hero-calc { grid-area: calc; width: 100%; display: flex; flex-direction: column; gap: 0.625rem; }
+  .hero-tools { grid-area: tools; display: flex; flex-direction: column; align-items: center; }
+  @media (min-width: 900px) {
+    .hero-inner {
+      grid-template-columns: minmax(0, 1fr) minmax(400px, 520px);
+      grid-template-areas: 'copy calc' 'tools calc';
+      column-gap: clamp(2rem, 5vw, 4rem);
+      row-gap: 0;
+      align-content: center;
+    }
+    .hero-copy { align-items: flex-start; text-align: left; }
+    .hero-tools { align-items: flex-start; margin-top: 1.5rem; }
+    .hero-calc { align-self: center; }
+  }
+  .hero-calc-head { display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem; }
+  .hero-calc-title { margin: 0; font-size: 14px; font-weight: 600; letter-spacing: -0.01em; color: var(--color-body); }
+  .hero-calc-link { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 13px; color: var(--color-link); white-space: nowrap; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+  .hero-calc-link:hover { text-decoration: underline; }
+  .hero-calc-link:active { opacity: 0.7; }
+  .hero-calc-link svg { transition: transform 0.15s ease; }
+  .hero-calc-link:hover svg { transform: translateX(2px); }
+  .hero-calc :global(.calc-device) { width: 100%; max-width: 500px; margin-inline: auto; gap: clamp(0.5rem, 1.4vh, 1rem); }
+  @media (min-width: 900px) {
+    .hero-calc :global(.calc-device) { margin-inline: 0; max-width: 520px; }
+    .hero-calc :global(.calc-screen) { min-height: clamp(72px, 12vh, 112px); }
+    .hero-calc :global(.calc-keys) { gap: clamp(0.35rem, 0.9vh, 0.5rem); }
+    .hero-calc :global(.calc-key) { min-height: clamp(40px, 6vh, 52px); }
+  }
+  @media (max-width: 899px) {
+    .hero-calc :global(.calc-device) { max-width: 480px; padding: 1rem; gap: 0.625rem; }
+    .hero-calc :global(.calc-screen) { min-height: 84px; }
+    .hero-calc :global(.calc-keys) { gap: 0.4rem; }
+    .hero-calc :global(.calc-key) { min-height: 46px; }
+  }
+  @media (max-width: 480px) {
+    .hero-calc :global(.calc-device) { max-width: 100%; padding: 0.875rem; }
+    .hero-calc :global(.calc-key) { min-height: 44px; font-size: 15px; }
+    .hero-calc :global(.calc-key.key-fn) { font-size: 12px; }
+    .hero-calc :global(.calc-screen) { min-height: 72px; padding: 0.75rem; }
+  }
+  @media (max-width: 360px) {
+    .hero-calc :global(.calc-device) { padding: 0.75rem; gap: 0.5rem; }
+    .hero-calc :global(.calc-key) { min-height: 44px; font-size: 14px; }
+    .hero-calc :global(.calc-key.key-fn) { font-size: 11px; }
+    .hero-calc :global(.calc-keys) { gap: 0.25rem; }
+    .hero-calc :global(.calc-screen) { min-height: 64px; }
+  }
+  .reveal { animation: hero-reveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards; animation-delay: calc(0.08s * var(--i, 0)); }
+  @keyframes hero-reveal {
+    from { opacity: 0; transform: translate3d(0, 14px, 0); filter: blur(6px); }
+    to   { opacity: 1; transform: translate3d(0, 0, 0); filter: blur(0); }
+  }
+  .hero-badge { display: inline-flex; align-items: center; gap: 0.5rem; padding: 5px 14px; font-size: 13px; font-weight: 500; letter-spacing: -0.01em; color: var(--color-body); background-color: color-mix(in srgb, var(--color-canvas) 80%, transparent); box-shadow: inset 0 0 0 1px var(--color-hairline), var(--shadow-card); backdrop-filter: blur(8px); border-radius: var(--radius-pill); }
+  .hero-dot { width: 6px; height: 6px; border-radius: var(--radius-pill); background-color: var(--color-cyan); box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-cyan) 25%, transparent); animation: hero-pulse 2.4s ease-in-out infinite; }
+  @keyframes hero-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-cyan) 45%, transparent); }
+    50%      { box-shadow: 0 0 0 5px color-mix(in srgb, var(--color-cyan) 0%, transparent); }
+  }
+  .hero-title { margin: 1.5rem 0 0; font-size: clamp(2.5rem, 7vw, 4.25rem); line-height: 1.02; letter-spacing: -0.045em; font-weight: 600; }
+  .hero-title .mesh-text { display: inline-block; padding-bottom: 0.08em; background-size: 220% 100%; animation: mesh-flow 8s ease-in-out infinite alternate; }
+  @keyframes mesh-flow { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+  .hero-lead { margin: 1.25rem 0 0; font-size: clamp(1rem, 2.5vw, 1.15rem); line-height: 1.55; color: var(--color-body); max-width: 48ch; }
+  @media (max-width: 899px) {
+    .hero { padding-top: clamp(1rem, 4vw, 1.75rem); }
+    .hero-inner { gap: 1.25rem; }
+    .hero-title { margin-top: 1rem; font-size: clamp(2rem, 8vw, 2.75rem); }
+    .hero-lead { margin-top: 0.75rem; font-size: 15px; line-height: 1.5; max-width: 100%; }
+  }
+  @media (max-width: 480px) {
+    .hero { padding-top: 0.75rem; padding-bottom: 1.25rem; }
+    .hero-inner { gap: 1rem; }
+    .hero-title { font-size: clamp(1.75rem, 9vw, 2.25rem); margin-top: 0.75rem; }
+    .hero-lead { font-size: 14px; margin-top: 0.5rem; }
+    .hero-badge { font-size: 12px; padding: 4px 12px; }
+    .hero-pills { gap: 0.375rem; margin-top: 1rem; }
+    .hero-pill { padding: 0.3rem 0.75rem; font-size: 12px; }
+  }
+  .hero-search { position: relative; width: 100%; max-width: 560px; margin-top: 0; }
+  .hero-search::before { content: ''; position: absolute; inset: -2px; z-index: -1; border-radius: calc(var(--radius-md) + 4px); background: linear-gradient(100deg, var(--color-grad-develop-start), var(--color-grad-develop-end), var(--color-grad-preview-start), var(--color-grad-preview-end), var(--color-grad-ship-end)); background-size: 220% 100%; opacity: 0; filter: blur(10px); transition: opacity 0.35s ease; animation: mesh-flow 8s ease-in-out infinite alternate; }
+  .hero-search:focus-within::before { opacity: 0.55; }
+  .hero-pills { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; justify-content: center; margin-top: 1.25rem; width: 100%; }
+  @media (min-width: 900px) { .hero-pills { justify-content: flex-start; } }
+  .hero-pills-label { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.02em; color: var(--color-mute); margin-right: 0.25rem; }
+  .hero-pill { padding: 0.375rem 0.875rem; font-size: 13px; color: var(--color-body); background-color: var(--color-canvas); box-shadow: var(--shadow-card); border-radius: var(--radius-pill); transition: color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+  .hero-pill:hover { color: var(--color-ink); box-shadow: var(--shadow-soft); transform: translateY(-1px); }
+  .hero-pill:active { transform: scale(0.95); box-shadow: var(--shadow-card); transition-duration: 0.04s; }
+  @media (max-width: 520px) { .hero-pills-label { width: 100%; text-align: center; margin: 0 0 0.25rem; } }
+  .trust { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; padding: 2rem; }
+  .trust-item h3 { font-size: 16px; margin: 0 0 0.375rem; }
+  .trust-item p { margin: 0; font-size: 14px; line-height: 1.6; color: var(--color-mute); }
+  .seo-prose { max-width: 72ch; }
+  .seo-prose h2 { font-size: clamp(1.375rem, 3vw, 1.75rem); letter-spacing: -0.02em; margin: 0 0 1rem; }
+  .seo-prose h3 { font-size: 1.125rem; letter-spacing: -0.01em; margin: 1.75rem 0 0.5rem; }
+  .seo-prose p { margin: 0 0 1rem; font-size: 15px; line-height: 1.75; color: var(--color-body); }
+  .seo-prose a { color: var(--color-link); }
+  .seo-prose a:hover { text-decoration: underline; }
+  .grid-categories { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+  @media (max-width: 720px) { .trust { grid-template-columns: 1fr; gap: 1.25rem; padding: 1.5rem; } }
+  @media (max-width: 480px) { .trust { padding: 1.25rem; gap: 1rem; } .trust-item h3 { font-size: 15px; } .trust-item p { font-size: 13px; } }
+
+  /* ---------- Shared ---------- */
+  .section { padding-top: 3rem; }
+  @media (max-width: 480px) { .section { padding-top: 2rem; } }
+  .section-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem; }
+  @media (max-width: 480px) { .section-head { margin-bottom: 1rem; } }
+  .section-title { margin: 0.375rem 0 0; font-size: clamp(1.375rem, 3vw, 1.75rem); letter-spacing: -0.02em; }
+
+  .grid-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+  @media (max-width: 1100px) {
+    .grid-cards { grid-template-columns: repeat(3, 1fr); }
+    .grid-categories { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 768px) {
+    .grid-cards { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+    .grid-categories { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+  }
+  @media (max-width: 460px) {
+    .grid-cards { grid-template-columns: 1fr; }
+    .grid-categories { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>

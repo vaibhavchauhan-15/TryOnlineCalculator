@@ -1,0 +1,32 @@
+---
+slug: "calorie-calculator"
+category: "health"
+title: "Kalorienrechner"
+description: "Berechnen Sie, wie viele Kalorien Sie täglich essen sollten, um abzunehmen, Ihr Gewicht zu halten oder zuzunehmen."
+keywords: ["Kalorienrechner", "Kalorien berechnen", "täglicher Kalorienbedarf", "Kalorienbedarf berechnen", "Kalorien zum Abnehmen"]
+calculatorVersion: 1
+seoVersion: 2
+translationVersion: 2
+source: "en"
+translatedFromVersion: 1
+model: "manual-de-v2"
+searchIntent: "Den persönlichen täglichen Kalorienbedarf zum Abnehmen, Halten oder Zunehmen berechnen."
+readingLevel: "general"
+market: "DE"
+audience: "Erwachsene, die ihren Kalorienbedarf für ein Gewichtsziel berechnen möchten"
+labels: {"dailyTarget":"Tägliches Kalorienziel","field.activity":"Aktivitätslevel","field.age":"Alter","field.goal":"Ziel","field.height":"Größe","field.heightFt":"Größe (Fuß)","field.heightIn":"Größe (Zoll)","field.sex":"Geschlecht","field.unitSystem":"Einheiten","field.weight":"Gewicht","field.weightLb":"Gewicht (lb)","gain":"Zunehmen","lose":"Abnehmen","maintain":"Halten","maintenance":"Erhaltungsbedarf","mildGain":"Leicht zunehmen","mildLoss":"Leicht abnehmen","weeklyTarget":"Wöchentliches Ziel"}
+enums: {"activity.extraActive":"Sehr sportlich","activity.light":"Leicht aktiv","activity.moderate":"Moderat aktiv","activity.sedentary":"Sitzend / kaum Bewegung","activity.veryActive":"Sportlich aktiv","female":"Weiblich","goal.gain":"Zunehmen","goal.lose":"Abnehmen","goal.maintain":"Gewicht halten","goal.mildGain":"Leicht zunehmen","goal.mildLoss":"Leicht abnehmen","imperial":"Imperial","male":"Männlich","metric":"Metrisch"}
+hints: {"unit.kcal":"kcal"}
+chartTitles: {"calorie.chartGoals":"Kalorienziele im Vergleich"}
+intro: "Basierend auf Ihren Körpermaßen, Ihrem Aktivitätslevel und Ihrem Ziel zeigt dieser Rechner Ihren täglichen Kalorienbedarf an."
+formulaIntro: "Der Kalorienbedarf wird aus dem Grundumsatz (BMR) und einem Aktivitätsfaktor berechnet."
+formulaItems: [{"name":"Mifflin-St Jeor (Männer)","expr":"BMR = 10 * kg + 6,25 * cm - 5 * Alter + 5"},{"name":"Mifflin-St Jeor (Frauen)","expr":"BMR = 10 * kg + 6,25 * cm - 5 * Alter - 161"},{"name":"TDEE","expr":"TDEE = BMR * Aktivitätsfaktor"}]
+howto: ["Wählen Sie metrische oder imperiale Einheiten.","Geben Sie Geschlecht, Alter, Größe und Gewicht ein.","Wählen Sie Ihr Aktivitätslevel.","Wählen Sie Ihr Ziel: Abnehmen, Halten oder Zunehmen.","Lesen Sie Ihr tägliches Kalorienziel ab."]
+faq: [{"q":"Wie viele Kalorien brauche ich am Tag?","a":"Das hängt von Geschlecht, Alter, Größe, Gewicht und Aktivitätslevel ab. Dieser Rechner ermittelt Ihren persönlichen Wert."},{"q":"Ist es gesund, sehr wenige Kalorien zu essen?","a":"Extreme Kaloriendefizite sind schwer durchzuhalten und können zu Muskelabbau führen. Die meisten Erwachsenen sollten ohne ärztliche Begleitung nicht unter 1200 kcal (Frauen) bzw. 1500 kcal (Männer) pro Tag gehen."},{"q":"Wie schnell kann ich gesund abnehmen?","a":"Ein Defizit von 500 kcal pro Tag führt zu etwa 0,5 kg Gewichtsverlust pro Woche."}]
+related: ["tdee-calculator","macro-calculator","bmr-calculator","ideal-weight-calculator"]
+---
+
+Ihr täglicher Kalorienbedarf ist individuell und hängt von Ihren Körpermaßen,
+Ihrem Aktivitätslevel und Ihrem Ziel ab. Dieser Kalorienrechner verwendet die
+Mifflin-St Jeor-Formel und zeigt Ihnen genau, wie viele Kalorien Sie zum
+Abnehmen, Halten oder Zunehmen essen sollten.
