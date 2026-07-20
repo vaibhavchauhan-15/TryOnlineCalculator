@@ -281,8 +281,8 @@ const jsonLd = localizedCalculatorPageSchemas(locale, {
      screen use viewport-relative sizing so they scale smoothly across screen
      heights without needing a hard max-height that clips the history panel. */
   .calc-stage[data-variant='keypad'] :global(.calc-device) {
-    gap: clamp(0.375rem, 1vh, 0.75rem);
-    padding: clamp(0.75rem, 1.5vh, 1.25rem);
+    gap: clamp(0.375rem, 0.8vh, 0.625rem);
+    padding: clamp(0.75rem, 1.2vh, 1.125rem);
     overflow: visible;
     position: relative;
   }
@@ -303,35 +303,39 @@ const jsonLd = localizedCalculatorPageSchemas(locale, {
     padding: 0.75rem;
   }
   .calc-stage[data-variant='keypad'] :global(.calc-screen) {
-    min-height: clamp(72px, 12vh, 100px);
-    max-height: clamp(100px, 18vh, 160px);
-    padding: clamp(0.5rem, 1vh, 0.875rem) 1rem;
+    min-height: clamp(64px, 10vh, 88px);
+    max-height: clamp(88px, 14vh, 130px);
+    padding: clamp(0.5rem, 0.8vh, 0.75rem) 1rem;
   }
   .calc-stage[data-variant='keypad'] :global(.calc-keys) {
-    gap: clamp(0.25rem, 0.6vh, 0.5rem);
+    gap: clamp(0.25rem, 0.5vh, 0.375rem);
   }
   .calc-stage[data-variant='keypad'] :global(.calc-key) {
-    min-height: clamp(36px, 6.5vh, 52px);
-  }
-  /* Scientific mode: tighter vh clamp prevents oversized buttons on short viewports */
-  .calc-stage[data-variant='keypad'] :global(.calc-device[data-mode='scientific'] .calc-key) {
     min-height: clamp(36px, 5.5vh, 50px);
+  }
+  /* Scientific mode: tighter vh clamp for compact vertical fit */
+  .calc-stage[data-variant='keypad'] :global(.calc-device[data-mode='scientific'] .calc-key) {
+    min-height: clamp(36px, 5vh, 48px);
   }
   .calc-stage[data-variant='keypad'] :global(.calc-copy-row) {
     margin-top: -0.125rem;
   }
 
   @media (min-width: 768px) {
-    .calc-stage[data-variant='keypad'] :global(.calc-device) { max-width: 600px; }
-    .calc-stage[data-variant='keypad'] :global(.calc-device[data-mode='scientific']) { max-width: 760px; }
+    .calc-stage[data-variant='keypad'] :global(.calc-device) { max-width: 680px; }
+    .calc-stage[data-variant='keypad'] :global(.calc-device[data-mode='scientific']) { max-width: 680px; }
+  }
+
+  @media (min-width: 1024px) {
+    .calc-stage[data-variant='keypad'] :global(.calc-device[data-mode='scientific']) { max-width: 860px; }
   }
 
   @media (min-width: 1280px) {
-    .calc-stage[data-variant='keypad'] :global(.calc-device[data-mode='scientific']) { max-width: 840px; }
+    .calc-stage[data-variant='keypad'] :global(.calc-device[data-mode='scientific']) { max-width: 940px; }
   }
 
   @media (min-width: 1440px) {
-    .calc-stage[data-variant='keypad'] :global(.calc-device[data-mode='scientific']) { max-width: 900px; }
+    .calc-stage[data-variant='keypad'] :global(.calc-device[data-mode='scientific']) { max-width: 1020px; }
   }
 
   /* On phones let the tool bleed to the page gutters so it uses every pixel. */

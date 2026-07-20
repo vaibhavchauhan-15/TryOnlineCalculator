@@ -15,8 +15,6 @@ interface Props {
 const { calculator, variant = 'basic', title, chrome = {} } = Astro.props;
 const scientific = variant === 'scientific';
 
-// Localized UI copy with English fallbacks so the keypad reads in the page's
-// language on every locale while keeping an identical layout.
 const label = title ?? calculator.title;
 const t = {
   hint: chrome.keypadHint ?? 'Tap any value to edit it, or paste a full expression',
@@ -35,7 +33,7 @@ type Key = {
   label: string;
   val?: string;
   cls?: string;
-  action?: 'clear' | 'del' | 'equals' | 'ans' | 'shift' | 'deg';
+  action?: 'clear' | 'del' | 'equals' | 'ans' | 'shift' | 'deg' | 'hyp';
   second?: { label: string; val: string };
   tip?: string;
 };
@@ -52,59 +50,93 @@ const basicKeys: Key[] = [
   { label: '=', action: 'equals', cls: 'key-equal span-4' },
 ];
 
-// Scientific function keys — shown in a separate grid on desktop (8 cols)
-// and stacked above the arithmetic keys on mobile (5 cols).
-const sciFnKeys: Key[] = [
-  { label: 'sin', val: 'sin(', cls: 'key-fn', second: { label: 'sin\u207B\u00B9', val: 'asin(' } },
-  { label: 'cos', val: 'cos(', cls: 'key-fn', second: { label: 'cos\u207B\u00B9', val: 'acos(' } },
-  { label: 'tan', val: 'tan(', cls: 'key-fn', second: { label: 'tan\u207B\u00B9', val: 'atan(' } },
-  { label: 'ln', val: 'ln(', cls: 'key-fn', second: { label: 'e\u02E3', val: 'exp(' } },
-  { label: 'log', val: 'log(', cls: 'key-fn', second: { label: '10\u02E3', val: '10^' } },
-  { label: '\u221A', val: '\u221A(', cls: 'key-fn', second: { label: '\u221B', val: '\u221B(' } },
-  { label: '\u03C0', val: '\u03C0', cls: 'key-fn' },
-  { label: 'e', val: 'e', cls: 'key-fn' },
-
-  { label: 'x\u00B2', val: '^2', cls: 'key-fn', second: { label: 'x\u00B3', val: '^3' } },
-  { label: 'x\u02B8', val: '^', cls: 'key-fn' },
-  { label: '1/x', val: '1/(', cls: 'key-fn' },
-  { label: 'n!', val: 'fact(', cls: 'key-fn' },
-  { label: 'mod', val: '%', cls: 'key-fn' },
-  { label: 'EXP', val: 'E', cls: 'key-fn' },
-  { label: 'abs', val: 'abs(', cls: 'key-fn' },
-  { label: 'Ans', action: 'ans', cls: 'key-fn', tip: 'Insert previous answer' },
+// ========= SCIENTIFIC CALCULATOR KEY LAYOUT =========
+// Organized by function category with shift support (Casio-style).
+// Tab: Basic (trig, powers, roots) — always visible
+const sciMainKeys: Key[] = [
+  { label: 'sin', val: 'sin(', cls: 'key-fn', second: { label: 'sin\u207B\u00B9', val: 'asin(' }, tip: 'Sine' },
+  { label: 'cos', val: 'cos(', cls: 'key-fn', second: { label: 'cos\u207B\u00B9', val: 'acos(' }, tip: 'Cosine' },
+  { label: 'tan', val: 'tan(', cls: 'key-fn', second: { label: 'tan\u207B\u00B9', val: 'atan(' }, tip: 'Tangent' },
+  { label: 'ln', val: 'ln(', cls: 'key-fn', second: { label: 'e\u02E3', val: 'exp(' }, tip: 'Natural log' },
+  { label: 'log', val: 'log(', cls: 'key-fn', second: { label: '10\u02E3', val: '10^' }, tip: 'Log base 10' },
+  { label: '\u221A', val: '\u221A(', cls: 'key-fn', second: { label: '\u221B', val: 'cbrt(' }, tip: 'Square root' },
+  { label: 'x\u00B2', val: '^2', cls: 'key-fn', second: { label: 'x\u00B3', val: '^3' }, tip: 'Square' },
+  { label: 'x\u02B8', val: '^', cls: 'key-fn', second: { label: '\u207F\u221A', val: 'nrt(' }, tip: 'Power' },
+  { label: '1/x', val: '1/(', cls: 'key-fn', second: { label: '|x|', val: 'abs(' }, tip: 'Reciprocal' },
+  { label: 'n!', val: 'fact(', cls: 'key-fn', second: { label: '\u0393', val: 'gamma(' }, tip: 'Factorial' },
+  { label: '\u03C0', val: '\u03C0', cls: 'key-const', tip: 'Pi (3.14159...)' },
+  { label: 'e', val: 'e', cls: 'key-const', tip: 'Euler\'s number (2.71828...)' },
 ];
 
-// Arithmetic / number keys — always 5 columns
+// Tab: Func (hyperbolic, advanced math)
+const sciFuncKeys: Key[] = [
+  { label: 'sinh', val: 'sinh(', cls: 'key-fn', second: { label: 'sinh\u207B\u00B9', val: 'asinh(' }, tip: 'Hyperbolic sine' },
+  { label: 'cosh', val: 'cosh(', cls: 'key-fn', second: { label: 'cosh\u207B\u00B9', val: 'acosh(' }, tip: 'Hyperbolic cosine' },
+  { label: 'tanh', val: 'tanh(', cls: 'key-fn', second: { label: 'tanh\u207B\u00B9', val: 'atanh(' }, tip: 'Hyperbolic tangent' },
+  { label: 'mod', val: '%', cls: 'key-fn', tip: 'Modulo' },
+  { label: 'abs', val: 'abs(', cls: 'key-fn', tip: 'Absolute value' },
+  { label: 'floor', val: 'floor(', cls: 'key-fn', second: { label: 'ceil', val: 'ceil(' }, tip: 'Floor' },
+  { label: 'round', val: 'round(', cls: 'key-fn', tip: 'Round' },
+  { label: 'sign', val: 'sign(', cls: 'key-fn', tip: 'Sign function' },
+  { label: 'gcd', val: 'gcd(', cls: 'key-fn', tip: 'Greatest common divisor' },
+  { label: 'lcm', val: 'lcm(', cls: 'key-fn', tip: 'Least common multiple' },
+  { label: 'nPr', val: 'nPr(', cls: 'key-fn', tip: 'Permutation' },
+  { label: 'nCr', val: 'nCr(', cls: 'key-fn', tip: 'Combination' },
+];
+
+// Tab: Constants & Engineering
+const sciConstKeys: Key[] = [
+  { label: '\u03C0', val: '\u03C0', cls: 'key-const', tip: 'Pi' },
+  { label: 'e', val: 'e', cls: 'key-const', tip: "Euler's number" },
+  { label: '\u03C6', val: '1.618033988749895', cls: 'key-const', tip: 'Golden ratio' },
+  { label: 'Rand', val: 'rand()', cls: 'key-fn', tip: 'Random [0,1)' },
+  { label: 'EXP', val: 'E', cls: 'key-fn', tip: 'Scientific notation (×10^)' },
+  { label: 'Ans', action: 'ans', cls: 'key-fn key-ans', tip: 'Previous answer' },
+];
+
+// Memory keys
+const sciMemKeys: Key[] = [
+  { label: 'MC', action: 'clear' as const, cls: 'key-mem', tip: 'Memory Clear' },
+  { label: 'MR', action: 'clear' as const, cls: 'key-mem', tip: 'Memory Recall' },
+  { label: 'M+', action: 'clear' as const, cls: 'key-mem', tip: 'Memory Add' },
+  { label: 'M\u2212', action: 'clear' as const, cls: 'key-mem', tip: 'Memory Subtract' },
+];
+
+// Number pad + operators — always visible, 5 columns
 const sciNumKeys: Key[] = [
   { label: '(', val: '(' }, { label: ')', val: ')' },
   { label: 'AC', action: 'clear', cls: 'key-danger' },
   { label: 'DEL', action: 'del', cls: 'key-danger' },
   { label: '\u00F7', val: '\u00F7', cls: 'key-op' },
 
-  { label: '7', val: '7' }, { label: '8', val: '8' }, { label: '9', val: '9' }, { label: '%', val: '%' }, { label: '\u00D7', val: '\u00D7', cls: 'key-op' },
-  { label: '4', val: '4' }, { label: '5', val: '5' }, { label: '6', val: '6' }, { label: '.', val: '.' }, { label: '\u2212', val: '\u2212', cls: 'key-op' },
-  { label: '1', val: '1' }, { label: '2', val: '2' }, { label: '3', val: '3' }, { label: '0', val: '0' }, { label: '+', val: '+', cls: 'key-op' },
+  { label: '7', val: '7' }, { label: '8', val: '8' }, { label: '9', val: '9' },
+  { label: '%', val: '%' }, { label: '\u00D7', val: '\u00D7', cls: 'key-op' },
+
+  { label: '4', val: '4' }, { label: '5', val: '5' }, { label: '6', val: '6' },
+  { label: '.', val: '.' }, { label: '\u2212', val: '\u2212', cls: 'key-op' },
+
+  { label: '1', val: '1' }, { label: '2', val: '2' }, { label: '3', val: '3' },
+  { label: '0', val: '0' }, { label: '+', val: '+', cls: 'key-op' },
+
   { label: '=', action: 'equals', cls: 'key-equal span-5' },
 ];
 
-// Combined flat array for backward compatibility (mobile uses this as fallback
-// if the two-grid desktop layout is hidden). We keep both arrays but render them
-// in separate grids.
-const sciKeys: Key[] = [...sciFnKeys, ...sciNumKeys];
-
-const keys = scientific ? sciKeys : basicKeys;
+const keys = scientific ? [...sciMainKeys, ...sciNumKeys] : basicKeys;
 ---
 
-<div class="calc-device" data-keypad data-mode={scientific ? 'scientific' : 'basic'} data-store={`keypad:${calculator.category}/${calculator.slug}`} tabindex="0" aria-label={label}>
+<div class="calc-device" data-keypad data-mode={scientific ? 'scientific' : 'basic'} data-store={`keypad:${calculator.category}/${calculator.slug}`} tabindex="0" aria-label={label} role="application">
+  {/* === DISPLAY === */}
   <div class="calc-screen">
     <div class="calc-status">
       {scientific && <span class="calc-chip" data-angle-chip>DEG</span>}
       {scientific && <span class="calc-chip" data-shift-chip hidden>SHIFT</span>}
+      {scientific && <span class="calc-chip" data-mem-chip hidden>M</span>}
     </div>
     <div class="calc-screen-expr is-editable" data-expr aria-live="off" role="textbox" aria-label={t.expr}></div>
     <div class="calc-screen-result" data-result aria-live="polite">0</div>
   </div>
 
+  {/* === TOOLBAR: hint + copy/paste === */}
   <div class="calc-copy-row calc-copy-row-split">
     <span class="calc-hint">{t.hint}</span>
     <div class="calc-copy-actions">
@@ -118,46 +150,92 @@ const keys = scientific ? sciKeys : basicKeys;
   </div>
 
   {scientific && (
-    <div class="calc-keys" style="grid-template-columns: 1fr 1fr;">
-      <button type="button" class="calc-key key-toggle" data-action="shift">SHIFT</button>
-      <button type="button" class="calc-key key-toggle" data-action="deg" data-deg-btn>DEG</button>
-    </div>
-  )}
-
-  {scientific ? (
     <>
-      <div class="calc-keys cols-sci-fn">
-        {sciFnKeys.map((k) => (
-          <button
-            type="button"
-            class={`calc-key ${k.cls ?? ''}`}
-            data-val={k.val}
-            data-action={k.action}
-            data-2nd={k.second?.label}
-            data-2nd-val={k.second?.val}
-            aria-label={k.tip}
-            title={k.tip}
-          >{k.label}</button>
-        ))}
+      {/* === MODE TOGGLES: SHIFT + DEG/RAD === */}
+      <div class="calc-mode-row">
+        <button type="button" class="calc-mode-btn" data-action="shift" aria-pressed="false">SHIFT</button>
+        <button type="button" class="calc-mode-btn" data-action="deg" data-deg-btn>DEG</button>
       </div>
-      <div class="calc-keys cols-sci-num">
-        {sciNumKeys.map((k) => (
-          <button
-            type="button"
-            class={`calc-key ${k.cls ?? ''}`}
-            data-val={k.val}
-            data-action={k.action}
-            data-2nd={k.second?.label}
-            data-2nd-val={k.second?.val}
-            aria-label={k.tip}
-            title={k.tip}
-          >{k.label}</button>
-        ))}
+
+      {/* === TABBED FUNCTION PANEL === */}
+      <div class="calc-tabs" data-tabs>
+        <div class="calc-tab-bar" role="tablist" aria-label="Function categories">
+          <button type="button" class="calc-tab is-active" role="tab" aria-selected="true" data-tab="main">Scientific</button>
+          <button type="button" class="calc-tab" role="tab" aria-selected="false" data-tab="func">Functions</button>
+          <button type="button" class="calc-tab" role="tab" aria-selected="false" data-tab="const">Constants</button>
+        </div>
+
+        <div class="calc-tab-panel is-active" role="tabpanel" data-panel="main">
+          <div class="calc-keys cols-sci-fn">
+            {sciMainKeys.map((k) => (
+              <button
+                type="button"
+                class={`calc-key ${k.cls ?? ''}`}
+                data-val={k.val}
+                data-action={k.action}
+                data-2nd={k.second?.label}
+                data-2nd-val={k.second?.val}
+                aria-label={k.tip}
+                title={k.tip}
+              >{k.label}</button>
+            ))}
+          </div>
+        </div>
+
+        <div class="calc-tab-panel" role="tabpanel" data-panel="func" hidden>
+          <div class="calc-keys cols-sci-fn">
+            {sciFuncKeys.map((k) => (
+              <button
+                type="button"
+                class={`calc-key ${k.cls ?? ''}`}
+                data-val={k.val}
+                data-action={k.action}
+                data-2nd={k.second?.label}
+                data-2nd-val={k.second?.val}
+                aria-label={k.tip}
+                title={k.tip}
+              >{k.label}</button>
+            ))}
+          </div>
+        </div>
+
+        <div class="calc-tab-panel" role="tabpanel" data-panel="const" hidden>
+          <div class="calc-keys cols-sci-const">
+            {sciConstKeys.map((k) => (
+              <button
+                type="button"
+                class={`calc-key ${k.cls ?? ''}`}
+                data-val={k.val}
+                data-action={k.action}
+                data-2nd={k.second?.label}
+                data-2nd-val={k.second?.val}
+                aria-label={k.tip}
+                title={k.tip}
+              >{k.label}</button>
+            ))}
+          </div>
+        </div>
       </div>
     </>
+  )}
+
+  {/* === NUMBER PAD + OPERATORS === */}
+  {scientific ? (
+    <div class="calc-keys cols-sci-num">
+      {sciNumKeys.map((k) => (
+        <button
+          type="button"
+          class={`calc-key ${k.cls ?? ''}`}
+          data-val={k.val}
+          data-action={k.action}
+          aria-label={k.tip}
+          title={k.tip}
+        >{k.label}</button>
+      ))}
+    </div>
   ) : (
     <div class="calc-keys">
-      {keys.map((k) => (
+      {basicKeys.map((k) => (
         <button
           type="button"
           class={`calc-key ${k.cls ?? ''}`}
@@ -188,14 +266,16 @@ const keys = scientific ? sciKeys : basicKeys;
 
   type State = {
     expr: string;
-    caret: number; // insertion point: a character offset in expr [0..expr.length]
-    sel: { s: number; e: number } | null; // highlighted token being edited
+    caret: number;
+    sel: { s: number; e: number } | null;
     ans: number;
     justEval: boolean;
     shift: boolean;
     deg: boolean;
+    memory: number;
+    hasMemory: boolean;
   };
-  type Saved = { expr: string; ans: number; deg: boolean; justEval: boolean };
+  type Saved = { expr: string; ans: number; deg: boolean; justEval: boolean; memory?: number; hasMemory?: boolean };
 
   function normalize(s: string): string {
     return s
@@ -214,8 +294,6 @@ const keys = scientific ? sciKeys : basicKeys;
     return number(n, 10);
   }
 
-  // Trim trailing operators/dots and balance open parentheses so a
-  // half-typed expression like "5+6\u00D7" or "2\u00D7(3+4" still resolves.
   function autofix(expr: string): string {
     let s = expr;
     while (s && /[+\-\u2212\u00D7\u00F7(^.]$/.test(s)) s = s.slice(0, -1);
@@ -227,8 +305,6 @@ const keys = scientific ? sciKeys : basicKeys;
 
   type EvalResult = { ok: true; value: number } | { ok: false; msg: string };
 
-  // Turn evaluator exceptions and non-finite results into short, friendly
-  // messages that fit on the calculator screen.
   function evalDetailed(s: string, deg: boolean, sci: boolean): EvalResult {
     if (!s.trim()) return { ok: false, msg: 'Incomplete expression' };
     let value: number;
@@ -241,14 +317,14 @@ const keys = scientific ? sciKeys : basicKeys;
       if (/Unknown name/i.test(m)) return { ok: false, msg: 'Unknown symbol' };
       if (/Unexpected character/i.test(m)) return { ok: false, msg: 'Invalid character' };
       if (/Invalid expression/i.test(m)) return { ok: false, msg: 'Incomplete expression' };
+      if (/Division by zero/i.test(m)) return { ok: false, msg: "Can\u2019t divide by zero" };
       return { ok: false, msg: 'Invalid expression' };
     }
     if (Number.isNaN(value)) return { ok: false, msg: 'Undefined result' };
-    if (!Number.isFinite(value)) return { ok: false, msg: "Can't divide by 0" };
+    if (!Number.isFinite(value)) return { ok: false, msg: "Can\u2019t divide by zero" };
     return { ok: true, value };
   }
 
-  // Best-effort live preview: never throws, returns null when nothing usable.
   function preview(expr: string, deg: boolean, sci: boolean): number | null {
     if (!expr) return 0;
     const fixed = autofix(expr);
@@ -257,8 +333,6 @@ const keys = scientific ? sciKeys : basicKeys;
     return r.ok ? r.value : null;
   }
 
-  // Split the expression into logical tokens so a tap can select a whole
-  // value or operator rather than a single character.
   type Tok = { s: number; e: number };
   function tokenize(expr: string): Tok[] {
     const toks: Tok[] = [];
@@ -271,14 +345,12 @@ const keys = scientific ? sciKeys : basicKeys;
         toks.push({ s: i, e: j });
         i = j;
       } else if (/[a-z\u221A\u221B]/i.test(c)) {
-        // Function name (letters), optionally with a trailing '('.
         let j = i + 1;
         while (j < expr.length && /[a-z\u221A\u221B]/i.test(expr[j])) j++;
         if (expr[j] === '(') j++;
         toks.push({ s: i, e: j });
         i = j;
       } else {
-        // Single-char token: operator, paren or constant glyph.
         toks.push({ s: i, e: i + 1 });
         i += 1;
       }
@@ -298,11 +370,31 @@ const keys = scientific ? sciKeys : basicKeys;
     const resultEl = root.querySelector<HTMLElement>('[data-result]')!;
     const angleChip = root.querySelector<HTMLElement>('[data-angle-chip]');
     const shiftChip = root.querySelector<HTMLElement>('[data-shift-chip]');
+    const memChip = root.querySelector<HTMLElement>('[data-mem-chip]');
     const degBtn = root.querySelector<HTMLElement>('[data-deg-btn]');
     const shiftBtn = root.querySelector<HTMLElement>('[data-action="shift"]');
 
-    const state: State = { expr: '', caret: 0, sel: null, ans: 0, justEval: false, shift: false, deg: true };
+    const state: State = { expr: '', caret: 0, sel: null, ans: 0, justEval: false, shift: false, deg: true, memory: 0, hasMemory: false };
     const store = root.dataset.store;
+
+    // === Tab switching ===
+    const tabBar = root.querySelector<HTMLElement>('[data-tabs]');
+    if (tabBar) {
+      const tabs = tabBar.querySelectorAll<HTMLElement>('[role="tab"]');
+      const panels = tabBar.querySelectorAll<HTMLElement>('[role="tabpanel"]');
+      tabs.forEach((tab) => {
+        tab.addEventListener('click', () => {
+          const target = tab.dataset.tab;
+          tabs.forEach((t) => { t.classList.remove('is-active'); t.setAttribute('aria-selected', 'false'); });
+          panels.forEach((p) => { p.classList.remove('is-active'); p.hidden = true; });
+          tab.classList.add('is-active');
+          tab.setAttribute('aria-selected', 'true');
+          const panel = tabBar.querySelector<HTMLElement>(`[data-panel="${target}"]`);
+          if (panel) { panel.classList.add('is-active'); panel.hidden = false; }
+          haptic.tap();
+        });
+      });
+    }
 
     // History panel + copy control.
     const historyMount = root.querySelector<HTMLElement>('[data-history-mount]');
@@ -315,8 +407,6 @@ const keys = scientific ? sciKeys : basicKeys;
     const pasteBtn = root.querySelector<HTMLElement>('[data-paste-btn]');
     const pasteIco = pasteBtn?.querySelector<HTMLElement>('[data-copy-ico]');
     const pasteIcoHTML = pasteIco?.innerHTML ?? '';
-    // Flash the check + "Pasted" tooltip so the tap reads as successful on
-    // touch (where there's no hover) as well as on desktop.
     function flashPaste(): void {
       if (!pasteBtn) return;
       const prev = pasteBtn.getAttribute('data-revert-timer');
@@ -334,13 +424,12 @@ const keys = scientific ? sciKeys : basicKeys;
 
     const persist = (): void => {
       if (!store) return;
-      saveState(store, { expr: state.expr, ans: state.ans, deg: state.deg, justEval: state.justEval } satisfies Saved);
+      saveState(store, { expr: state.expr, ans: state.ans, deg: state.deg, justEval: state.justEval, memory: state.memory, hasMemory: state.hasMemory } satisfies Saved);
     };
 
     const charBefore = () => state.expr[state.caret - 1] ?? '';
     const needsMult = () => /[0-9)%\u03C0e]/.test(charBefore());
 
-    // Paint the expression with a caret and (when editing a value) a highlight.
     function paintExpr(): void {
       const { expr, caret, sel } = state;
       if (!expr) { exprEl.innerHTML = CARET; return; }
@@ -357,14 +446,11 @@ const keys = scientific ? sciKeys : basicKeys;
           html += open + esc(expr.slice(t.s, t.e)) + '</span>';
         }
       }
-      if (!caretDone) html += CARET; // caret sits at the very end
+      if (!caretDone) html += CARET;
       exprEl.innerHTML = html;
       scrollCaretIntoView();
     }
 
-    // Keep the caret visible when a long expression overflows the read-out's
-    // capped, scrollable height (so the screen grows to its limit then scrolls
-    // rather than ballooning off the device).
     function scrollCaretIntoView(): void {
       const caret = exprEl.querySelector<HTMLElement>('.calc-caret');
       if (!caret) { exprEl.scrollTop = exprEl.scrollHeight; return; }
@@ -379,7 +465,6 @@ const keys = scientific ? sciKeys : basicKeys;
     function render(): void {
       resultEl.classList.remove('is-error');
       if (state.justEval) {
-        // Big line already holds the committed answer; expr line shows source.
         exprEl.textContent = state.expr + ' =';
         persist();
         return;
@@ -390,7 +475,6 @@ const keys = scientific ? sciKeys : basicKeys;
       persist();
     }
 
-    // Replace the current selection (if any) with `text`, else insert at caret.
     function spliceAtCaret(text: string): void {
       if (state.sel) {
         state.expr = state.expr.slice(0, state.sel.s) + text + state.expr.slice(state.sel.e);
@@ -404,7 +488,6 @@ const keys = scientific ? sciKeys : basicKeys;
 
     function insert(val: string): void {
       if (state.justEval) {
-        // Continue from the answer for operators, start fresh for values.
         if (/^[+\-\u2212\u00D7\u00F7^%]/.test(val)) {
           state.expr = fmt(state.ans).replace(/,/g, '');
           state.caret = state.expr.length;
@@ -415,7 +498,6 @@ const keys = scientific ? sciKeys : basicKeys;
         state.sel = null;
         state.justEval = false;
       }
-      // Implicit multiplication before a function/const/opening paren.
       const isFuncOrConst = /[a-z\u221A\u221B\u03C0(]/i.test(val[0]) || val === '10^';
       if (isFuncOrConst && !state.sel && needsMult() && !/^[\^]/.test(val)) {
         spliceAtCaret('\u00D7');
@@ -424,27 +506,21 @@ const keys = scientific ? sciKeys : basicKeys;
       render();
     }
 
-    // Turn arbitrary pasted text ("12,000 * (3+4) = ...", "3.14x2", etc.) into
-    // the glyph set the editor and evaluator understand, dropping anything
-    // unsupported so a stray label or unit can't wedge the calculator.
     function sanitizePasted(raw: string): string {
       let s = raw;
-      // If an equation was copied, keep only the expression side.
       const eq = s.indexOf('=');
       if (eq >= 0) s = s.slice(0, eq);
       s = s
-        .replace(/\s+/g, '')                    // spaces / newlines
-        .replace(/,(?=\d{3}\b)/g, '')           // thousands separators
-        .replace(/\*\*/g, '^')                  // pow operator
-        .replace(/[*\u2217\u2715\u2716]/g, '\u00D7') // *, ∗, ✕, ✖ → ×
-        .replace(/(\d)[xX](?=[\d(.])/g, '$1\u00D7')  // 3x4 → 3×4 (leave "exp" alone)
-        .replace(/\//g, '\u00F7')               // / → ÷
-        .replace(/[-\u2010\u2011\u2013\u2014]/g, '\u2212'); // hyphens/dashes → −
-      // Keep only characters the editor + evaluator accept.
+        .replace(/\s+/g, '')
+        .replace(/,(?=\d{3}\b)/g, '')
+        .replace(/\*\*/g, '^')
+        .replace(/[*\u2217\u2715\u2716]/g, '\u00D7')
+        .replace(/(\d)[xX](?=[\d(.])/g, '$1\u00D7')
+        .replace(/\//g, '\u00F7')
+        .replace(/[-\u2010\u2011\u2013\u2014]/g, '\u2212');
       return s.replace(/[^0-9.\u00D7\u00F7\u2212+^%()a-zA-Z\u03C0\u221A\u221B]/g, '');
     }
 
-    // Insert sanitized clipboard text at the caret (replacing any selection).
     function insertPasted(raw: string): void {
       const clean = sanitizePasted(raw);
       if (!clean) return;
@@ -458,14 +534,11 @@ const keys = scientific ? sciKeys : basicKeys;
       render();
     }
 
-    // Read the system clipboard on an explicit user gesture (button / Ctrl+V).
     async function pasteFromClipboard(): Promise<void> {
       try {
         const text = await navigator.clipboard.readText();
         if (text) { insertPasted(text); flashPaste(); }
-      } catch {
-        /* Clipboard blocked (permissions / insecure context) — no-op. */
-      }
+      } catch { /* Clipboard blocked */ }
     }
 
     function setShift(on: boolean): void {
@@ -474,9 +547,12 @@ const keys = scientific ? sciKeys : basicKeys;
       shiftChip?.toggleAttribute('hidden', !on);
     }
 
+    function updateMemChip(): void {
+      memChip?.toggleAttribute('hidden', !state.hasMemory);
+    }
+
     function equals(): void {
       if (!state.expr.trim()) return;
-      // Try the expression as-is first, then a forgiving auto-fixed version.
       let res = evalDetailed(state.expr, state.deg, sci);
       let source = state.expr;
       if (!res.ok) {
@@ -487,10 +563,8 @@ const keys = scientific ? sciKeys : basicKeys;
       if (!res.ok) {
         resultEl.textContent = res.msg;
         resultEl.classList.add('is-error');
-        // Restart the shake animation even if the screen was already in an
-        // error state (re-adding a class alone won't re-trigger it).
         resultEl.classList.remove('is-shake');
-        void resultEl.offsetWidth; // force reflow
+        void resultEl.offsetWidth;
         resultEl.classList.add('is-shake');
         haptic.error();
         return;
@@ -519,7 +593,6 @@ const keys = scientific ? sciKeys : basicKeys;
     function del(): void {
       if (state.justEval) state.justEval = false;
       if (state.sel) {
-        // Remove the highlighted token.
         state.expr = state.expr.slice(0, state.sel.s) + state.expr.slice(state.sel.e);
         state.caret = state.sel.s;
         state.sel = null;
@@ -540,7 +613,6 @@ const keys = scientific ? sciKeys : basicKeys;
       render();
     }
 
-    // Best-effort character offset from a screen point, resilient across browsers.
     function offsetFromPoint(x: number, y: number): number {
       const doc = document as Document & {
         caretPositionFromPoint?: (x: number, y: number) => { offsetNode: Node; offset: number } | null;
@@ -556,7 +628,6 @@ const keys = scientific ? sciKeys : basicKeys;
         if (range) { node = range.startContainer; nodeOffset = range.startOffset; }
       }
       if (!node) return state.expr.length;
-      // Walk the text nodes inside exprEl and accumulate lengths up to `node`.
       let acc = 0;
       const walker = document.createTreeWalker(exprEl, NodeFilter.SHOW_TEXT);
       let cur = walker.nextNode();
@@ -568,7 +639,6 @@ const keys = scientific ? sciKeys : basicKeys;
       return Math.min(acc, state.expr.length);
     }
 
-    // Map a tap on the expression to the token under it and highlight it.
     function selectFromPoint(x: number, y: number): void {
       if (state.justEval) state.justEval = false;
       const offset = offsetFromPoint(x, y);
@@ -584,8 +654,26 @@ const keys = scientific ? sciKeys : basicKeys;
       root.focus();
     }
 
-    function handle(action: string | undefined, val: string | undefined, second: string | undefined): void {
-      if (action === 'clear') { clearAll(); return; }
+    // Memory operations
+    function memoryOp(op: string): void {
+      const current = state.justEval ? state.ans : (preview(state.expr, state.deg, sci) ?? 0);
+      switch (op) {
+        case 'MC': state.memory = 0; state.hasMemory = false; break;
+        case 'MR': insert(fmt(state.memory).replace(/,/g, '')); break;
+        case 'M+': state.memory += current; state.hasMemory = true; break;
+        case 'M\u2212': state.memory -= current; state.hasMemory = true; break;
+        case 'MS': state.memory = current; state.hasMemory = true; break;
+      }
+      updateMemChip();
+      persist();
+    }
+
+    function handle(action: string | undefined, val: string | undefined, second: string | undefined, label?: string): void {
+      if (action === 'clear') {
+        // Check if it's a memory button by label
+        if (label && /^M[CR+\u2212S]/.test(label)) { memoryOp(label); return; }
+        clearAll(); return;
+      }
       if (action === 'del') { del(); return; }
       if (action === 'equals') { equals(); return; }
       if (action === 'ans') { insert(fmt(state.ans).replace(/,/g, '')); return; }
@@ -598,19 +686,15 @@ const keys = scientific ? sciKeys : basicKeys;
         render();
         return;
       }
-      // A value key. Shift applies to its 2nd function, then auto-releases.
       if (state.shift && second) { insert(second); setShift(false); return; }
       if (val !== undefined) { insert(val); if (state.shift) setShift(false); }
     }
 
     root.querySelectorAll<HTMLButtonElement>('.calc-key').forEach((btn) => {
       btn.addEventListener('click', () => {
-        // Equals fires its own success/error pulse; every other key gets a
-        // light tick so the whole keypad feels tactile.
         if (btn.dataset.action !== 'equals') haptic.tap();
-        handle(btn.dataset.action, btn.dataset.val, btn.dataset['2ndVal']);
+        handle(btn.dataset.action, btn.dataset.val, btn.dataset['2ndVal'], btn.textContent?.trim());
       });
-      // Visual press feedback for touch.
       const press = () => btn.classList.add('is-press');
       const release = () => btn.classList.remove('is-press');
       btn.addEventListener('touchstart', press, { passive: true });
@@ -618,13 +702,29 @@ const keys = scientific ? sciKeys : basicKeys;
       btn.addEventListener('touchcancel', release);
     });
 
-    // Tap the screen to place the cursor / select a value to edit.
+    // Mode buttons (SHIFT / DEG) — separate from calc-key
+    root.querySelectorAll<HTMLButtonElement>('.calc-mode-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        haptic.tap();
+        handle(btn.dataset.action, undefined, undefined);
+      });
+    });
+
+    // Tap the screen to place cursor / select value.
     exprEl.addEventListener('pointerdown', (e) => {
       e.preventDefault();
       selectFromPoint(e.clientX, e.clientY);
     });
 
-    // Right-click / menu paste on browsers that dispatch it to a focusable div.
+    // Swipe left on display to delete
+    let touchStartX = 0;
+    exprEl.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
+    exprEl.addEventListener('touchend', (e) => {
+      const dx = (e.changedTouches[0]?.clientX ?? touchStartX) - touchStartX;
+      if (dx < -40) { del(); haptic.tap(); }
+    });
+
+    // Paste event
     root.addEventListener('paste', (e) => {
       const text = e.clipboardData?.getData('text') ?? '';
       if (!text) return;
@@ -632,11 +732,15 @@ const keys = scientific ? sciKeys : basicKeys;
       insertPasted(text);
     });
 
-    // Physical keyboard support when the calculator is focused.
+    // Keyboard support
     root.addEventListener('keydown', (e) => {
-      // Let clipboard/OS shortcuts through; Ctrl/Cmd+V pastes an expression.
       if (e.ctrlKey || e.metaKey) {
         if (e.key === 'v' || e.key === 'V') { e.preventDefault(); void pasteFromClipboard(); }
+        if (e.key === 'c' || e.key === 'C') {
+          e.preventDefault();
+          const val = resultEl.textContent?.trim() ?? '';
+          if (val) void navigator.clipboard?.writeText(val);
+        }
         return;
       }
       const k = e.key;
@@ -653,7 +757,6 @@ const keys = scientific ? sciKeys : basicKeys;
       else if (k === 'Enter' || k === '=') equals();
       else if (k === 'Backspace') del();
       else if (k === 'Delete') {
-        // Forward delete: remove the selection or the char at the caret.
         if (state.sel) del();
         else if (state.caret < state.expr.length) {
           state.expr = state.expr.slice(0, state.caret) + state.expr.slice(state.caret + 1);
@@ -669,13 +772,15 @@ const keys = scientific ? sciKeys : basicKeys;
       if (handled) e.preventDefault();
     });
 
-    // Restore a previous session (expression, last answer and angle mode).
+    // Restore session
     const saved = store ? loadState<Saved>(store) : null;
     if (saved) {
       state.expr = typeof saved.expr === 'string' ? saved.expr : '';
       state.ans = typeof saved.ans === 'number' ? saved.ans : 0;
       state.deg = typeof saved.deg === 'boolean' ? saved.deg : true;
       state.justEval = Boolean(saved.justEval);
+      state.memory = typeof saved.memory === 'number' ? saved.memory : 0;
+      state.hasMemory = Boolean(saved.hasMemory);
       state.caret = state.expr.length;
     }
     if (sci) {
@@ -683,8 +788,8 @@ const keys = scientific ? sciKeys : basicKeys;
       if (degBtn) degBtn.textContent = mode;
       if (angleChip) angleChip.textContent = mode;
     }
+    updateMemChip();
     if (state.justEval && state.expr) {
-      // Reconstruct the committed-answer view without recomputing the preview.
       exprEl.textContent = state.expr + ' =';
       resultEl.textContent = fmt(state.ans);
     } else {
