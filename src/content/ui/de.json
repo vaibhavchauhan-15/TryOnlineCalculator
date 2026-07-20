@@ -33,7 +33,15 @@
     "openCalculator": "Interaktiven Rechner öffnen",
     "noResults": "Keine Rechner passen zu Ihrer Suche.",
     "converters": "Umrechner",
-    "more": "Mehr"
+    "more": "Mehr",
+    "keypadHint": "Tippen Sie auf einen Wert, um ihn zu bearbeiten, oder fügen Sie einen ganzen Ausdruck ein",
+    "keypadPaste": "Ausdruck einfügen",
+    "keypadPasteAria": "Einen Ausdruck einfügen",
+    "keypadPasted": "Eingefügt",
+    "keypadCopy": "Ergebnis kopieren",
+    "keypadCopied": "Ergebnis kopiert",
+    "keypadExpr": "Ausdruck (tippen Sie auf einen Wert, um ihn zu bearbeiten)",
+    "keypadNoscript": "Dieser Rechner läuft vollständig in Ihrem Browser und benötigt JavaScript. Bitte aktivieren Sie JavaScript oder nutzen Sie einen unserer anderen Rechner, die ein vollständiges Rechenbeispiel auf der Seite zeigen."
   },
   "categories": {
     "finance": "Finanzen",

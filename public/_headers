@@ -7,7 +7,12 @@
 /fonts/*
   Cache-Control: public, max-age=31536000, immutable
 
+# Block search engines from indexing pages.dev domains.
+# Only the custom domain (tryonlinecalculator.com) should be indexed.
 https://tryonlinecalculator.pages.dev/*
+  X-Robots-Tag: noindex
+
+https://master.tryonlinecalculator.pages.dev/*
   X-Robots-Tag: noindex
 
 # Baseline security headers for every response. Deliberately conservative:

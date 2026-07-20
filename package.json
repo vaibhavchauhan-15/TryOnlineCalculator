@@ -20,7 +20,7 @@
     "translate:check": "vite-node scripts/translate.ts --check",
     "test": "vitest run",
     "test:watch": "vitest",
-    "deploy": "npm run build && wrangler pages deploy"
+    "deploy": "npm run build && wrangler pages deploy --branch=main"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.9",

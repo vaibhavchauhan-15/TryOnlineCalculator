@@ -7,9 +7,29 @@ import type { Calculator } from '../lib/types';
 interface Props {
   calculator: Calculator;
   variant?: 'basic' | 'scientific';
+  /** Localized calculator title (for the keypad's accessible name). */
+  title?: string;
+  /** Localized chrome strings (keypad* keys). Falls back to English. */
+  chrome?: Record<string, string>;
 }
-const { calculator, variant = 'basic' } = Astro.props;
+const { calculator, variant = 'basic', title, chrome = {} } = Astro.props;
 const scientific = variant === 'scientific';
+
+// Localized UI copy with English fallbacks so the keypad reads in the page's
+// language on every locale while keeping an identical layout.
+const label = title ?? calculator.title;
+const t = {
+  hint: chrome.keypadHint ?? 'Tap any value to edit it, or paste a full expression',
+  paste: chrome.keypadPaste ?? 'Paste expression',
+  pasteAria: chrome.keypadPasteAria ?? 'Paste an expression',
+  pasted: chrome.keypadPasted ?? 'Pasted',
+  copy: chrome.keypadCopy ?? 'Copy result',
+  copied: chrome.keypadCopied ?? 'Copied result',
+  expr: chrome.keypadExpr ?? 'Expression (tap a value to edit it)',
+  noscript:
+    chrome.keypadNoscript ??
+    'This calculator runs entirely in your browser and needs JavaScript to work. Please enable JavaScript, or use one of our other calculators that show a full worked example on the page.',
+};
 
 type Key = {
   label: string;
@@ -17,6 +37,7 @@ type Key = {
   cls?: string;
   action?: 'clear' | 'del' | 'equals' | 'ans' | 'shift' | 'deg';
   second?: { label: string; val: string };
+  tip?: string;
 };
 
 const basicKeys: Key[] = [
@@ -31,50 +52,66 @@ const basicKeys: Key[] = [
   { label: '=', action: 'equals', cls: 'key-equal span-4' },
 ];
 
-const sciKeys: Key[] = [
+// Scientific function keys — shown in a separate grid on desktop (8 cols)
+// and stacked above the arithmetic keys on mobile (5 cols).
+const sciFnKeys: Key[] = [
   { label: 'sin', val: 'sin(', cls: 'key-fn', second: { label: 'sin\u207B\u00B9', val: 'asin(' } },
   { label: 'cos', val: 'cos(', cls: 'key-fn', second: { label: 'cos\u207B\u00B9', val: 'acos(' } },
   { label: 'tan', val: 'tan(', cls: 'key-fn', second: { label: 'tan\u207B\u00B9', val: 'atan(' } },
-  { label: '\u03C0', val: '\u03C0', cls: 'key-fn' },
-  { label: 'e', val: 'e', cls: 'key-fn' },
-
   { label: 'ln', val: 'ln(', cls: 'key-fn', second: { label: 'e\u02E3', val: 'exp(' } },
   { label: 'log', val: 'log(', cls: 'key-fn', second: { label: '10\u02E3', val: '10^' } },
   { label: '\u221A', val: '\u221A(', cls: 'key-fn', second: { label: '\u221B', val: '\u221B(' } },
+  { label: '\u03C0', val: '\u03C0', cls: 'key-fn' },
+  { label: 'e', val: 'e', cls: 'key-fn' },
+
   { label: 'x\u00B2', val: '^2', cls: 'key-fn', second: { label: 'x\u00B3', val: '^3' } },
   { label: 'x\u02B8', val: '^', cls: 'key-fn' },
+  { label: '1/x', val: '1/(', cls: 'key-fn' },
+  { label: 'n!', val: 'fact(', cls: 'key-fn' },
+  { label: 'mod', val: '%', cls: 'key-fn' },
+  { label: 'EXP', val: 'E', cls: 'key-fn' },
+  { label: 'abs', val: 'abs(', cls: 'key-fn' },
+  { label: 'Ans', action: 'ans', cls: 'key-fn', tip: 'Insert previous answer' },
+];
 
+// Arithmetic / number keys — always 5 columns
+const sciNumKeys: Key[] = [
   { label: '(', val: '(' }, { label: ')', val: ')' },
   { label: 'AC', action: 'clear', cls: 'key-danger' },
   { label: 'DEL', action: 'del', cls: 'key-danger' },
   { label: '\u00F7', val: '\u00F7', cls: 'key-op' },
 
   { label: '7', val: '7' }, { label: '8', val: '8' }, { label: '9', val: '9' }, { label: '%', val: '%' }, { label: '\u00D7', val: '\u00D7', cls: 'key-op' },
-  { label: '4', val: '4' }, { label: '5', val: '5' }, { label: '6', val: '6' }, { label: 'Ans', action: 'ans' }, { label: '\u2212', val: '\u2212', cls: 'key-op' },
-  { label: '1', val: '1' }, { label: '2', val: '2' }, { label: '3', val: '3' }, { label: '.', val: '.' }, { label: '+', val: '+', cls: 'key-op' },
-  { label: '0', val: '0', cls: 'span-2' }, { label: '=', action: 'equals', cls: 'key-equal span-3' },
+  { label: '4', val: '4' }, { label: '5', val: '5' }, { label: '6', val: '6' }, { label: '.', val: '.' }, { label: '\u2212', val: '\u2212', cls: 'key-op' },
+  { label: '1', val: '1' }, { label: '2', val: '2' }, { label: '3', val: '3' }, { label: '0', val: '0' }, { label: '+', val: '+', cls: 'key-op' },
+  { label: '=', action: 'equals', cls: 'key-equal span-5' },
 ];
+
+// Combined flat array for backward compatibility (mobile uses this as fallback
+// if the two-grid desktop layout is hidden). We keep both arrays but render them
+// in separate grids.
+const sciKeys: Key[] = [...sciFnKeys, ...sciNumKeys];
 
 const keys = scientific ? sciKeys : basicKeys;
 ---
 
-<div class="calc-device" data-keypad data-mode={scientific ? 'scientific' : 'basic'} data-store={`keypad:${calculator.category}/${calculator.slug}`} tabindex="0" aria-label={`${calculator.title} keypad`}>
+<div class="calc-device" data-keypad data-mode={scientific ? 'scientific' : 'basic'} data-store={`keypad:${calculator.category}/${calculator.slug}`} tabindex="0" aria-label={label}>
   <div class="calc-screen">
     <div class="calc-status">
       {scientific && <span class="calc-chip" data-angle-chip>DEG</span>}
       {scientific && <span class="calc-chip" data-shift-chip hidden>SHIFT</span>}
     </div>
-    <div class="calc-screen-expr is-editable" data-expr aria-live="off" role="textbox" aria-label="Expression (tap a value to edit it)"></div>
+    <div class="calc-screen-expr is-editable" data-expr aria-live="off" role="textbox" aria-label={t.expr}></div>
     <div class="calc-screen-result" data-result aria-live="polite">0</div>
   </div>
 
   <div class="calc-copy-row calc-copy-row-split">
-    <span class="calc-hint">Tap any value to edit it, or paste a full expression</span>
+    <span class="calc-hint">{t.hint}</span>
     <div class="calc-copy-actions">
-      <button type="button" class="calc-copy-action is-icon" data-paste-btn aria-label="Paste an expression" data-tip="Paste expression" data-tip-done="Pasted">
+      <button type="button" class="calc-copy-action is-icon" data-paste-btn aria-label={t.pasteAria} data-tip={t.paste} data-tip-done={t.pasted}>
         <span data-copy-ico><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1"></rect><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path></svg></span>
       </button>
-      <button type="button" class="calc-copy-action is-icon" data-copy-btn aria-label="Copy result" data-tip="Copy result" data-tip-done="Copied result">
+      <button type="button" class="calc-copy-action is-icon" data-copy-btn aria-label={t.copy} data-tip={t.copy} data-tip-done={t.copied}>
         <span data-copy-ico><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></span>
       </button>
     </div>
@@ -87,24 +124,59 @@ const keys = scientific ? sciKeys : basicKeys;
     </div>
   )}
 
-  <div class={`calc-keys ${scientific ? 'cols-5' : ''}`}>
-    {keys.map((k) => (
-      <button
-        type="button"
-        class={`calc-key ${k.cls ?? ''}`}
-        data-val={k.val}
-        data-action={k.action}
-        data-2nd={k.second?.label}
-        data-2nd-val={k.second?.val}
-      >{k.label}</button>
-    ))}
-  </div>
+  {scientific ? (
+    <>
+      <div class="calc-keys cols-sci-fn">
+        {sciFnKeys.map((k) => (
+          <button
+            type="button"
+            class={`calc-key ${k.cls ?? ''}`}
+            data-val={k.val}
+            data-action={k.action}
+            data-2nd={k.second?.label}
+            data-2nd-val={k.second?.val}
+            aria-label={k.tip}
+            title={k.tip}
+          >{k.label}</button>
+        ))}
+      </div>
+      <div class="calc-keys cols-sci-num">
+        {sciNumKeys.map((k) => (
+          <button
+            type="button"
+            class={`calc-key ${k.cls ?? ''}`}
+            data-val={k.val}
+            data-action={k.action}
+            data-2nd={k.second?.label}
+            data-2nd-val={k.second?.val}
+            aria-label={k.tip}
+            title={k.tip}
+          >{k.label}</button>
+        ))}
+      </div>
+    </>
+  ) : (
+    <div class="calc-keys">
+      {keys.map((k) => (
+        <button
+          type="button"
+          class={`calc-key ${k.cls ?? ''}`}
+          data-val={k.val}
+          data-action={k.action}
+          data-2nd={k.second?.label}
+          data-2nd-val={k.second?.val}
+          aria-label={k.tip}
+          title={k.tip}
+        >{k.label}</button>
+      ))}
+    </div>
+  )}
 
   <div data-history-mount></div>
 </div>
 
 <noscript>
-  <p class="calc-visual-note">This calculator runs entirely in your browser and needs JavaScript to work. Please enable JavaScript, or use one of our other calculators that show a full worked example on the page.</p>
+  <p class="calc-visual-note">{t.noscript}</p>
 </noscript>
 
 <script>

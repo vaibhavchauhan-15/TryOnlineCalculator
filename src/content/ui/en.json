@@ -43,7 +43,15 @@
     "openCalculator": "Open interactive calculator",
     "noResults": "No calculators match your search.",
     "converters": "Converters",
-    "more": "More"
+    "more": "More",
+    "keypadHint": "Tap any value to edit it, or paste a full expression",
+    "keypadPaste": "Paste expression",
+    "keypadPasteAria": "Paste an expression",
+    "keypadPasted": "Pasted",
+    "keypadCopy": "Copy result",
+    "keypadCopied": "Copied result",
+    "keypadExpr": "Expression (tap a value to edit it)",
+    "keypadNoscript": "This calculator runs entirely in your browser and needs JavaScript to work. Please enable JavaScript, or use one of our other calculators that show a full worked example on the page."
   },
   "errors": {
     "404Title": "Page Not Found",

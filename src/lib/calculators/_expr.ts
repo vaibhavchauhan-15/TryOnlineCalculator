@@ -17,6 +17,7 @@ const FUNCS: Record<string, (x: number) => number> = {
   log: (x) => Math.log10(x),
   exp: (x) => Math.exp(x),
   abs: (x) => Math.abs(x),
+  fact: (x) => { const n = Math.round(x); if (n < 0 || n > 170) return NaN; let r = 1; for (let i = 2; i <= n; i++) r *= i; return r; },
   round: (x) => Math.round(x),
   floor: (x) => Math.floor(x),
   ceil: (x) => Math.ceil(x),

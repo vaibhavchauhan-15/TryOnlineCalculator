@@ -33,7 +33,15 @@
     "openCalculator": "Abrir calculadora interactiva",
     "noResults": "Ninguna calculadora coincide con tu búsqueda.",
     "converters": "Convertidores",
-    "more": "Más"
+    "more": "Más",
+    "keypadHint": "Toca cualquier valor para editarlo o pega una expresión completa",
+    "keypadPaste": "Pegar expresión",
+    "keypadPasteAria": "Pegar una expresión",
+    "keypadPasted": "Pegado",
+    "keypadCopy": "Copiar resultado",
+    "keypadCopied": "Resultado copiado",
+    "keypadExpr": "Expresión (toca un valor para editarlo)",
+    "keypadNoscript": "Esta calculadora funciona por completo en tu navegador y necesita JavaScript. Activa JavaScript o usa una de nuestras otras calculadoras que muestran un ejemplo resuelto completo en la página."
   },
   "categories": {
     "finance": "Finanzas",

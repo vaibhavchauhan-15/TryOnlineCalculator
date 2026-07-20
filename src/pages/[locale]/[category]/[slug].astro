@@ -10,9 +10,11 @@ import { localizedCalculatorPageSchemas } from '../../../lib/i18n/seo-schema';
 import { to } from '../../../lib/i18n/paths';
 import { getCategory } from '../../../lib/categories';
 import { getCalculator } from '../../../lib/calculators';
+import { calculatorIcon } from '../../../lib/icons';
 import { localizedCategorySlug, localizedCalculatorSlug } from '../../../lib/i18n/slugs';
 import LocalizedCalculatorWidget from '../../../components/LocalizedCalculatorWidget.astro';
 import KeypadCalculator from '../../../components/KeypadCalculator.astro';
+import LinkCard from '../../../components/LinkCard.astro';
 
 export async function getStaticPaths() {
   // Build paths for every enabled locale (including the default 'en') from the
@@ -45,6 +47,12 @@ const engine = getEngine(enSlug);
 const calculator = getCalculator(enSlug);
 if (!content || !engine) return Astro.redirect('/404');
 
+// Interactive keypad calculators (basic / scientific) are centred and enlarged
+// on wide screens; every calculator type sits at the top of the page as the
+// primary, full-width focal point with all editorial content flowing beneath.
+const isKeypad = calculator?.visual === 'basic' || calculator?.visual === 'scientific';
+const calcVariant = isKeypad ? 'keypad' : 'form';
+
 const fm = content.entry.data;
 const cat = getCategory(fm.category);
 const categoryLabel = categoryName(locale, fm.category);
@@ -52,7 +60,27 @@ const categoryLabel = categoryName(locale, fm.category);
 // Formatting context seeded from this locale's default region. The widget's
 // client re-renders live from the visitor's real preferences.
 const ctx = regionDefaultsForLocale(locale);
-const chrome = uiPack(locale).chrome ?? {};
+const ui = uiPack(locale);
+const chrome = ui.chrome ?? {};
+const openLabel = ui.home?.open ?? chrome.openCalculator ?? 'Open';
+
+// Related calculators — resolve each canonical (English) slug to its LOCALIZED
+// title + description so the cards read in the page's language, then build a
+// locale-aware link. Skips any slug that no longer resolves.
+type RelatedItem = { href: string; title: string; desc: string; icon?: string };
+const relatedItems: RelatedItem[] = [];
+for (const relSlug of fm.related) {
+  if (relSlug === enSlug) continue; // never link a page to itself
+  const relContent = await getCalculatorContent(relSlug, locale);
+  if (!relContent) continue;
+  const relData = relContent.entry.data;
+  relatedItems.push({
+    href: to(`/${relData.category}/${relSlug}`, locale),
+    title: relData.title,
+    desc: relData.description,
+    icon: calculatorIcon(relSlug) ?? getCategory(relData.category)?.icon,
+  });
+}
 
 // Localized MDX body.
 const { Content } = await render(content.entry);
@@ -85,7 +113,7 @@ const jsonLd = localizedCalculatorPageSchemas(locale, {
   jsonLd={jsonLd}
   noindex={!isIndexedLocale(locale)}
 >
-  <div class="container-page">
+  <div class="container-page calc-page">
     <nav class="breadcrumb" aria-label="Breadcrumb">
       <a href={to('/', locale)}>{chrome.home ?? 'Home'}</a><span aria-hidden="true">/</span>
       {cat && <><a href={to(cat.path, locale)}>{categoryLabel}</a><span aria-hidden="true">/</span></>}
@@ -94,116 +122,256 @@ const jsonLd = localizedCalculatorPageSchemas(locale, {
 
     <header class="calc-header">
       <h1 class="calc-title">{fm.title}</h1>
-      <p class="calc-desc">{fm.description}</p>
     </header>
 
-    {fm.intro && <p class="calc-intro">{fm.intro}</p>}
-
-    <section class="calc-widget-section" aria-label={fm.title}>
-    {engine.fields && engine.parseInput ? (
-      <LocalizedCalculatorWidget
-        slug={enSlug}
-        pack={content.pack}
-        fallback={content.fallback}
-        ctx={ctx}
-        chrome={chrome}
-      />
-    ) : calculator?.visual === 'basic' || calculator?.visual === 'scientific' ? (
-      <KeypadCalculator calculator={calculator} variant={calculator.visual} />
-    ) : (
-      <div class="calc-visual-note">
-        <p>
-          <a href={to(`/${enCategory}/${enSlug}`, DEFAULT_LOCALE)} class="btn btn-primary">
-            {chrome.openCalculator ?? 'Open interactive calculator'}
-          </a>
-        </p>
-      </div>
-    )}
+    {/* The calculator is the first interactive element on every page — a
+        full-width focal point directly below the title, visible without
+        scrolling on phones. All editorial/SEO content follows beneath it. */}
+    <section class="calc-stage" data-variant={calcVariant} aria-label={fm.title}>
+      {engine.fields && engine.parseInput ? (
+        <LocalizedCalculatorWidget
+          slug={enSlug}
+          pack={content.pack}
+          fallback={content.fallback}
+          ctx={ctx}
+          chrome={chrome}
+        />
+      ) : calculator?.visual === 'basic' || calculator?.visual === 'scientific' ? (
+        <KeypadCalculator calculator={calculator} variant={calculator.visual} title={fm.title} chrome={chrome} />
+      ) : (
+        <div class="calc-visual-note">
+          <p>
+            <a href={to(`/${enCategory}/${enSlug}`, DEFAULT_LOCALE)} class="btn btn-primary">
+              {chrome.openCalculator ?? 'Open interactive calculator'}
+            </a>
+          </p>
+        </div>
+      )}
     </section>
 
-    <div class="calc-body">
-      <div class="calc-content">
-        <article class="prose-section">
-          <Content />
-        </article>
+    <div class="calc-sub-header">
+      <p class="calc-desc">{fm.description}</p>
+      {fm.intro && <p class="calc-intro">{fm.intro}</p>}
+    </div>
 
-        {fm.howto.length > 0 && (
-          <section class="prose-section">
-            <h2>{chrome.howToUse ?? 'How to use'}</h2>
-            <ol class="howto">{fm.howto.map((step) => <li>{step}</li>)}</ol>
-          </section>
-        )}
+    <div class="calc-content">
+      <article class="prose-section prose-measure">
+        <Content />
+      </article>
 
-        {fm.formulaItems.length > 0 && (
-          <section class="prose-section">
-            <h2>{chrome.formula ?? 'Formula'}</h2>
-            {fm.formulaIntro && <p>{fm.formulaIntro}</p>}
-            <div class="formula-list">
-              {fm.formulaItems.map((f) => (
-                <div class="formula">
-                  <span class="formula-name">{f.name}</span>
-                  <code class="formula-expr">{f.expr}</code>
-                  {f.desc && <span class="formula-desc">{f.desc}</span>}
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
+      {fm.howto.length > 0 && (
+        <section class="prose-section prose-measure">
+          <h2>{chrome.howToUse ?? 'How to use'}</h2>
+          <ol class="howto">{fm.howto.map((step) => <li>{step}</li>)}</ol>
+        </section>
+      )}
 
-        {fm.faq.length > 0 && (
-          <section class="prose-section">
-            <h2>{chrome.faq ?? 'Frequently asked questions'}</h2>
-            <div class="faq">
-              {fm.faq.map((f) => (
-                <details class="faq-item">
-                  <summary>{f.q}</summary>
-                  <p>{f.a}</p>
-                </details>
-              ))}
-            </div>
-          </section>
-        )}
-      </div>
+      {fm.formulaItems.length > 0 && (
+        <section class="prose-section prose-measure">
+          <h2>{chrome.formula ?? 'Formula'}</h2>
+          {fm.formulaIntro && <p>{fm.formulaIntro}</p>}
+          <div class="formula-list">
+            {fm.formulaItems.map((f) => (
+              <div class="formula">
+                <span class="formula-name">{f.name}</span>
+                <code class="formula-expr">{f.expr}</code>
+                {f.desc && <span class="formula-desc">{f.desc}</span>}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {fm.examples.length > 0 && (
+        <section class="prose-section">
+          <h2>{chrome.workedExamples ?? 'Worked examples'}</h2>
+          <div class="examples-list">
+            {fm.examples.map((ex) => (
+              <div class="example-card">
+                <h3 class="example-title">{ex.title}</h3>
+                <p class="example-body">{ex.body}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {fm.faq.length > 0 && (
+        <section class="prose-section prose-measure">
+          <h2>{chrome.faq ?? 'Frequently asked questions'}</h2>
+          <div class="faq">
+            {fm.faq.map((f) => (
+              <details class="faq-item">
+                <summary>{f.q}</summary>
+                <p>{f.a}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {relatedItems.length > 0 && (
+        <section class="prose-section">
+          <h2>{chrome.relatedCalculators ?? 'Related calculators'}</h2>
+          <div class="related-grid">
+            {relatedItems.map((r) => (
+              <LinkCard href={r.href} title={r.title} desc={r.desc} icon={r.icon} cta={openLabel} />
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   </div>
 </Layout>
 
 <style>
-  .breadcrumb { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-top: 1.5rem; font-size: 13px; color: var(--color-mute); }
+  /* ============================================================
+     Tool-first calculator page.
+     Flow (all breakpoints, single column):
+       breadcrumb → H1 → short description → (intro) → CALCULATOR
+       → article → how-to → formula → examples → FAQ → related
+     The calculator is always the first interactive element and the
+     visual focal point; nothing sits between the description and it.
+     ============================================================ */
+
+  .breadcrumb { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-top: 1rem; font-size: 13px; color: var(--color-mute); }
   .breadcrumb a { color: var(--color-body); }
   .breadcrumb a:hover { color: var(--color-ink); }
 
-  .calc-header { padding: 1.5rem 0 0; }
-  .calc-title { margin: 0; font-size: clamp(1.75rem, 4vw, 2.5rem); letter-spacing: -0.03em; text-wrap: balance; }
-  .calc-desc { margin: 0.625rem 0 0; font-size: 17px; line-height: 1.6; color: var(--color-body); max-width: 62ch; text-wrap: pretty; }
-  .calc-intro { margin: 1rem 0 1.5rem; font-size: 15px; line-height: 1.6; color: var(--color-mute); max-width: 68ch; }
-
-  /* The calculator widget section: centered, responsive, fills available width on mobile */
-  .calc-widget-section {
-    margin: 1.5rem 0 0;
-    display: flex;
-    justify-content: center;
+  /* ---- Compact hero: title + one/two lines, then the tool ---- */
+  .calc-header { padding: 0.75rem 0 0; }
+  .calc-title {
+    margin: 0;
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
   }
+  .calc-desc {
+    margin: 0.4rem 0 0;
+    font-size: clamp(0.875rem, 2vw, 1.0625rem);
+    line-height: 1.45;
+    color: var(--color-body);
+    max-width: 68ch;
+    text-wrap: pretty;
+  }
+  .calc-intro {
+    margin: 0.375rem 0 0;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--color-mute);
+    max-width: 72ch;
+  }
+
+  /* Description + intro moved below calculator for better viewport fit */
+  .calc-sub-header {
+    margin-top: 1.25rem;
+  }
+  .calc-sub-header .calc-desc { margin-top: 0; }
+
+  /* ---- Calculator stage: full-width focal point ---- */
+  .calc-stage { margin-top: 0.75rem; min-width: 0; overflow: visible; }
+
+  /* Keypad calculators (basic / scientific) are centred; the device grows on
+     larger screens so keys + display read big, without stretching to an
+     awkward full-bleed width. Form / guided widgets already fill the stage. */
+  .calc-stage[data-variant='keypad'] { display: flex; justify-content: center; }
+
+  /* The keypad device sizes itself from its children (screen + keys). Keys and
+     screen use viewport-relative sizing so they scale smoothly across screen
+     heights without needing a hard max-height that clips the history panel. */
+  .calc-stage[data-variant='keypad'] :global(.calc-device) {
+    gap: clamp(0.375rem, 1vh, 0.75rem);
+    padding: clamp(0.75rem, 1.5vh, 1.25rem);
+    overflow: visible;
+    position: relative;
+  }
+  /* History panel sits below the device in normal flow so it doesn't overlap
+     the description. It's outside the max-height constraint because
+     [data-history-mount] is the last child inside .calc-device, and we let it
+     overflow visibly. */
+  .calc-stage[data-variant='keypad'] :global(.calc-history) {
+    position: relative;
+    left: auto;
+    right: auto;
+    top: auto;
+    z-index: 10;
+    margin-top: 0.5rem;
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-float);
+    padding: 0.75rem;
+  }
+  .calc-stage[data-variant='keypad'] :global(.calc-screen) {
+    min-height: clamp(72px, 12vh, 100px);
+    max-height: clamp(100px, 18vh, 160px);
+    padding: clamp(0.5rem, 1vh, 0.875rem) 1rem;
+  }
+  .calc-stage[data-variant='keypad'] :global(.calc-keys) {
+    gap: clamp(0.25rem, 0.6vh, 0.5rem);
+  }
+  .calc-stage[data-variant='keypad'] :global(.calc-key) {
+    min-height: clamp(36px, 6.5vh, 52px);
+  }
+  /* Scientific mode: tighter vh clamp prevents oversized buttons on short viewports */
+  .calc-stage[data-variant='keypad'] :global(.calc-device[data-mode='scientific'] .calc-key) {
+    min-height: clamp(36px, 5.5vh, 50px);
+  }
+  .calc-stage[data-variant='keypad'] :global(.calc-copy-row) {
+    margin-top: -0.125rem;
+  }
+
+  @media (min-width: 768px) {
+    .calc-stage[data-variant='keypad'] :global(.calc-device) { max-width: 600px; }
+    .calc-stage[data-variant='keypad'] :global(.calc-device[data-mode='scientific']) { max-width: 760px; }
+  }
+
+  @media (min-width: 1280px) {
+    .calc-stage[data-variant='keypad'] :global(.calc-device[data-mode='scientific']) { max-width: 840px; }
+  }
+
+  @media (min-width: 1440px) {
+    .calc-stage[data-variant='keypad'] :global(.calc-device[data-mode='scientific']) { max-width: 900px; }
+  }
+
+  /* On phones let the tool bleed to the page gutters so it uses every pixel. */
   @media (max-width: 640px) {
-    .calc-widget-section {
-      margin-inline: -1rem; /* bleed to page edges on phones */
-    }
+    .calc-stage { margin-inline: -1rem; }
   }
 
-  .calc-visual-note { margin: 1.5rem 0; }
+  .calc-visual-note { margin: 0.5rem 0; }
 
-  .calc-body { display: grid; grid-template-columns: 1fr; gap: 2.5rem; margin-top: 3rem; }
-  .calc-content { min-width: 0; }
-  .prose-section { margin-bottom: 2.5rem; }
-  .prose-section h2 { font-size: 1.375rem; letter-spacing: -0.02em; margin: 0 0 1rem; }
-  .prose-section p { font-size: 15px; line-height: 1.7; color: var(--color-body); }
-  .prose-section :global(h2) { font-size: 1.375rem; letter-spacing: -0.02em; margin: 2.25rem 0 1rem; }
+  /* ---- Editorial / SEO content, stacked below the tool ---- */
+  .calc-content { min-width: 0; margin-top: 2.75rem; }
+
+  /* Constrain long-form reading blocks to a comfortable measure while cards
+     (examples / related) below are free to span the full width. */
+  .prose-measure { max-width: 72ch; }
+
+  .prose-section { margin-bottom: 2.75rem; }
+  .prose-section:last-child { margin-bottom: 0; }
+  .prose-section h2 {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin: 0 0 1rem;
+  }
+  .prose-section p { font-size: 1.0625rem; line-height: 1.75; color: var(--color-body); }
+  .prose-section :global(h2) {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin: 2.5rem 0 1rem;
+  }
   .prose-section :global(h2:first-child) { margin-top: 0; }
-  .prose-section :global(p) { font-size: 15px; line-height: 1.7; color: var(--color-body); margin: 0 0 1rem; }
+  .prose-section :global(h3) { font-size: clamp(1.25rem, 2.4vw, 1.5rem); letter-spacing: -0.02em; margin: 1.75rem 0 0.75rem; }
+  .prose-section :global(p) { font-size: 1.0625rem; line-height: 1.75; color: var(--color-body); margin: 0 0 1.1rem; }
+  .prose-section :global(ul), .prose-section :global(ol) { font-size: 1.0625rem; line-height: 1.7; color: var(--color-body); padding-left: 1.25rem; margin: 0 0 1.1rem; }
+  .prose-section :global(li) { margin: 0.35rem 0; }
   .prose-section :global(code) { font-family: var(--font-mono); font-size: 0.92em; background-color: var(--color-canvas-soft-2); padding: 0.1rem 0.35rem; border-radius: var(--radius-sm); }
 
-  .howto { margin: 0; padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem; }
-  .howto li { font-size: 15px; line-height: 1.6; color: var(--color-body); }
+  .howto { margin: 0; padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.625rem; }
+  .howto li { font-size: 1.0625rem; line-height: 1.6; color: var(--color-body); }
 
   .formula-list { display: flex; flex-direction: column; gap: 0.75rem; }
   .formula {
@@ -227,6 +395,25 @@ const jsonLd = localizedCalculatorPageSchemas(locale, {
   }
   .formula-desc { font-size: 13px; color: var(--color-mute); }
 
+  /* ---- Worked examples ---- */
+  .examples-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+    gap: 1rem;
+  }
+  .example-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.25rem 1.375rem;
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+  }
+  .example-title { font-size: 1.0625rem; font-weight: 600; letter-spacing: -0.01em; margin: 0; }
+  .example-body { font-size: 1rem; line-height: 1.65; color: var(--color-body); margin: 0; }
+
+  /* ---- FAQ ---- */
   .faq { display: flex; flex-direction: column; gap: 0.5rem; }
   .faq-item {
     border: 1px solid var(--color-hairline);
@@ -236,20 +423,29 @@ const jsonLd = localizedCalculatorPageSchemas(locale, {
   }
   .faq-item summary {
     cursor: pointer;
-    padding: 0.875rem 1rem;
-    font-size: 15px;
+    padding: 1rem 1.125rem;
+    font-size: 1rem;
     font-weight: 500;
     list-style: none;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 1rem;
   }
   .faq-item summary::-webkit-details-marker { display: none; }
-  .faq-item summary::after { content: '+'; color: var(--color-mute); font-size: 18px; }
+  .faq-item summary::after { content: '+'; color: var(--color-mute); font-size: 20px; flex: 0 0 auto; }
   .faq-item[open] summary::after { content: '−'; }
-  .faq-item p { margin: 0; padding: 0 1rem 1rem; font-size: 14px; line-height: 1.65; color: var(--color-body); }
+  .faq-item p { margin: 0; padding: 0 1.125rem 1.125rem; font-size: 0.9375rem; line-height: 1.7; color: var(--color-body); }
 
-  @media (max-width: 900px) {
-    .calc-body { grid-template-columns: 1fr; gap: 1.5rem; }
+  /* ---- Related calculators grid ---- */
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+    gap: 1rem;
+  }
+
+  @media (max-width: 640px) {
+    .calc-content { margin-top: 2rem; }
+    .prose-section { margin-bottom: 2.25rem; }
   }
 </style>
