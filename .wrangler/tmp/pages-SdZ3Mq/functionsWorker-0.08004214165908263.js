@@ -100,7 +100,7 @@ var onRequest2 = /* @__PURE__ */ __name(async (context) => {
   return Response.redirect(new URL(`/${DEFAULT_LOCALE}/`, url), 302);
 }, "onRequest");
 
-// ../.wrangler/tmp/pages-zhWJqz/functionsRoutes-0.15598317875540713.mjs
+// ../.wrangler/tmp/pages-SdZ3Mq/functionsRoutes-0.4784842727600458.mjs
 var routes = [
   {
     routePath: "/",
