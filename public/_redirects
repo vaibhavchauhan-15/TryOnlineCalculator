@@ -1,3 +1,13 @@
+# Locale-root trailing-slash normalization — MUST use 302 (temporary), never a
+# permanent 301/308. Cloudflare Pages would otherwise auto-issue a 308 Permanent
+# Redirect for /en → /en/, which browsers cache indefinitely. If a deploy is ever
+# momentarily broken, that permanent redirect gets frozen in visitors' browsers
+# (e.g. /en cached → /en/404/) and no later fix can evict it. A 302 is never
+# cached, so the entry path always re-checks the server. These explicit rules
+# override Cloudflare's automatic 308 for the primary entry URLs.
+/en   /en/   302
+/de   /de/   302
+
 # Permanent redirects: legacy non-prefixed English URLs → canonical /en/ paths.
 # Cloudflare Pages processes these at the edge (no round-trip to origin).
 #
