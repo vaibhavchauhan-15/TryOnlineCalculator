@@ -1,6 +1,7 @@
 ﻿---
 import Layout from '../../layouts/Layout.astro';
 import FaqAccordion from '../../components/FaqAccordion.astro';
+import SeoInternalLinks from '../../components/SeoInternalLinks.astro';
 import { faqPageSchema } from '../../lib/seo';
 import { staticPageHreflang } from '../../lib/i18n/seo-head';
 import type { FaqItem } from '../../lib/types';
@@ -33,8 +34,8 @@ const keywords = [
 ---
 
 <Layout
-  title="Privacy Policy"
-  description="How Try Online Calculator handles your data. Short version: your calculator inputs stay on your device."
+  title="Privacy Policy — How Try Online Calculator Protects Your Data"
+  description="Privacy policy for Try Online Calculator. Your calculator inputs stay on your device — we never send or store your numbers. No account needed, no data sold."
   path="/en/privacy"
   locale="en"
   alternates={staticPageHreflang('privacy')}
@@ -61,5 +62,7 @@ const keywords = [
     <p>Questions about privacy? Reach us through the <a class="link" href="/contact">contact page</a>.</p>
 
     <FaqAccordion items={faqs} title="Privacy FAQ" />
+
+    <SeoInternalLinks locale="en" />
   </div>
 </Layout>

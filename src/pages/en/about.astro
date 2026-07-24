@@ -1,6 +1,7 @@
 ﻿---
 import Layout from '../../layouts/Layout.astro';
 import FaqAccordion from '../../components/FaqAccordion.astro';
+import SeoInternalLinks from '../../components/SeoInternalLinks.astro';
 import { allCalculators } from '../../lib/calculators';
 import { faqPageSchema } from '../../lib/seo';
 import { staticPageHreflang } from '../../lib/i18n/seo-head';
@@ -40,8 +41,8 @@ const keywords = [
 ---
 
 <Layout
-  title="About"
-  description="About Try Online Calculator ΓÇö free, fast, privacy-friendly calculators for everyday life."
+  title="About Try Online Calculator — Free, Private & Accurate Calculator Hub"
+  description="About Try Online Calculator — a growing collection of free, privacy-friendly calculators for finance, health, education and math. All calculations run in your browser with no sign-up needed."
   path="/en/about"
   locale="en"
   alternates={staticPageHreflang('about')}
@@ -63,5 +64,7 @@ const keywords = [
     <p>Spotted a bug or want a calculator we do not have yet? We would love to hear from you on our <a class="link" href="/en/contact">contact page</a>.</p>
 
     <FaqAccordion items={faqs} title="About & FAQ" />
+
+    <SeoInternalLinks locale="en" />
   </div>
 </Layout>

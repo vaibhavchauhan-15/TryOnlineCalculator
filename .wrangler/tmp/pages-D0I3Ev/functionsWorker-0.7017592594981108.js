@@ -2,7 +2,7 @@ var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 
 // _middleware.ts
-var ENABLED_LOCALES = /* @__PURE__ */ new Set(["en", "de", "hi", "es"]);
+var ENABLED_LOCALES = /* @__PURE__ */ new Set(["en", "de"]);
 var SKIP_PATTERN = /^\/(?:fonts|_astro|_image|favicon|robots\.txt|sitemap|site\.webmanifest|web-app-manifest|apple-touch-icon|search\/)/;
 function getCookie(cookieHeader, name) {
   const match2 = cookieHeader.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`));
@@ -41,6 +41,16 @@ var onRequest = /* @__PURE__ */ __name(async (context) => {
       });
     }
   }
+  if (!pathLocale) {
+    const firstSegment = pathname.split("/")[1] ?? "";
+    const isLocaleShaped = /^[a-z]{2}$/.test(firstSegment);
+    const target = isLocaleShaped ? new URL("/en/", url.origin) : new URL(`/en${pathname}`, url.origin);
+    if (!isLocaleShaped) target.search = url.search;
+    return new Response(null, {
+      status: 301,
+      headers: { Location: target.toString() }
+    });
+  }
   const response = await context.next();
   if (!cookieHeader.includes("geo-country=")) {
     const country = request.headers.get("cf-ipcountry");
@@ -57,7 +67,7 @@ var onRequest = /* @__PURE__ */ __name(async (context) => {
 }, "onRequest");
 
 // index.ts
-var ENABLED_LOCALES2 = /* @__PURE__ */ new Set(["en", "de", "hi", "es"]);
+var ENABLED_LOCALES2 = /* @__PURE__ */ new Set(["en", "de"]);
 var DEFAULT_LOCALE = "en";
 function matchAcceptLanguage(header) {
   if (!header) return null;
@@ -100,7 +110,7 @@ var onRequest2 = /* @__PURE__ */ __name(async (context) => {
   return Response.redirect(new URL(`/${DEFAULT_LOCALE}/`, url), 302);
 }, "onRequest");
 
-// ../.wrangler/tmp/pages-SdZ3Mq/functionsRoutes-0.4784842727600458.mjs
+// ../.wrangler/tmp/pages-D0I3Ev/functionsRoutes-0.5539120283932844.mjs
 var routes = [
   {
     routePath: "/",

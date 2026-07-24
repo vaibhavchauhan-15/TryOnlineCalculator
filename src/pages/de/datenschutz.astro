@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import FaqAccordion from '../../components/FaqAccordion.astro';
+import SeoInternalLinks from '../../components/SeoInternalLinks.astro';
 import { faqPageSchema } from '../../lib/seo';
 import { staticPageHreflang } from '../../lib/i18n/seo-head';
 import type { FaqItem } from '../../lib/types';
@@ -33,8 +34,8 @@ const keywords = [
 ---
 
 <Layout
-  title="Datenschutzrichtlinie"
-  description="Wie Try Online Calculator mit Ihren Daten umgeht. Kurzfassung: Ihre Rechnereingaben bleiben auf Ihrem Gerät."
+  title="Datenschutzrichtlinie — So schützt Try Online Calculator Ihre Daten"
+  description="Datenschutzrichtlinie von Try Online Calculator. Ihre Rechnereingaben bleiben auf Ihrem Gerät – wir senden und speichern Ihre Zahlen niemals. Kein Konto nötig, keine Daten verkauft."
   path="/de/datenschutz"
   locale="de"
   alternates={staticPageHreflang('privacy')}
@@ -61,5 +62,7 @@ const keywords = [
     <p>Fragen zum Datenschutz? Erreichen Sie uns über die <a class="link" href="/de/kontakt">Kontaktseite</a>.</p>
 
     <FaqAccordion items={faqs} title="Datenschutz-FAQ" />
+
+    <SeoInternalLinks locale="de" />
   </div>
 </Layout>

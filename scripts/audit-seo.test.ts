@@ -72,11 +72,13 @@ test('non-self canonical is caught', () => {
   assert.ok(has(auditPage('/de/health/bmi-calculator', meta, allExist), 'canonical'));
 });
 
-test('non-indexed locale page missing noindex is caught', () => {
-  // es has not passed the rollout gate, so its pages must stay noindex. An
-  // indexable es page is a defect.
-  const meta = localeMeta({ lang: 'es', canonical: `${SITE}/es/health/bmi-calculator`, robots: 'index, follow' });
-  assert.ok(has(auditPage('/es/health/bmi-calculator', meta, allExist), 'noindex'));
+test('indexed locale page wrongly marked noindex is caught', () => {
+  // en and de are the live, indexed locales, so their pages must stay
+  // indexable. A stray noindex would drop the page from search — a defect.
+  // (Held-back locales like hi/es are disabled entirely: they build no pages,
+  // so there is no enabled-but-non-indexed locale to police here anymore.)
+  const meta = localeMeta({ robots: 'noindex, nofollow' });
+  assert.ok(has(auditPage('/de/health/bmi-calculator', meta, allExist), 'indexed-noindex'));
 });
 
 test('incomplete hreflang set is caught', () => {

@@ -51,6 +51,18 @@ const popularListSchema = itemListSchema(
   popular.map((c) => ({ name: c.title, path: to(`/${c.category}/${c.slug}`, locale) })),
 );
 
+// SiteNavigationElement for category navigation — helps Google understand site structure
+const siteNavSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SiteNavigationElement',
+  name: 'Main Navigation',
+  hasPart: categories.map((c) => ({
+    '@type': 'WebPage',
+    name: categoryName(locale, c.id),
+    url: `https://tryonlinecalculator.com${to(c.path, locale)}`,
+  })),
+};
+
 const homeKeywords = isDefault ? [
   'calculator', 'online calculator', 'calculator online', 'free calculator',
   'calculator app', 'scientific calculator', 'loan calculator', 'emi calculator',
@@ -69,17 +81,17 @@ const homeKeywords = isDefault ? [
 
 <Layout
   title={isDefault
-    ? 'Calculator — Free Online Calculator for Finance, Health & Math'
+    ? 'Free Online Calculator — Mortgage, BMI, Loan, Percentage & Scientific Calculator'
     : (home.metaTitle ?? 'Free Online Calculators')}
   description={isDefault
-    ? `Free online calculator hub with ${total}+ fast, accurate tools: mortgage, loan/EMI, SIP, BMI, calorie, percentage, scientific, GPA, age and compound interest calculators. No sign-up required.`
+    ? `Free online calculator hub with ${total}+ fast, accurate tools: mortgage, loan/EMI, SIP, BMI, calorie, percentage, scientific, GPA, age and compound interest calculators. Instant results, no sign-up, works on any device.`
     : (home.metaDescription ?? 'Free, fast, privacy-friendly online calculators.')}
   path={to('/', locale)}
   locale={locale}
   alternates={hreflangAlternates('/')}
   noindex={!isIndexedLocale(locale)}
   keywords={homeKeywords}
-  jsonLd={isDefault ? [websiteSchema(), organizationSchema(), calculatorSchema(heroCalc), popularListSchema, faqPageSchema(homeFaqItems)] : [popularListSchema, ...(getHomeFaqItems(locale).length > 0 ? [faqPageSchema(getHomeFaqItems(locale))] : [])]}
+  jsonLd={isDefault ? [websiteSchema(), organizationSchema(), calculatorSchema(heroCalc), popularListSchema, siteNavSchema, faqPageSchema(homeFaqItems)] : [popularListSchema, siteNavSchema, ...(getHomeFaqItems(locale).length > 0 ? [faqPageSchema(getHomeFaqItems(locale))] : [])]}
 >
     <section class="hero">
       <div class="hero-glow" aria-hidden="true"></div>

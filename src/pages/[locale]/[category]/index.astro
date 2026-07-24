@@ -15,7 +15,7 @@ import { hreflangAlternates } from '../../../lib/i18n/seo-head';
 import { categories, getCategory } from '../../../lib/categories';
 import { calculatorsByCategory } from '../../../lib/calculators';
 import { calculatorIcon } from '../../../lib/icons';
-import { breadcrumbSchema, faqPageSchema } from '../../../lib/seo';
+import { breadcrumbSchema, faqPageSchema, itemListSchema } from '../../../lib/seo';
 import { categoryFaqs, categoryFaqsByLocale } from '../../../lib/faq';
 import { localizedCategorySlug } from '../../../lib/i18n/slugs';
 
@@ -53,9 +53,14 @@ const crumbs = [
   { name: chrome.home ?? 'Home', path: to('/', locale) },
   { name: catLabel, path: to(cat.path, locale) },
 ];
-const schemas = faqs.length
-  ? [breadcrumbSchema(crumbs), faqPageSchema(faqs)]
-  : [breadcrumbSchema(crumbs)];
+
+// ItemList schema for all calculators in this category — helps Google display rich results
+const calcListSchema = itemListSchema(
+  calcs.map((c) => ({ name: locTitle(c.slug, c.title), path: to(`/${c.category}/${c.slug}`, locale) })),
+);
+
+const schemas: Record<string, unknown>[] = [breadcrumbSchema(crumbs), calcListSchema];
+if (faqs.length) schemas.push(faqPageSchema(faqs));
 
 // Localized category description from the UI pack
 const catDescriptions: Record<string, Record<string, string>> = {
@@ -85,13 +90,18 @@ const catKeywords = isDefault ? Array.from(
     ...entries.flatMap((e) => (e.data.keywords as string[]) ?? []),
   ]),
 ).slice(0, 20) : []);
+// Build SEO-optimized meta description with top calculator names
+const topCalcNames = calcs.slice(0, 5).map((c) => locTitle(c.slug, c.title).replace(' Calculator', '').replace(' Rechner', '')).join(', ');
+const seoDescription = isDefault
+  ? `Free online ${cat.name.toLowerCase()} calculators: ${topCalcNames} and more. ${calcs.length} accurate tools with instant results — no sign-up needed.`
+  : (localizedCatDesc || home.metaDescription || 'Free, fast, privacy-friendly online calculators.');
 ---
 
 <Layout
   title={isDefault
-    ? `${cat.name} Calculators — Free Online ${cat.name} Tools`
+    ? `${cat.name} Calculators — Free Online ${cat.name} Calculator Tools (${calcs.length}+)`
     : `${catLabel} — ${home.metaTitle ?? 'Free Online Calculators'}`}
-  description={isDefault ? cat.description : (localizedCatDesc || home.metaDescription || 'Free, fast, privacy-friendly online calculators.')}
+  description={seoDescription}
   path={to(cat.path, locale)}
   locale={locale}
   alternates={hreflangAlternates(cat.path)}
@@ -134,6 +144,17 @@ const catKeywords = isDefault ? Array.from(
       <FaqAccordion items={faqs} title={`${catLabel} — ${chrome.faq ?? 'FAQ'}`} />
     )}
 
+    {/* SEO prose section — internal links to every calculator for crawl depth */}
+    <section class="cat-prose">
+      <h2>{isDefault ? `All ${cat.name.toLowerCase()} calculators` : `${catLabel}`}</h2>
+      <p>{isDefault ? cat.description : localizedCatDesc}</p>
+      <ul class="cat-links">
+        {calcs.map((c) => (
+          <li><a href={to(`/${c.category}/${c.slug}`, locale)}>{locTitle(c.slug, c.title)}</a>{isDefault && c.description ? ` — ${c.description}` : ''}</li>
+        ))}
+      </ul>
+    </section>
+
     <section class="other">
       <span class="eyebrow">{isDefault ? 'Other categories' : (locale === 'de' ? 'Weitere Kategorien' : '')}</span>
       <div class="other-links">
@@ -168,4 +189,12 @@ const catKeywords = isDefault ? Array.from(
     border-radius: var(--radius-pill);
   }
   .other-pill:hover { border-color: var(--color-hairline-strong); color: var(--color-ink); }
+
+  .cat-prose { max-width: 72ch; margin: 3rem 0 0; }
+  .cat-prose h2 { font-size: clamp(1.25rem, 3vw, 1.5rem); letter-spacing: -0.02em; margin: 0 0 0.75rem; }
+  .cat-prose p { font-size: 15px; line-height: 1.7; color: var(--color-body); margin: 0 0 1rem; }
+  .cat-links { margin: 0; padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem; }
+  .cat-links li { font-size: 14px; line-height: 1.6; color: var(--color-mute); }
+  .cat-links a { color: var(--color-link); font-weight: 500; }
+  .cat-links a:hover { text-decoration: underline; }
 </style>

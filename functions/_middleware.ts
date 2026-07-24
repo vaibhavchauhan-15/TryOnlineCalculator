@@ -19,7 +19,7 @@
 interface Env {}
 
 // Keep in sync with src/lib/i18n/locales.ts (enabled locales only).
-const ENABLED_LOCALES = new Set(['en', 'de', 'hi', 'es']);
+const ENABLED_LOCALES = new Set(['en', 'de']);
 
 // Paths that should never be subject to locale enforcement (static assets,
 // service worker, build artifacts, etc.).
@@ -80,6 +80,35 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         headers: { Location: redirectUrl.toString() },
       });
     }
+  }
+
+  // --- Non-prefixed / disabled-locale catch-all: 301 → /en equivalent ---
+  // If the path does NOT start with an ENABLED locale prefix it needs
+  // redirecting. This is the production equivalent of src/middleware.ts and the
+  // single owner of the "prepend /en" logic — public/_redirects deliberately
+  // has NO blanket `/*  /en/:splat` rule, because that would re-prefix
+  // already-/en/ paths on every hop and produce an infinite /en/en/en/… loop.
+  if (!pathLocale) {
+    // Distinguish a held-back / unknown locale prefix (e.g. /hi/…, /es/…, or any
+    // two-letter segment that isn't an enabled locale) from a genuine legacy
+    // non-prefixed path (e.g. /finance, /about).
+    //
+    //   * Locale-shaped prefix → drop it and send the visitor to the English
+    //     home (/en/). Prepending /en would yield /en/hi/… which 404s.
+    //   * Everything else       → prepend /en to the full path.
+    const firstSegment = pathname.split('/')[1] ?? '';
+    const isLocaleShaped = /^[a-z]{2}$/.test(firstSegment); // 2-letter, not enabled (else pathLocale would be set)
+
+    const target = isLocaleShaped
+      ? new URL('/en/', url.origin)
+      : new URL(`/en${pathname}`, url.origin);
+    // Preserve the query string only when we keep the path (legacy redirects).
+    if (!isLocaleShaped) target.search = url.search;
+
+    return new Response(null, {
+      status: 301,
+      headers: { Location: target.toString() },
+    });
   }
 
   // --- Continue to the origin (static asset serving) ---

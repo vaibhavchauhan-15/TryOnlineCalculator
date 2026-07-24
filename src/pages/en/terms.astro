@@ -1,6 +1,7 @@
 ﻿---
 import Layout from '../../layouts/Layout.astro';
 import FaqAccordion from '../../components/FaqAccordion.astro';
+import SeoInternalLinks from '../../components/SeoInternalLinks.astro';
 import { faqPageSchema } from '../../lib/seo';
 import { staticPageHreflang } from '../../lib/i18n/seo-head';
 import type { FaqItem } from '../../lib/types';
@@ -33,8 +34,8 @@ const keywords = [
 ---
 
 <Layout
-  title="Terms & Conditions"
-  description="The terms and conditions for using Try Online Calculator's free online tools."
+  title="Terms & Conditions — Try Online Calculator Usage Terms"
+  description="Terms and conditions for using Try Online Calculator's free online tools. Results are estimates for general information only — not professional advice."
   path="/en/terms"
   locale="en"
   alternates={staticPageHreflang('terms')}
@@ -61,5 +62,7 @@ const keywords = [
     <p>We may update these terms from time to time. Continued use of the site means you accept the current terms.</p>
 
     <FaqAccordion items={faqs} title="Terms FAQ" />
+
+    <SeoInternalLinks locale="en" />
   </div>
 </Layout>

@@ -48,8 +48,8 @@ const keywords = isDe
   ? ['einheitenumrechner', 'umrechnungsrechner', 'maßeinheiten umrechnen', ...converters.flatMap((c) => (convertersDe[c.slug]?.keywords ?? c.keywords).slice(0, 2))]
   : ['unit converter', 'conversion calculator', 'measurement converter', ...converters.flatMap((c) => c.keywords.slice(0, 2))];
 
-const pageTitle = hub?.metaTitle ?? 'Unit Converter — Free Online Conversion Calculator';
-const pageDesc = hub?.metaDescription ?? 'Free unit converter and conversion calculator: length, weight, temperature, speed, volume, area and currency. Fast, accurate conversions with no sign-up.';
+const pageTitle = hub?.metaTitle ?? 'Unit Converter — Free Online Length, Weight, Temperature & Currency Conversion';
+const pageDesc = hub?.metaDescription ?? `Free unit converter with ${converters.length} tools: length, weight, temperature, speed, volume, area and currency. Instant conversions between metric and imperial — no sign-up needed.`;
 ---
 
 <Layout

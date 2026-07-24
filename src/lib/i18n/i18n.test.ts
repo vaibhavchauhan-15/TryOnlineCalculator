@@ -19,12 +19,12 @@ test('default locale is defined and enabled', () => {
   assert.equal(def!.enabled, true);
 });
 
-test('enabled locales are a subset that includes the pilot four', () => {
+test('enabled locales are the live set (en, de) and exclude held-back ones', () => {
   const codes = enabledLocaleCodes();
-  for (const c of ['en', 'de', 'hi', 'es']) assert.ok(codes.includes(c), `${c} enabled`);
+  for (const c of ['en', 'de']) assert.ok(codes.includes(c), `${c} enabled`);
   assert.ok(codes.length <= LOCALES.length);
-  // Disabled next-wave locales must not leak into routing.
-  assert.ok(!codes.includes('fr'), 'fr is disabled until the rollout gate');
+  // Held-back (hi, es) and next-wave (fr, …) locales must not leak into routing.
+  for (const c of ['hi', 'es', 'fr']) assert.ok(!codes.includes(c), `${c} is disabled`);
 });
 
 test('isEnabledLocale gates unknown and disabled codes', () => {
@@ -75,7 +75,9 @@ test('switchLocale swaps the locale and re-localizes slugs', () => {
 });
 
 test('stripLocale and localeOf are inverse-ish helpers', () => {
-  assert.equal(stripLocale('/hi/health/bmi-calculator'), '/health/bmi-calculator');
-  assert.equal(localeOf('/hi/health/bmi-calculator'), 'hi');
+  assert.equal(stripLocale('/de/gesundheit/bmi-rechner'), '/gesundheit/bmi-rechner');
+  assert.equal(localeOf('/de/gesundheit/bmi-rechner'), 'de');
   assert.equal(localeOf('/health/bmi-calculator'), DEFAULT_LOCALE);
+  // A held-back locale prefix is treated as content, not a locale.
+  assert.equal(localeOf('/hi/health/bmi-calculator'), DEFAULT_LOCALE);
 });

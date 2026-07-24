@@ -52,17 +52,28 @@ const others = converters.filter((c) => c.slug !== cfg.slug);
 const bcHome = labels?.breadcrumbHome ?? 'Home';
 const bcHub = labels?.breadcrumbHub ?? 'Unit Converter';
 const eyebrow = labels?.eyebrow ?? 'Unit converter';
+
+// Enhanced SEO title — front-load the conversion type keyword
+const seoTitle = metaTitle.includes('—') || metaTitle.includes('|')
+  ? metaTitle
+  : `${metaTitle} — Free Online ${name} Conversion Tool`;
+
+// Enhanced description with CTA
+const seoDesc = metaDesc.length > 130
+  ? metaDesc
+  : `${metaDesc} Instant results, accurate conversion factors, no sign-up needed.`;
 ---
 
 <Layout
-  title={metaTitle}
-  description={metaDesc}
+  title={seoTitle}
+  description={seoDesc}
   path={pagePath}
   locale={locale}
   alternates={hreflangAlternates(`/unit-converter/${cfg.slug}`)}
   keywords={keywords}
   jsonLd={schemas}
   noindex={!isIndexedLocale(locale)}
+  ogType="article"
 >
   <div class="container-page">
     <nav class="breadcrumb" aria-label="Breadcrumb">
@@ -142,6 +153,12 @@ const eyebrow = labels?.eyebrow ?? 'Unit converter';
         </div>
       </aside>
     </div>
+
+    {/* Bottom navigation for crawl equity */}
+    <nav class="conv-nav-links" aria-label="Converter navigation">
+      <a href={to('/unit-converter', locale)} class="conv-nav-link">← {isDe ? 'Alle Umrechner' : 'All unit converters'}</a>
+      <a href={to('/', locale)} class="conv-nav-link">{bcHome} — {isDe ? 'Alle Rechner' : 'All calculators'}</a>
+    </nav>
   </div>
 </Layout>
 
@@ -186,4 +203,8 @@ const eyebrow = labels?.eyebrow ?? 'Unit converter';
   .related-list a:hover { text-decoration: underline; }
   .aside-cta { margin-top: 0.75rem; width: 100%; }
   @media (max-width: 900px) { .conv-body { grid-template-columns: 1fr; gap: 1.5rem; } .conv-aside { position: static; } }
+
+  .conv-nav-links { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--color-hairline); }
+  .conv-nav-link { font-size: 14px; color: var(--color-link); padding: 0.5rem 1rem; border: 1px solid var(--color-hairline); border-radius: var(--radius-pill); transition: border-color 0.15s ease; }
+  .conv-nav-link:hover { border-color: var(--color-link); text-decoration: none; }
 </style>

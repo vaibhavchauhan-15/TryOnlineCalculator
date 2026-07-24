@@ -227,10 +227,13 @@ const secondaryCategories = categories.slice(4);
     }
   });
 
-  // Theme toggle with View Transition
+  // Theme toggle with View Transition — premium circular reveal
   const root = document.documentElement;
   const themeToggle = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
   const themeColorMeta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+
+  // Guard against rapid clicks during an in-flight transition
+  let isTransitioning = false;
 
   const syncThemeUi = (theme: string) => {
     const isDark = theme === 'dark';
@@ -253,7 +256,9 @@ const secondaryCategories = categories.slice(4);
     setPreference('theme', next as 'light' | 'dark');
   };
 
-  themeToggle?.addEventListener('click', (event) => {
+  themeToggle?.addEventListener('click', () => {
+    if (isTransitioning) return;
+
     const current = root.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
     const next = current === 'dark' ? 'light' : 'dark';
 
@@ -264,16 +269,24 @@ const secondaryCategories = categories.slice(4);
       return;
     }
 
-    const rect = themeToggle.getBoundingClientRect();
-    const x = event.clientX || rect.left + rect.width / 2;
-    const y = event.clientY || rect.top + rect.height / 2;
+    // Always originate from the exact center of the toggle button,
+    // regardless of where the user clicked or if triggered via keyboard.
+    const rect = themeToggle!.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+
+    // Calculate the radius needed to cover the entire viewport from
+    // the button center (hypotenuse to the farthest corner).
     const endRadius = Math.hypot(
       Math.max(x, window.innerWidth - x),
       Math.max(y, window.innerHeight - y),
     );
 
+    isTransitioning = true;
+    themeToggle!.classList.add('is-transitioning');
+
     const transition = (document as Document & {
-      startViewTransition: (cb: () => void) => { ready: Promise<void> };
+      startViewTransition: (cb: () => void) => { ready: Promise<void>; finished: Promise<void> };
     }).startViewTransition(() => commitTheme(next));
 
     transition.ready.then(() => {
@@ -285,11 +298,19 @@ const secondaryCategories = categories.slice(4);
           ],
         },
         {
-          duration: 300,
-          easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+          duration: 400,
+          easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
           pseudoElement: '::view-transition-new(root)',
         },
       );
+    });
+
+    transition.finished.then(() => {
+      isTransitioning = false;
+      themeToggle!.classList.remove('is-transitioning');
+    }).catch(() => {
+      isTransitioning = false;
+      themeToggle!.classList.remove('is-transitioning');
     });
   });
 </script>
@@ -458,6 +479,14 @@ const secondaryCategories = categories.slice(4);
     position: relative;
     overflow: hidden;
   }
+  .theme-toggle.is-transitioning {
+    animation: theme-pulse 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  @keyframes theme-pulse {
+    0%   { transform: scale(1); }
+    30%  { transform: scale(0.85); }
+    100% { transform: scale(1); }
+  }
   .theme-icon {
     position: absolute;
     top: 50%;
@@ -474,6 +503,7 @@ const secondaryCategories = categories.slice(4);
   }
   @media (prefers-reduced-motion: reduce) {
     .theme-icon { transition: none; }
+    .theme-toggle.is-transitioning { animation: none; }
     .icon-btn:active { transform: none; }
   }
 

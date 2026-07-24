@@ -101,17 +101,34 @@ const jsonLd = localizedCalculatorPageSchemas(locale, {
   faq: fm.faq,
   howto: fm.howto,
 });
+
+// Build SEO-optimized title: if title already includes "Calculator"/"Rechner",
+// append a value-proposition suffix for CTR; otherwise use as-is.
+const seoTitle = (() => {
+  const t = fm.title;
+  // Already has "Calculator"/"Rechner" — add a free/online suffix for search
+  if (t.toLowerCase().includes('calculator') || t.toLowerCase().includes('rechner')) {
+    return `${t} — Free Online ${categoryLabel} Tool`;
+  }
+  return `${t} Calculator — Free Online Tool`;
+})();
+
+// Enhanced meta description: include a call-to-action and mention key features
+const seoDescription = fm.description.length > 120
+  ? fm.description
+  : `${fm.description} Free, instant results with formula explanation. No sign-up required.`;
 ---
 
 <Layout
-  title={fm.title}
-  description={fm.description}
+  title={seoTitle}
+  description={seoDescription}
   path={to(pathNoLocale, locale)}
   keywords={fm.keywords}
   locale={locale}
   alternates={alternates}
   jsonLd={jsonLd}
   noindex={!isIndexedLocale(locale)}
+  ogType="article"
 >
   <div class="container-page calc-page">
     <nav class="breadcrumb" aria-label="Breadcrumb">
@@ -220,6 +237,18 @@ const jsonLd = localizedCalculatorPageSchemas(locale, {
           </div>
         </section>
       )}
+
+      {/* Internal links for better crawl paths */}
+      <nav class="calc-nav-links" aria-label="Calculator navigation">
+        {cat && (
+          <a href={to(cat.path, locale)} class="nav-link">
+            ← {chrome.allIn ?? 'All'} {categoryLabel} {locale === 'de' ? 'Rechner' : 'calculators'}
+          </a>
+        )}
+        <a href={to('/', locale)} class="nav-link">
+          {chrome.home ?? 'Home'} — {locale === 'de' ? 'Alle Rechner' : 'All calculators'}
+        </a>
+      </nav>
     </div>
   </div>
 </Layout>
@@ -447,6 +476,25 @@ const jsonLd = localizedCalculatorPageSchemas(locale, {
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
     gap: 1rem;
   }
+
+  /* ---- Bottom navigation links for crawl signals ---- */
+  .calc-nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-hairline);
+  }
+  .nav-link {
+    font-size: 14px;
+    color: var(--color-link);
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-pill);
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  .nav-link:hover { border-color: var(--color-link); text-decoration: none; }
 
   @media (max-width: 640px) {
     .calc-content { margin-top: 2rem; }

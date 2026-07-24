@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import FaqAccordion from '../../components/FaqAccordion.astro';
+import SeoInternalLinks from '../../components/SeoInternalLinks.astro';
 import { allCalculators } from '../../lib/calculators';
 import { faqPageSchema } from '../../lib/seo';
 import { staticPageHreflang } from '../../lib/i18n/seo-head';
@@ -40,8 +41,8 @@ const keywords = [
 ---
 
 <Layout
-  title="Über uns"
-  description="Über Try Online Calculator – kostenlose, schnelle und datenschutzfreundliche Rechner für den Alltag."
+  title="Über Try Online Calculator — Kostenlose & Datenschutzfreundliche Rechner"
+  description="Über Try Online Calculator – eine wachsende Sammlung von kostenlose Rechnern für Finanzen, Gesundheit, Bildung und Mathematik. Alle Berechnungen laufen in Ihrem Browser, ohne Anmeldung."
   path="/de/ueber-uns"
   locale="de"
   alternates={staticPageHreflang('about')}
@@ -63,5 +64,7 @@ const keywords = [
     <p>Einen Fehler entdeckt oder einen Rechner vermisst, den wir noch nicht haben? Wir freuen uns über Ihre Nachricht auf unserer <a class="link" href="/de/kontakt">Kontaktseite</a>.</p>
 
     <FaqAccordion items={faqs} title="Über uns & FAQ" />
+
+    <SeoInternalLinks locale="de" />
   </div>
 </Layout>

@@ -13,7 +13,7 @@ test('preferredEnabledLocale picks the first enabled base language', () => {
   // "de-AT" → base "de" (enabled). "pt" is defined but disabled → skipped.
   assert.equal(preferredEnabledLocale(['pt-BR', 'de-AT', 'en-US']), 'de');
   assert.equal(preferredEnabledLocale(['fr-FR']), null); // fr disabled
-  assert.equal(preferredEnabledLocale(['es']), 'es');
+  assert.equal(preferredEnabledLocale(['es']), null); // es held back (disabled)
   assert.equal(preferredEnabledLocale([]), null);
 });
 

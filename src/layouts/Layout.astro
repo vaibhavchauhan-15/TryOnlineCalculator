@@ -18,6 +18,8 @@ interface Props {
   ogImage?: string; // absolute or site-relative social share image
   locale?: string; // content locale (drives <html lang> + og:locale)
   alternates?: { hreflang: string; href: string }[]; // hreflang link set
+  publishedTime?: string; // ISO date for article:published_time
+  modifiedTime?: string; // ISO date for article:modified_time
 }
 
 const {
@@ -31,6 +33,8 @@ const {
   ogImage: ogImageProp,
   locale = 'en',
   alternates = [],
+  publishedTime,
+  modifiedTime,
 } = Astro.props;
 const localeDef = getLocale(locale);
 const htmlLang = localeDef?.bcp47 ?? 'en';
@@ -97,6 +101,10 @@ const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     <meta name="description" content={description} />
     {keywordsContent && <meta name="keywords" content={keywordsContent} />}
     <meta name="author" content="Try Online Calculator" />
+    <meta name="publisher" content="Try Online Calculator" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="rating" content="general" />
     <link rel="canonical" href={canonical} />
     {alternates.map((a) => (
       <link rel="alternate" hreflang={a.hreflang} href={a.href} />
@@ -104,6 +112,7 @@ const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     {noindex
       ? <meta name="robots" content="noindex, nofollow" />
       : <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />}
+    {!noindex && <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />}
     <meta name="theme-color" content="#000000" />
 
     <!-- Open Graph -->
@@ -118,13 +127,16 @@ const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     <meta property="og:image:width" content="512" />
     <meta property="og:image:height" content="512" />
     <meta property="og:image:alt" content="Try Online Calculator — free online calculators" />
+    {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
 
     <!-- Twitter -->
-    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
     <meta name="twitter:image:alt" content="Try Online Calculator — free online calculators" />
+    <meta name="twitter:site" content="@tryonlinecalc" />
 
     {schemas.map((s) => (
       <script type="application/ld+json" set:html={JSON.stringify(s)} />

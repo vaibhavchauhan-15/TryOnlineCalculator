@@ -38,8 +38,13 @@ export const DEFAULT_LOCALE = 'en';
 export const LOCALES: LocaleDef[] = [
   { code: 'en', nativeName: 'English', englishName: 'English', bcp47: 'en', defaultRegion: 'US', dir: 'ltr', enabled: true },
   { code: 'de', nativeName: 'Deutsch', englishName: 'German', bcp47: 'de', defaultRegion: 'DE', dir: 'ltr', enabled: true },
-  { code: 'hi', nativeName: 'हिन्दी', englishName: 'Hindi', bcp47: 'hi', defaultRegion: 'IN', dir: 'ltr', enabled: true },
-  { code: 'es', nativeName: 'Español', englishName: 'Spanish', bcp47: 'es', defaultRegion: 'ES', dir: 'ltr', enabled: true },
+
+  // --- Prepared but held back: translations exist in the repo (content/ +
+  // ui-pack) but are not yet production-ready. Disabled so they produce no
+  // routes and never appear in hreflang/sitemap/selector — nothing is served
+  // or indexed until the flag is flipped back to true.
+  { code: 'hi', nativeName: 'हिन्दी', englishName: 'Hindi', bcp47: 'hi', defaultRegion: 'IN', dir: 'ltr', enabled: false },
+  { code: 'es', nativeName: 'Español', englishName: 'Spanish', bcp47: 'es', defaultRegion: 'ES', dir: 'ltr', enabled: false },
 
   // --- Next wave (Task 15 rollout gate). Defined but not yet served. --------
   { code: 'fr', nativeName: 'Français', englishName: 'French', bcp47: 'fr', defaultRegion: 'FR', dir: 'ltr', enabled: false },

@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import FaqAccordion from '../../components/FaqAccordion.astro';
+import SeoInternalLinks from '../../components/SeoInternalLinks.astro';
 import { faqPageSchema } from '../../lib/seo';
 import { staticPageHreflang } from '../../lib/i18n/seo-head';
 import type { FaqItem } from '../../lib/types';
@@ -33,8 +34,8 @@ const keywords = [
 ---
 
 <Layout
-  title="Kontakt"
-  description="Nehmen Sie Kontakt mit Try Online Calculator auf – melden Sie einen Fehler oder schlagen Sie einen neuen Rechner vor."
+  title="Kontakt — Try Online Calculator Feedback & Rechner-Wünsche"
+  description="Kontaktieren Sie Try Online Calculator: Fehler melden, neuen Rechner vorschlagen oder Feedback senden. Wir lesen jede Nachricht und priorisieren beliebte Anfragen."
   path="/de/kontakt"
   locale="de"
   alternates={staticPageHreflang('contact')}
@@ -55,5 +56,7 @@ const keywords = [
     <p>Wenn ein Ergebnis nicht stimmt, geben Sie den Namen des Rechners und die genauen Werte an, die Sie eingegeben haben, damit wir das Problem schnell nachstellen können.</p>
 
     <FaqAccordion items={faqs} title="Kontakt-FAQ" />
+
+    <SeoInternalLinks locale="de" />
   </div>
 </Layout>

@@ -76,6 +76,7 @@ export interface Meta {
   hasResult: boolean;
   hasVisualNote: boolean;
   headHasThemeScript: boolean;
+  isMetaRefresh: boolean;
 }
 
 export function extractMeta(html: string): Meta {
@@ -95,6 +96,7 @@ export function extractMeta(html: string): Meta {
     hasResult: /data-primary-value|result-primary-value/.test(html),
     hasVisualNote: /calc-visual-note/.test(html),
     headHasThemeScript: /data-theme|localStorage/.test(h),
+    isMetaRefresh: /meta\s+http-equiv="refresh"/.test(h),
   };
 }
 
@@ -110,10 +112,12 @@ export function auditPage(urlPath: string, meta: Meta, exists: (p: string) => bo
   // only need the basics (lang + title), not self-canonical or indexability.
   const isErrorPage = /^\/(?:[a-z]{2}\/)?(404|500)$/.test(urlPath);
   // The bare "/" is a locale-redirect stub (noindex, canonical → /en/), handled
-  // at the edge by functions/index.ts — not a live content page.
-  const isRedirectStub = urlPath === '/';
+  // at the edge by functions/index.ts — not a live content page. Astro also
+  // generates meta-refresh redirect stubs for root error pages (/404, /500)
+  // that lack an <html> wrapper — treat them the same as the "/" stub.
+  const isRedirectStub = urlPath === '/' || meta.isMetaRefresh;
 
-  if (!meta.lang) err('html-lang', 'missing <html lang>');
+  if (!meta.lang && !meta.isMetaRefresh) err('html-lang', 'missing <html lang>');
   if (!meta.title) err('title', 'missing <title>');
   if (!isErrorPage && !isRedirectStub && !meta.description) err('description', 'missing meta description');
 

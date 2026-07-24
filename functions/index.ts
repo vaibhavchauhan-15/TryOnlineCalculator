@@ -10,7 +10,7 @@
 
 // Keep in sync with src/lib/i18n/locales.ts — only the codes that are currently
 // served (enabled: true). A mismatch just means we fall through to the default.
-const ENABLED_LOCALES = new Set(['en', 'de', 'hi', 'es']);
+const ENABLED_LOCALES = new Set(['en', 'de']);
 const DEFAULT_LOCALE = 'en';
 
 /**

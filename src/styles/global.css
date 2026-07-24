@@ -1157,6 +1157,13 @@ html[data-theme='dark'] {
 ::view-transition-new(root) {
   animation: none;
   mix-blend-mode: normal;
+  /* GPU-accelerate the clip-path expansion — keep compositing on its
+     own layer to avoid expensive main-thread repaints. */
+  will-change: clip-path;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  /* Isolate stacking context so blend calculations stay cheap. */
+  isolation: isolate;
 }
 /* New theme is revealed on top of the outgoing one. */
 ::view-transition-new(root) {
@@ -1170,6 +1177,7 @@ html[data-theme='dark'] {
   ::view-transition-old(root),
   ::view-transition-new(root) {
     animation: none !important;
+    will-change: auto;
   }
 }
 
