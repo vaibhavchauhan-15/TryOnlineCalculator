@@ -1,0 +1,34 @@
+---
+slug: "nps-calculator"
+category: "finance"
+title: "NPS Rechner - National Pension System & Rentenrechner"
+description: "Berechnen Sie das Vorsorgevermögen, die 60 % steuerfreie Einmalauszahlung und die monatliche Rente des National Pension System (NPS)."
+keywords: ["nps rechner","rentenplan rechner","pensionskassen rechner","nps rente rechner","altersvorsorge rechner"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "gemini-3.6-flash"
+labels: {"annuityCorpus":"Annuitäten-Kapital (mind. 40 %)","balance":"Rentenguthaben","field.annuityPercent":"Annuitäten-Anteil (%)","field.annuityRate":"Erwarteter Rentenzins (%)","field.currentAge":"Aktuelles Alter","field.monthlyContribution":"Monatlicher Sparbeitrag","field.rate":"Erwartete Rendite (%)","field.retirementAge":"Rentenalter","lumpSum":"Steuerfreie Einmalauszahlung (60 %)","lumpSumWithdrawal":"Einmalauszahlung (60 %)","monthlyPension":"Geschätzte monatliche Rente","totalCorpus":"Gesamtes Rentenvermögen"}
+enums: {}
+hints: {}
+chartTitles: {"nps.growthTitle":"Aufbau des Rentenkapitals bis zur Pensionierung","nps.pieTitle":"Aufteilung des Rentenvermögens"}
+intro: "Das National Pension System (NPS) sichert Ihre finanzielle Unabhängigkeit im Ruhestand. Berechnen Sie das Rentenkapital, die Einmalauszahlung und die monatliche Rente."
+formulaIntro: "Beim NPS werden monatliche Sparbeiträge bis zum Rentenalter mit Zinseszins in Fonds angelegt."
+formulaItems: [{"name":"NPS-Rentenkapital-Formel","expr":"FV = P × [((1 + r)^n − 1) / r]","desc":"FV = Gesamtkapital bei Renteneintritt, P = monatliche Einzahlung, r = monatliche Rendite, n = Gesamtmonate."},{"name":"Aufteilung Einmalauszahlung & Rente","expr":"Einmalauszahlung = 60 % × FV, Annuität = 40 % × FV","desc":"Mindestens 40 % des Kapitals müssen für eine monatliche Lebensrente verwendet werden."},{"name":"Monatliche Rentenauszahlung","expr":"Monatliche Rente = (Annuitäten-Kapital × Rentenzins) / 12","desc":"Geschätzte monatliche Rente aus der Annuität."}]
+howto: ["Geben Sie Ihr aktuelles Alter und das gewünschte Rentenalter ein.","Tragen Sie Ihren monatlichen Sparbeitrag ein.","Geben Sie die erwartete Rendite an.","Wählen Sie den Prozentsatz für die Leibrente (mindestens 40 %).","Analysieren Sie das Rentenkapital, die Einmalauszahlung und die monatliche Rente."]
+examples: [{"title":"Alter 30 bis 60, 5.000 monatlich bei 10 % Rendite","body":"30 Jahre lang 5.000 monatlich sparen ergibt bei 10 % Rendite ca. 11.396.627 Rentenkapital. 60 % Einmalauszahlung bringen 6.837.976 steuerfrei, 40 % Annuität ergeben ca. 22.793/Monat Rente."},{"title":"Alter 25 bis 60, 2.500 monatlich bei 11 % Rendite","body":"Mit 25 Jahren starten und 2.500 monatlich sparen ergibt mit 60 Jahren ca. 13.248.000 Rentenkapital."}]
+faq: [{"q":"Was ist das National Pension System (NPS)?","a":"Das NPS ist ein staatlich reguliertes System zur Altersvorsorge mit Anlageoptionen in Aktien und Anleihen."},{"q":"Wie viel Geld kann bei Renteneintritt steuerfrei entnommen werden?","a":"Bis zu 60 % des gesamten Rentenkapitals können mit 60 Jahren steuerfrei als Einmalbetrag entnommen werden."},{"q":"Wofür dienen die verbleibenden 40 %?","a":"Mindestens 40 % müssen in eine lebenslange Rentenversicherung (Annuität) investiert werden."}]
+related: ["retirement-calculator","sip-calculator","ppf-calculator","investment-calculator"]
+---
+
+## Was ist ein NPS Rechner?
+
+Ein NPS Rechner berechnet das Gesamtkapital bei Renteneintritt, die steuerfreie Einmalauszahlung und die daraus resultierende monatliche Altersrente.
+
+## Vorteile des NPS Rentenplans
+
+1. Hohe Steuervorteile bei Einzahlung und Auszahlung.
+2. Äußerst geringe Verwaltungskosten.
+3. Flexibles Risikomanagement zwischen Aktien und Anleihen.

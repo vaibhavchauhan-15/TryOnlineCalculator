@@ -1,0 +1,34 @@
+---
+slug: "amortization-calculator"
+category: "finance"
+title: "Tilgungsrechner - Annuitäten & Tilgungsplan Rechner"
+description: "Berechnen Sie monatliche Kreditraten, die Aufteilung von Zins und Tilgung sowie den vollständigen Tilgungsplan."
+keywords: ["tilgungsrechner","tilgungsplan rechner","annuitätenrechner","darlehen tilgungsplan","bauspar tilgungsrechner"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "gemini-3.6-flash"
+labels: {"balance":"Restschuld","field.loanAmount":"Kreditbetrag","field.rate":"Sollzins (p.a.)","field.tenureYears":"Laufzeit (Jahre)","interest":"Gezahlte Zinsen","monthlyPayment":"Monatliche Annuitätsrate","principal":"Gezahlte Tilgung","totalInterest":"Zinsen insgesamt","totalPaid":"Gesamte Rückzahlung"}
+enums: {}
+hints: {}
+chartTitles: {"amortization.growthTitle":"Entwicklung von Restschuld und Zinsen","amortization.pieTitle":"Aufteilung von Tilgung und Zinsen"}
+intro: "Ein Tilgungsrechner erstellt den monatlichen Tilgungsplan für Ihr Darlehen und schlüsselt jede Ratenzahlung exakt in Zins und Tilgung auf."
+formulaIntro: "Die Annuitätentilgung berechnet eine konstante monatliche Ratenhöhe bei sich verschiebendem Zins- und Tilgungsanteil."
+formulaItems: [{"name":"Monatliche Annuitäten-Formel","expr":"R = K × [r(1 + r)^n] / [(1 + r)^n − 1]","desc":"R = monatliche Ratenhöhe, K = Darlehensbetrag, r = monatlicher Zinssatz, n = Gesamtzahl der Monate."},{"name":"Monatlicher Zinsanteil","expr":"Zins_m = Restschuld_{m-1} × r","desc":"Monatliche Zinsbelastung auf den verbleibenden Kreditbetrag."},{"name":"Monatlicher Tilgungsanteil","expr":"Tilgung_m = Ratenhöhe − Zins_m","desc":"Reiner Betrag, der Ihre Restschuld verringert."}]
+howto: ["Geben Sie den Kreditbetrag ein.","Tragen Sie den jährlichen Sollzins ein.","Wählen Sie die Laufzeit in Jahren.","Lesen Sie die monatliche Ratenhöhe, Gesamtzinsen und den Tilgungsplan ab."]
+examples: [{"title":"250.000 € Darlehen zu 6,5 % Zinsen für 30 Jahre","body":"Bei 250.000 € zu 6,5 % über 30 Jahre beträgt die Monatsrate 1.580,17 €. Gesamtzinsen: 318.861,42 € (568.861,42 € Gesamtrückzahlung)."},{"title":"100.000 € Darlehen zu 7,0 % Zinsen für 15 Jahre","body":"Eine Verkürzung der Laufzeit auf 15 Jahre ergibt 898,83 € Monatsrate und senkt die Gesamtzinsen auf 61.789,09 €."}]
+faq: [{"q":"Was bedeutet Tilgung beim Kredit?","a":"Tilgung ist der Prozess der stufenweisen Rückzahlung der Kreditschuld über regelmäßige Raten."},{"q":"Warum sind Zinsen am Anfang eines Darlehens so hoch?","a":"Weil die Zinsen auf die noch hohe Restschuld berechnet werden, die zu Beginn am höchsten ist."},{"q":"Wie wirken Sondertilgungen auf den Tilgungsplan?","a":"Sondertilgungen reduzieren direkt die Restschuld, sparen Zinskosten und verkürzen die Gesamtlaufzeit."}]
+related: ["mortgage-calculator","loan-calculator","auto-loan-calculator","personal-loan-calculator"]
+---
+
+## Was ist ein Tilgungsrechner?
+
+Ein Tilgungsrechner erstellt einen Tilgungsplan, der die schrittweise Rückzahlung eines Kredits Monat für Monat aufzeigt. Er schlüsselt Zins- und Tilgungsanteil jeder Ratenzahlung auf.
+
+## Vorteile des Tilgungsrechners
+
+1. Transparente Einsicht in den Schuldenabbau.
+2. Vergleich von Annuitäten und Laufzeiten.
+3. Planung von Sondertilgungen zur Zinsersparnis.

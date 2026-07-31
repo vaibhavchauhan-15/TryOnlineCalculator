@@ -1,0 +1,36 @@
+---
+slug: "roi-calculator"
+category: "finance"
+title: "ROI-Rechner"
+description: "Berechnen Sie Return on Investment, Nettogewinn und annualisierten ROI aus Einsatz und Rückfluss."
+keywords: ["roi rechner","return on investment berechnen","roi berechnen","kapitalrendite rechner","annualisierter roi"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "manual-de-v1"
+searchIntent: "Den Return on Investment (ROI) und den annualisierten ROI berechnen."
+readingLevel: "general"
+market: "global"
+audience: "Anleger und Unternehmer, die die Rendite einer Investition messen"
+labels: {"field.amountInvested":"Investierter Betrag","field.amountReturned":"Rückfluss","field.years":"Haltedauer","roi":"ROI","netProfit":"Nettogewinn","annualizedRoi":"Annualisierter ROI","amountInvested":"Investierter Betrag"}
+chartTitles: {"roi.pieTitle":"Investition und Gewinn"}
+intro: "Der Return on Investment (ROI) misst Gewinn oder Verlust einer Investition im Verhältnis zu ihren Kosten. Geben Sie den investierten Betrag und den Rückfluss ein, um ROI, Nettogewinn und annualisierte Rendite zu sehen."
+formulaIntro: "Der ROI ist der Nettogewinn als Prozentsatz des Einsatzes; die Annualisierung verteilt ihn über die Haltedauer."
+formulaItems: [{"name":"ROI","expr":"ROI % = (Rückfluss − Einsatz) / Einsatz × 100"},{"name":"Annualisierter ROI","expr":"Annualisiert = (Rückfluss / Einsatz)^(1 / Jahre) − 1"}]
+howto: ["Geben Sie den investierten Betrag ein.","Geben Sie den Rückfluss ein.","Fügen Sie optional die Haltedauer für einen annualisierten ROI hinzu."]
+examples: [{"title":"1.000 € werden in 1 Jahr zu 1.500 €","body":"Eine Investition von 1.000 €, die 1.500 € zurückbringt, ergibt einen ROI von 50 % und einen Nettogewinn von 500 €."}]
+faq: [{"q":"Was ist ein guter ROI?","a":"Das hängt von Investition und Risiko ab. Als Richtwert hat der Aktienmarkt langfristig historisch etwa 7 %–10 % pro Jahr im Durchschnitt erzielt."},{"q":"Warum den annualisierten ROI berechnen?","a":"Der Gesamt-ROI berücksichtigt die Zeit nicht. Der annualisierte ROI wandelt die Gesamtrendite in eine Jahresrate um, sodass Sie unterschiedlich lange Investitionen vergleichen können."},{"q":"Enthält der ROI Gebühren und Steuern?","a":"Nur, wenn Sie sie einbeziehen. Für ein realistisches Bild verwenden Sie den Nettorückfluss nach Gebühren und Steuern als Rückfluss."}]
+related: ["cagr-calculator","investment-calculator","profit-calculator","compound-interest-calculator"]
+---
+
+Ein ROI-Rechner misst, wie viel eine Investition im Verhältnis zu ihren Kosten
+eingebracht hat. Geben Sie den eingesetzten und den zurückerhaltenen Betrag ein,
+und Sie erhalten den Return on Investment in Prozent, den Nettogewinn in Geld
+und — mit Haltedauer — den annualisierten ROI.
+
+Der einfache ROI eignet sich für ein schnelles Urteil, ignoriert aber die Zeit:
+50 % Rendite in einem Jahr sind weit besser als dieselben 50 % über fünf Jahre.
+Der annualisierte ROI behebt das, indem er den Gewinn als konstante Jahresrate
+ausdrückt und so sehr unterschiedliche Investitionen vergleichbar macht.

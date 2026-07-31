@@ -40,9 +40,31 @@ const catLabel = categoryName(locale, cat.id);
 
 const entries = await getCollection('calculators', (e) => e.id.startsWith(`${locale}/`));
 const titleBySlug = new Map(entries.map((e) => [e.id.slice(locale.length + 1), e.data.title]));
+const descBySlug = new Map(entries.map((e) => [e.id.slice(locale.length + 1), e.data.description]));
 const locTitle = (slug: string, fallback: string) => titleBySlug.get(slug) ?? fallback;
+const locDesc = (slug: string, fallback: string) => descBySlug.get(slug) ?? fallback;
 
-const calcs = calculatorsByCategory(cat.id);
+const categoryMdxSlugs = entries
+  .filter((e) => e.data.category === cat.id)
+  .map((e) => e.id.slice(locale.length + 1));
+
+const legacyCalcs = calculatorsByCategory(cat.id);
+const allCategorySlugs = Array.from(new Set([...legacyCalcs.map((c) => c.slug), ...categoryMdxSlugs]));
+
+const calcs = allCategorySlugs.map((slug) => {
+  const legacy = legacyCalcs.find((c) => c.slug === slug);
+  return (
+    legacy ?? {
+      slug,
+      category: cat.id as any,
+      title: locTitle(slug, slug),
+      description: locDesc(slug, ''),
+      keywords: [],
+      inputs: [],
+      compute: () => ({ results: [] }),
+    }
+  );
+});
 const openLabel = home.open ?? 'Open';
 
 // FAQs and structured data — English uses categoryFaqs, other locales use categoryFaqsByLocale
@@ -129,7 +151,7 @@ const seoDescription = isDefault
           <LinkCard
             href={to(`/${c.category}/${c.slug}`, locale)}
             title={locTitle(c.slug, c.title)}
-            desc=""
+            desc={locDesc(c.slug, c.description)}
             icon={calculatorIcon(c.slug) ?? cat.icon}
             cta={openLabel}
           />

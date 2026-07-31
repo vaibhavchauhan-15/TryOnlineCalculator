@@ -963,6 +963,1367 @@ export const retirementEngine: CalculatorEngine<RetirementInput, RetirementResul
 };
 
 // =====================================================================
+// FD Calculator (Fixed Deposit)
+// =====================================================================
+
+export interface FdInput {
+  depositAmount: number;
+  rate: number;
+  tenureYears: number;
+  compounding: 'monthly' | 'quarterly' | 'halfYearly' | 'yearly';
+}
+
+export interface FdResult extends EngineResult {}
+
+export const fdEngine: CalculatorEngine<FdInput, FdResult> = {
+  slug: 'fd-calculator',
+  category: 'finance',
+
+  defaultInput: () => ({ depositAmount: 100000, rate: 7, tenureYears: 5, compounding: 'quarterly' }),
+
+  fields: (): EngineField[] => [
+    { name: 'depositAmount', labelKey: 'field.depositAmount', type: 'number', defaultValue: '100000', min: 0, step: 1000, currency: true },
+    { name: 'rate', labelKey: 'field.rate', type: 'number', defaultValue: '7', min: 0, max: 30, step: 0.01, suffixKey: '%' },
+    { name: 'tenureYears', labelKey: 'field.tenureYears', type: 'number', defaultValue: '5', min: 0.25, max: 30, step: 0.25, suffixKey: 'years' },
+    {
+      name: 'compounding',
+      labelKey: 'field.compounding',
+      type: 'select',
+      defaultValue: 'quarterly',
+      options: [
+        { labelKey: 'compounding.monthly', value: 'monthly' },
+        { labelKey: 'compounding.quarterly', value: 'quarterly' },
+        { labelKey: 'compounding.halfYearly', value: 'halfYearly' },
+        { labelKey: 'compounding.yearly', value: 'yearly' },
+      ],
+    },
+  ],
+
+  parseInput: (v): FdInput => ({
+    depositAmount: num(v.depositAmount, 0),
+    rate: num(v.rate, 0),
+    tenureYears: num(v.tenureYears, 0),
+    compounding: (['monthly', 'quarterly', 'halfYearly', 'yearly'].includes(String(v.compounding)) ? String(v.compounding) : 'quarterly') as FdInput['compounding'],
+  }),
+
+  validate: (input) => {
+    if (input.depositAmount <= 0 || input.tenureYears <= 0) return fail('finance.fdRequired');
+    return ok();
+  },
+
+  compute: (input) => {
+    const p = input.depositAmount;
+    const r = input.rate / 100;
+    const t = Math.min(input.tenureYears, 50);
+    const freqMap = { monthly: 12, quarterly: 4, halfYearly: 2, yearly: 1 };
+    const n = freqMap[input.compounding] || 4;
+    const maturity = p * Math.pow(1 + r / n, n * t);
+    const interest = Math.max(maturity - p, 0);
+
+    const yearLabels: string[] = ['0'];
+    const balancePts: number[] = [p];
+    const interestPts: number[] = [0];
+    for (let y = 1; y <= Math.ceil(t); y++) {
+      const curT = Math.min(y, t);
+      const val = p * Math.pow(1 + r / n, n * curT);
+      yearLabels.push(String(y));
+      balancePts.push(val);
+      interestPts.push(val - p);
+    }
+
+    return {
+      items: [
+        { key: 'maturityAmount', value: maturity, format: 'currency', primary: true },
+        { key: 'totalInvestment', value: p, format: 'currency' },
+        { key: 'totalInterest', value: interest, format: 'currency', tone: 'success' },
+      ],
+      charts: [
+        {
+          type: 'pie',
+          titleKey: 'fd.pieTitle',
+          format: 'currency',
+          slices: [
+            { labelKey: 'principal', value: p, color: '#0070f3' },
+            { labelKey: 'interest', value: interest, color: '#50e3c2' },
+          ],
+        },
+        {
+          type: 'line',
+          titleKey: 'fd.growthTitle',
+          format: 'currency',
+          labels: yearLabels,
+          series: [
+            { labelKey: 'balance', points: balancePts, color: '#0070f3' },
+            { labelKey: 'interest', points: interestPts, color: '#50e3c2' },
+          ],
+        },
+      ],
+    };
+  },
+};
+
+// =====================================================================
+// RD Calculator (Recurring Deposit)
+// =====================================================================
+
+export interface RdInput {
+  monthlyDeposit: number;
+  rate: number;
+  tenureYears: number;
+}
+
+export interface RdResult extends EngineResult {}
+
+export const rdEngine: CalculatorEngine<RdInput, RdResult> = {
+  slug: 'rd-calculator',
+  category: 'finance',
+
+  defaultInput: () => ({ monthlyDeposit: 5000, rate: 7, tenureYears: 3 }),
+
+  fields: (): EngineField[] => [
+    { name: 'monthlyDeposit', labelKey: 'field.monthlyDeposit', type: 'number', defaultValue: '5000', min: 0, step: 500, currency: true },
+    { name: 'rate', labelKey: 'field.rate', type: 'number', defaultValue: '7', min: 0, max: 30, step: 0.01, suffixKey: '%' },
+    { name: 'tenureYears', labelKey: 'field.tenureYears', type: 'number', defaultValue: '3', min: 0.25, max: 30, step: 0.25, suffixKey: 'years' },
+  ],
+
+  parseInput: (v): RdInput => ({
+    monthlyDeposit: num(v.monthlyDeposit, 0),
+    rate: num(v.rate, 0),
+    tenureYears: num(v.tenureYears, 0),
+  }),
+
+  validate: (input) => {
+    if (input.monthlyDeposit <= 0 || input.tenureYears <= 0) return fail('finance.rdRequired');
+    return ok();
+  },
+
+  compute: (input) => {
+    const P = input.monthlyDeposit;
+    const r = input.rate / 100;
+    const totalMonths = Math.min(input.tenureYears * 12, 600);
+    const invested = P * totalMonths;
+
+    let maturity = 0;
+    for (let m = 1; m <= totalMonths; m++) {
+      const monthsCompounded = totalMonths - m + 1;
+      maturity += P * Math.pow(1 + r / 4, (4 * monthsCompounded) / 12);
+    }
+    const interest = Math.max(maturity - invested, 0);
+
+    const yearLabels: string[] = ['0'];
+    const balancePts: number[] = [0];
+    const investedPts: number[] = [0];
+    let curBal = 0;
+    for (let m = 1; m <= totalMonths; m++) {
+      curBal = (curBal + P) * Math.pow(1 + r / 4, 4 / 12);
+      if (m % 12 === 0 || m === totalMonths) {
+        yearLabels.push(String(Math.round(m / 12)));
+        balancePts.push(curBal);
+        investedPts.push(P * m);
+      }
+    }
+
+    return {
+      items: [
+        { key: 'maturityAmount', value: maturity, format: 'currency', primary: true },
+        { key: 'totalInvested', value: invested, format: 'currency' },
+        { key: 'totalInterest', value: interest, format: 'currency', tone: 'success' },
+      ],
+      charts: [
+        {
+          type: 'pie',
+          titleKey: 'rd.pieTitle',
+          format: 'currency',
+          slices: [
+            { labelKey: 'invested', value: invested, color: '#0070f3' },
+            { labelKey: 'interest', value: interest, color: '#50e3c2' },
+          ],
+        },
+        {
+          type: 'line',
+          titleKey: 'rd.growthTitle',
+          format: 'currency',
+          labels: yearLabels,
+          series: [
+            { labelKey: 'balance', points: balancePts, color: '#0070f3' },
+            { labelKey: 'invested', points: investedPts, color: '#7928ca' },
+          ],
+        },
+      ],
+    };
+  },
+};
+
+// =====================================================================
+// SWP Calculator (Systematic Withdrawal Plan)
+// =====================================================================
+
+export interface SwpInput {
+  totalInvestment: number;
+  monthlyWithdrawal: number;
+  rate: number;
+  tenureYears: number;
+}
+
+export interface SwpResult extends EngineResult {}
+
+export const swpEngine: CalculatorEngine<SwpInput, SwpResult> = {
+  slug: 'swp-calculator',
+  category: 'finance',
+
+  defaultInput: () => ({ totalInvestment: 500000, monthlyWithdrawal: 4000, rate: 8, tenureYears: 10 }),
+
+  fields: (): EngineField[] => [
+    { name: 'totalInvestment', labelKey: 'field.totalInvestment', type: 'number', defaultValue: '500000', min: 0, step: 5000, currency: true },
+    { name: 'monthlyWithdrawal', labelKey: 'field.monthlyWithdrawal', type: 'number', defaultValue: '4000', min: 0, step: 500, currency: true },
+    { name: 'rate', labelKey: 'field.rate', type: 'number', defaultValue: '8', min: 0, max: 30, step: 0.01, suffixKey: '%' },
+    { name: 'tenureYears', labelKey: 'field.tenureYears', type: 'number', defaultValue: '10', min: 1, max: 40, step: 1, suffixKey: 'years' },
+  ],
+
+  parseInput: (v): SwpInput => ({
+    totalInvestment: num(v.totalInvestment, 0),
+    monthlyWithdrawal: num(v.monthlyWithdrawal, 0),
+    rate: num(v.rate, 0),
+    tenureYears: num(v.tenureYears, 0),
+  }),
+
+  validate: (input) => {
+    if (input.totalInvestment <= 0 || input.tenureYears <= 0) return fail('finance.swpRequired');
+    return ok();
+  },
+
+  compute: (input) => {
+    const P = input.totalInvestment;
+    const W = input.monthlyWithdrawal;
+    const r = input.rate / 100 / 12;
+    const totalMonths = Math.min(input.tenureYears * 12, 600);
+
+    let bal = P;
+    let totalWithdrawn = 0;
+    const yearLabels: string[] = ['0'];
+    const balancePts: number[] = [P];
+    const withdrawnPts: number[] = [0];
+
+    for (let m = 1; m <= totalMonths; m++) {
+      const interest = bal * r;
+      bal = Math.max(bal + interest - W, 0);
+      totalWithdrawn += W;
+      if (m % 12 === 0 || m === totalMonths) {
+        yearLabels.push(String(Math.round(m / 12)));
+        balancePts.push(bal);
+        withdrawnPts.push(totalWithdrawn);
+      }
+    }
+
+    const totalReturns = bal + totalWithdrawn - P;
+
+    return {
+      items: [
+        { key: 'finalBalance', value: bal, format: 'currency', primary: true },
+        { key: 'totalWithdrawn', value: totalWithdrawn, format: 'currency' },
+        { key: 'totalReturns', value: totalReturns, format: 'currency', tone: totalReturns >= 0 ? 'success' : 'warning' },
+      ],
+      charts: [
+        {
+          type: 'pie',
+          titleKey: 'swp.pieTitle',
+          format: 'currency',
+          slices: [
+            { labelKey: 'finalBalance', value: bal, color: '#0070f3' },
+            { labelKey: 'totalWithdrawn', value: totalWithdrawn, color: '#7928ca' },
+          ],
+        },
+        {
+          type: 'line',
+          titleKey: 'swp.growthTitle',
+          format: 'currency',
+          labels: yearLabels,
+          series: [
+            { labelKey: 'balance', points: balancePts, color: '#0070f3' },
+            { labelKey: 'withdrawn', points: withdrawnPts, color: '#7928ca' },
+          ],
+        },
+      ],
+    };
+  },
+};
+
+// =====================================================================
+// PPF Calculator (Public Provident Fund)
+// =====================================================================
+
+export interface PpfInput {
+  yearlyInvestment: number;
+  rate: number;
+  tenureYears: number;
+}
+
+export interface PpfResult extends EngineResult {}
+
+export const ppfEngine: CalculatorEngine<PpfInput, PpfResult> = {
+  slug: 'ppf-calculator',
+  category: 'finance',
+
+  defaultInput: () => ({ yearlyInvestment: 150000, rate: 7.1, tenureYears: 15 }),
+
+  fields: (): EngineField[] => [
+    { name: 'yearlyInvestment', labelKey: 'field.yearlyInvestment', type: 'number', defaultValue: '150000', min: 500, max: 150000, step: 500, currency: true },
+    { name: 'rate', labelKey: 'field.rate', type: 'number', defaultValue: '7.1', min: 0, max: 20, step: 0.1, suffixKey: '%' },
+    { name: 'tenureYears', labelKey: 'field.tenureYears', type: 'number', defaultValue: '15', min: 15, max: 50, step: 5, suffixKey: 'years' },
+  ],
+
+  parseInput: (v): PpfInput => ({
+    yearlyInvestment: num(v.yearlyInvestment, 0),
+    rate: num(v.rate, 0),
+    tenureYears: num(v.tenureYears, 0),
+  }),
+
+  validate: (input) => {
+    if (input.yearlyInvestment <= 0 || input.tenureYears < 15) return fail('finance.ppfRequired');
+    return ok();
+  },
+
+  compute: (input) => {
+    const P = Math.min(input.yearlyInvestment, 150000);
+    const r = input.rate / 100;
+    const years = Math.min(input.tenureYears, 50);
+
+    let bal = 0;
+    let invested = 0;
+    const yearLabels: string[] = ['0'];
+    const balancePts: number[] = [0];
+    const investedPts: number[] = [0];
+
+    for (let y = 1; y <= years; y++) {
+      invested += P;
+      bal = (bal + P) * (1 + r);
+      yearLabels.push(String(y));
+      balancePts.push(bal);
+      investedPts.push(invested);
+    }
+
+    const interest = Math.max(bal - invested, 0);
+
+    return {
+      items: [
+        { key: 'maturityValue', value: bal, format: 'currency', primary: true },
+        { key: 'totalInvested', value: invested, format: 'currency' },
+        { key: 'totalInterest', value: interest, format: 'currency', tone: 'success' },
+      ],
+      charts: [
+        {
+          type: 'pie',
+          titleKey: 'ppf.pieTitle',
+          format: 'currency',
+          slices: [
+            { labelKey: 'invested', value: invested, color: '#0070f3' },
+            { labelKey: 'interest', value: interest, color: '#50e3c2' },
+          ],
+        },
+        {
+          type: 'line',
+          titleKey: 'ppf.growthTitle',
+          format: 'currency',
+          labels: yearLabels,
+          series: [
+            { labelKey: 'balance', points: balancePts, color: '#0070f3' },
+            { labelKey: 'invested', points: investedPts, color: '#7928ca' },
+          ],
+        },
+      ],
+    };
+  },
+};
+
+// =====================================================================
+// NPS Calculator (National Pension System)
+// =====================================================================
+
+export interface NpsInput {
+  monthlyContribution: number;
+  currentAge: number;
+  retirementAge: number;
+  rate: number;
+  annuityPercent: number;
+  annuityRate: number;
+}
+
+export interface NpsResult extends EngineResult {}
+
+export const npsEngine: CalculatorEngine<NpsInput, NpsResult> = {
+  slug: 'nps-calculator',
+  category: 'finance',
+
+  defaultInput: () => ({ monthlyContribution: 5000, currentAge: 30, retirementAge: 60, rate: 10, annuityPercent: 40, annuityRate: 6 }),
+
+  fields: (): EngineField[] => [
+    { name: 'monthlyContribution', labelKey: 'field.monthlyContribution', type: 'number', defaultValue: '5000', min: 500, step: 500, currency: true },
+    { name: 'currentAge', labelKey: 'field.currentAge', type: 'number', defaultValue: '30', min: 18, max: 69, step: 1, suffixKey: 'years' },
+    { name: 'retirementAge', labelKey: 'field.retirementAge', type: 'number', defaultValue: '60', min: 50, max: 75, step: 1, suffixKey: 'years' },
+    { name: 'rate', labelKey: 'field.rate', type: 'number', defaultValue: '10', min: 0, max: 25, step: 0.1, suffixKey: '%' },
+    { name: 'annuityPercent', labelKey: 'field.annuityPercent', type: 'number', defaultValue: '40', min: 40, max: 100, step: 5, suffixKey: '%' },
+    { name: 'annuityRate', labelKey: 'field.annuityRate', type: 'number', defaultValue: '6', min: 0, max: 15, step: 0.1, suffixKey: '%' },
+  ],
+
+  parseInput: (v): NpsInput => ({
+    monthlyContribution: num(v.monthlyContribution, 0),
+    currentAge: num(v.currentAge, 0),
+    retirementAge: num(v.retirementAge, 0),
+    rate: num(v.rate, 0),
+    annuityPercent: num(v.annuityPercent, 0),
+    annuityRate: num(v.annuityRate, 0),
+  }),
+
+  validate: (input) => {
+    if (input.monthlyContribution <= 0 || input.retirementAge <= input.currentAge) return fail('finance.npsRequired');
+    return ok();
+  },
+
+  compute: (input) => {
+    const P = input.monthlyContribution;
+    const years = Math.min(input.retirementAge - input.currentAge, 60);
+    const months = years * 12;
+    const r = input.rate / 100 / 12;
+
+    const totalCorpus = futureValue(r, months, P, 0);
+    const annuityCorpus = totalCorpus * (Math.max(input.annuityPercent, 40) / 100);
+    const lumpSum = totalCorpus - annuityCorpus;
+    const monthlyPension = (annuityCorpus * (input.annuityRate / 100)) / 12;
+
+    const ageLabels: string[] = [String(input.currentAge)];
+    const corpusPts: number[] = [0];
+    let bal = 0;
+    for (let m = 1; m <= months; m++) {
+      bal = bal * (1 + r) + P;
+      if (m % 12 === 0 || m === months) {
+        ageLabels.push(String(input.currentAge + Math.round(m / 12)));
+        corpusPts.push(bal);
+      }
+    }
+
+    return {
+      items: [
+        { key: 'totalCorpus', value: totalCorpus, format: 'currency', primary: true },
+        { key: 'lumpSumWithdrawal', value: lumpSum, format: 'currency' },
+        { key: 'annuityCorpus', value: annuityCorpus, format: 'currency' },
+        { key: 'monthlyPension', value: monthlyPension, format: 'currency', tone: 'success' },
+      ],
+      charts: [
+        {
+          type: 'pie',
+          titleKey: 'nps.pieTitle',
+          format: 'currency',
+          slices: [
+            { labelKey: 'lumpSum', value: lumpSum, color: '#0070f3' },
+            { labelKey: 'annuityCorpus', value: annuityCorpus, color: '#7928ca' },
+          ],
+        },
+        {
+          type: 'line',
+          titleKey: 'nps.growthTitle',
+          format: 'currency',
+          labels: ageLabels,
+          series: [{ labelKey: 'balance', points: corpusPts, color: '#0070f3' }],
+        },
+      ],
+    };
+  },
+};
+
+// =====================================================================
+// Mutual Fund Calculator
+// =====================================================================
+
+export interface MutualFundInput {
+  mode: 'sip' | 'lumpsum';
+  amount: number;
+  rate: number;
+  tenureYears: number;
+}
+
+export interface MutualFundResult extends EngineResult {}
+
+export const mutualFundEngine: CalculatorEngine<MutualFundInput, MutualFundResult> = {
+  slug: 'mutual-fund-calculator',
+  category: 'finance',
+
+  defaultInput: () => ({ mode: 'sip', amount: 5000, rate: 12, tenureYears: 10 }),
+
+  fields: (): EngineField[] => [
+    {
+      name: 'mode',
+      labelKey: 'field.mode',
+      type: 'select',
+      defaultValue: 'sip',
+      options: [
+        { labelKey: 'mode.sip', value: 'sip' },
+        { labelKey: 'mode.lumpsum', value: 'lumpsum' },
+      ],
+    },
+    { name: 'amount', labelKey: 'field.amount', type: 'number', defaultValue: '5000', min: 100, step: 500, currency: true },
+    { name: 'rate', labelKey: 'field.rate', type: 'number', defaultValue: '12', min: 0, max: 30, step: 0.1, suffixKey: '%' },
+    { name: 'tenureYears', labelKey: 'field.tenureYears', type: 'number', defaultValue: '10', min: 1, max: 40, step: 1, suffixKey: 'years' },
+  ],
+
+  parseInput: (v): MutualFundInput => ({
+    mode: v.mode === 'lumpsum' ? 'lumpsum' : 'sip',
+    amount: num(v.amount, 0),
+    rate: num(v.rate, 0),
+    tenureYears: num(v.tenureYears, 0),
+  }),
+
+  validate: (input) => {
+    if (input.amount <= 0 || input.tenureYears <= 0) return fail('finance.mfRequired');
+    return ok();
+  },
+
+  compute: (input) => {
+    const P = input.amount;
+    const r = input.rate / 100;
+    const years = Math.min(input.tenureYears, 50);
+
+    let totalValue = 0;
+    let invested = 0;
+    const yearLabels: string[] = ['0'];
+    const balancePts: number[] = [0];
+    const investedPts: number[] = [0];
+
+    if (input.mode === 'sip') {
+      const rm = r / 12;
+      const months = years * 12;
+      invested = P * months;
+      totalValue = futureValue(rm, months, P, 0);
+
+      let bal = 0;
+      balancePts[0] = 0;
+      investedPts[0] = 0;
+      for (let m = 1; m <= months; m++) {
+        bal = bal * (1 + rm) + P;
+        if (m % 12 === 0 || m === months) {
+          yearLabels.push(String(Math.round(m / 12)));
+          balancePts.push(bal);
+          investedPts.push(P * m);
+        }
+      }
+    } else {
+      invested = P;
+      totalValue = P * Math.pow(1 + r, years);
+      balancePts[0] = P;
+      investedPts[0] = P;
+      for (let y = 1; y <= years; y++) {
+        yearLabels.push(String(y));
+        balancePts.push(P * Math.pow(1 + r, y));
+        investedPts.push(P);
+      }
+    }
+
+    const returns = Math.max(totalValue - invested, 0);
+
+    return {
+      items: [
+        { key: 'totalValue', value: totalValue, format: 'currency', primary: true },
+        { key: 'investedAmount', value: invested, format: 'currency' },
+        { key: 'estReturns', value: returns, format: 'currency', tone: 'success' },
+      ],
+      charts: [
+        {
+          type: 'pie',
+          titleKey: 'mf.pieTitle',
+          format: 'currency',
+          slices: [
+            { labelKey: 'invested', value: invested, color: '#0070f3' },
+            { labelKey: 'returns', value: returns, color: '#50e3c2' },
+          ],
+        },
+        {
+          type: 'line',
+          titleKey: 'mf.growthTitle',
+          format: 'currency',
+          labels: yearLabels,
+          series: [
+            { labelKey: 'balance', points: balancePts, color: '#0070f3' },
+            { labelKey: 'invested', points: investedPts, color: '#7928ca' },
+          ],
+        },
+      ],
+    };
+  },
+};
+
+// =====================================================================
+// Lumpsum Calculator
+// =====================================================================
+
+export interface LumpsumInput {
+  investment: number;
+  rate: number;
+  tenureYears: number;
+}
+
+export interface LumpsumResult extends EngineResult {}
+
+export const lumpsumEngine: CalculatorEngine<LumpsumInput, LumpsumResult> = {
+  slug: 'lumpsum-calculator',
+  category: 'finance',
+
+  defaultInput: () => ({ investment: 100000, rate: 12, tenureYears: 10 }),
+
+  fields: (): EngineField[] => [
+    { name: 'investment', labelKey: 'field.investment', type: 'number', defaultValue: '100000', min: 500, step: 1000, currency: true },
+    { name: 'rate', labelKey: 'field.rate', type: 'number', defaultValue: '12', min: 0, max: 30, step: 0.1, suffixKey: '%' },
+    { name: 'tenureYears', labelKey: 'field.tenureYears', type: 'number', defaultValue: '10', min: 1, max: 40, step: 1, suffixKey: 'years' },
+  ],
+
+  parseInput: (v): LumpsumInput => ({
+    investment: num(v.investment, 0),
+    rate: num(v.rate, 0),
+    tenureYears: num(v.tenureYears, 0),
+  }),
+
+  validate: (input) => {
+    if (input.investment <= 0 || input.tenureYears <= 0) return fail('finance.lumpsumRequired');
+    return ok();
+  },
+
+  compute: (input) => {
+    const P = input.investment;
+    const r = input.rate / 100;
+    const years = Math.min(input.tenureYears, 50);
+
+    const maturityValue = P * Math.pow(1 + r, years);
+    const growth = Math.max(maturityValue - P, 0);
+
+    const yearLabels: string[] = ['0'];
+    const balancePts: number[] = [P];
+    const growthPts: number[] = [0];
+
+    for (let y = 1; y <= years; y++) {
+      const val = P * Math.pow(1 + r, y);
+      yearLabels.push(String(y));
+      balancePts.push(val);
+      growthPts.push(val - P);
+    }
+
+    return {
+      items: [
+        { key: 'maturityValue', value: maturityValue, format: 'currency', primary: true },
+        { key: 'totalInvested', value: P, format: 'currency' },
+        { key: 'totalGrowth', value: growth, format: 'currency', tone: 'success' },
+      ],
+      charts: [
+        {
+          type: 'pie',
+          titleKey: 'lumpsum.pieTitle',
+          format: 'currency',
+          slices: [
+            { labelKey: 'principal', value: P, color: '#0070f3' },
+            { labelKey: 'growth', value: growth, color: '#50e3c2' },
+          ],
+        },
+        {
+          type: 'line',
+          titleKey: 'lumpsum.growthTitle',
+          format: 'currency',
+          labels: yearLabels,
+          series: [
+            { labelKey: 'balance', points: balancePts, color: '#0070f3' },
+            { labelKey: 'growth', points: growthPts, color: '#50e3c2' },
+          ],
+        },
+      ],
+    };
+  },
+};
+
+// =====================================================================
+// Simple Interest Calculator
+// =====================================================================
+
+export interface SimpleInterestInput {
+  principal: number;
+  rate: number;
+  termYears: number;
+}
+
+export interface SimpleInterestResult extends EngineResult {}
+
+export const simpleInterestEngine: CalculatorEngine<SimpleInterestInput, SimpleInterestResult> = {
+  slug: 'simple-interest-calculator',
+  category: 'finance',
+
+  defaultInput: () => ({ principal: 10000, rate: 5, termYears: 3 }),
+
+  fields: (): EngineField[] => [
+    { name: 'principal', labelKey: 'field.principal', type: 'number', defaultValue: '10000', min: 0, step: 500, currency: true },
+    { name: 'rate', labelKey: 'field.rate', type: 'number', defaultValue: '5', min: 0, max: 100, step: 0.1, suffixKey: '%' },
+    { name: 'termYears', labelKey: 'field.termYears', type: 'number', defaultValue: '3', min: 0.1, max: 50, step: 0.5, suffixKey: 'years' },
+  ],
+
+  parseInput: (v): SimpleInterestInput => ({
+    principal: num(v.principal, 0),
+    rate: num(v.rate, 0),
+    termYears: num(v.termYears, 0),
+  }),
+
+  validate: (input) => {
+    if (input.principal <= 0 || input.termYears <= 0) return fail('finance.siRequired');
+    return ok();
+  },
+
+  compute: (input) => {
+    const P = input.principal;
+    const r = input.rate / 100;
+    const t = Math.min(input.termYears, 50);
+
+    const interest = P * r * t;
+    const totalAmount = P + interest;
+
+    const yearLabels: string[] = ['0'];
+    const balancePts: number[] = [P];
+    const interestPts: number[] = [0];
+
+    for (let y = 1; y <= Math.ceil(t); y++) {
+      const curT = Math.min(y, t);
+      const curI = P * r * curT;
+      yearLabels.push(String(y));
+      balancePts.push(P + curI);
+      interestPts.push(curI);
+    }
+
+    return {
+      items: [
+        { key: 'totalAmount', value: totalAmount, format: 'currency', primary: true },
+        { key: 'principalAmount', value: P, format: 'currency' },
+        { key: 'totalInterest', value: interest, format: 'currency', tone: 'success' },
+      ],
+      charts: [
+        {
+          type: 'pie',
+          titleKey: 'simpleInterest.pieTitle',
+          format: 'currency',
+          slices: [
+            { labelKey: 'principal', value: P, color: '#0070f3' },
+            { labelKey: 'interest', value: interest, color: '#50e3c2' },
+          ],
+        },
+        {
+          type: 'line',
+          titleKey: 'simpleInterest.growthTitle',
+          format: 'currency',
+          labels: yearLabels,
+          series: [
+            { labelKey: 'balance', points: balancePts, color: '#0070f3' },
+            { labelKey: 'interest', points: interestPts, color: '#50e3c2' },
+          ],
+        },
+      ],
+    };
+  },
+};
+
+// =====================================================================
+// Credit Card Payoff Calculator
+// =====================================================================
+
+export interface CreditCardPayoffInput {
+  balance: number;
+  apr: number;
+  monthlyPayment: number;
+}
+
+export interface CreditCardPayoffResult extends EngineResult {}
+
+export const creditCardPayoffEngine: CalculatorEngine<CreditCardPayoffInput, CreditCardPayoffResult> = {
+  slug: 'credit-card-payoff-calculator',
+  category: 'finance',
+
+  defaultInput: () => ({ balance: 5000, apr: 21.99, monthlyPayment: 200 }),
+
+  fields: (): EngineField[] => [
+    { name: 'balance', labelKey: 'field.balance', type: 'number', defaultValue: '5000', min: 0, step: 100, currency: true },
+    { name: 'apr', labelKey: 'field.apr', type: 'number', defaultValue: '21.99', min: 0, max: 60, step: 0.01, suffixKey: '%' },
+    { name: 'monthlyPayment', labelKey: 'field.monthlyPayment', type: 'number', defaultValue: '200', min: 10, step: 10, currency: true },
+  ],
+
+  parseInput: (v): CreditCardPayoffInput => ({
+    balance: num(v.balance, 0),
+    apr: num(v.apr, 0),
+    monthlyPayment: num(v.monthlyPayment, 0),
+  }),
+
+  validate: (input) => {
+    const monthlyRate = input.apr / 100 / 12;
+    if (input.balance <= 0) return fail('finance.ccRequired');
+    if (input.monthlyPayment <= input.balance * monthlyRate) return fail('finance.ccPaymentTooLow');
+    return ok();
+  },
+
+  compute: (input) => {
+    const P = input.balance;
+    const r = input.apr / 100 / 12;
+    const pmt = input.monthlyPayment;
+
+    let bal = P;
+    let totalInterest = 0;
+    let months = 0;
+    const monthLabels: string[] = ['0'];
+    const balancePts: number[] = [P];
+
+    while (bal > 0 && months < 600) {
+      months++;
+      const interest = bal * r;
+      totalInterest += interest;
+      const principalPaid = Math.min(pmt - interest, bal);
+      bal = Math.max(bal - principalPaid, 0);
+
+      if (months % 6 === 0 || bal === 0) {
+        monthLabels.push(String(months));
+        balancePts.push(bal);
+      }
+    }
+
+    const totalPaid = P + totalInterest;
+
+    return {
+      items: [
+        { key: 'payoffMonths', value: months, format: 'integer', primary: true },
+        { key: 'totalInterest', value: totalInterest, format: 'currency', tone: 'warning' },
+        { key: 'totalPaid', value: totalPaid, format: 'currency' },
+      ],
+      charts: [
+        {
+          type: 'pie',
+          titleKey: 'creditCard.pieTitle',
+          format: 'currency',
+          slices: [
+            { labelKey: 'balance', value: P, color: '#0070f3' },
+            { labelKey: 'interest', value: totalInterest, color: '#f5a623' },
+          ],
+        },
+        {
+          type: 'line',
+          titleKey: 'creditCard.growthTitle',
+          format: 'currency',
+          labels: monthLabels,
+          series: [{ labelKey: 'balance', points: balancePts, color: '#0070f3' }],
+        },
+      ],
+    };
+  },
+};
+
+// =====================================================================
+// Debt Payoff Calculator
+// =====================================================================
+
+export interface DebtPayoffInput {
+  balance: number;
+  rate: number;
+  minPayment: number;
+  extraPayment: number;
+}
+
+export interface DebtPayoffResult extends EngineResult {}
+
+export const debtPayoffEngine: CalculatorEngine<DebtPayoffInput, DebtPayoffResult> = {
+  slug: 'debt-payoff-calculator',
+  category: 'finance',
+
+  defaultInput: () => ({ balance: 15000, rate: 15, minPayment: 350, extraPayment: 150 }),
+
+  fields: (): EngineField[] => [
+    { name: 'balance', labelKey: 'field.balance', type: 'number', defaultValue: '15000', min: 0, step: 500, currency: true },
+    { name: 'rate', labelKey: 'field.rate', type: 'number', defaultValue: '15', min: 0, max: 60, step: 0.1, suffixKey: '%' },
+    { name: 'minPayment', labelKey: 'field.minPayment', type: 'number', defaultValue: '350', min: 10, step: 10, currency: true },
+    { name: 'extraPayment', labelKey: 'field.extraPayment', type: 'number', defaultValue: '150', min: 0, step: 10, currency: true },
+  ],
+
+  parseInput: (v): DebtPayoffInput => ({
+    balance: num(v.balance, 0),
+    rate: num(v.rate, 0),
+    minPayment: num(v.minPayment, 0),
+    extraPayment: num(v.extraPayment, 0),
+  }),
+
+  validate: (input) => {
+    const monthlyRate = input.rate / 100 / 12;
+    if (input.balance <= 0) return fail('finance.debtRequired');
+    if (input.minPayment <= input.balance * monthlyRate) return fail('finance.debtPaymentTooLow');
+    return ok();
+  },
+
+  compute: (input) => {
+    const P = input.balance;
+    const r = input.rate / 100 / 12;
+    const basePmt = input.minPayment;
+    const accPmt = input.minPayment + input.extraPayment;
+
+    // Helper to simulate payoff
+    const simulate = (payment: number) => {
+      let bal = P;
+      let interest = 0;
+      let m = 0;
+      const pts: number[] = [P];
+      while (bal > 0 && m < 600) {
+        m++;
+        const i = bal * r;
+        interest += i;
+        bal = Math.max(bal - Math.min(payment - i, bal), 0);
+        if (m % 3 === 0 || bal === 0) pts.push(bal);
+      }
+      return { months: m, interest, pts };
+    };
+
+    const base = simulate(basePmt);
+    const acc = simulate(accPmt);
+
+    const interestSaved = Math.max(base.interest - acc.interest, 0);
+    const monthsSaved = Math.max(base.months - acc.months, 0);
+
+    return {
+      items: [
+        { key: 'payoffMonths', value: acc.months, format: 'integer', primary: true },
+        { key: 'totalInterest', value: acc.interest, format: 'currency', tone: 'warning' },
+        { key: 'interestSaved', value: interestSaved, format: 'currency', tone: 'success' },
+        { key: 'monthsSaved', value: monthsSaved, format: 'integer', tone: 'success' },
+      ],
+      charts: [
+        {
+          type: 'pie',
+          titleKey: 'debt.pieTitle',
+          format: 'currency',
+          slices: [
+            { labelKey: 'balance', value: P, color: '#0070f3' },
+            { labelKey: 'interest', value: acc.interest, color: '#f5a623' },
+          ],
+        },
+      ],
+    };
+  },
+};
+
+// =====================================================================
+// Personal Loan Calculator
+// =====================================================================
+
+export interface PersonalLoanInput {
+  loanAmount: number;
+  rate: number;
+  tenureYears: number;
+  originationFeePercent: number;
+}
+
+export interface PersonalLoanResult extends EngineResult {}
+
+export const personalLoanEngine: CalculatorEngine<PersonalLoanInput, PersonalLoanResult> = {
+  slug: 'personal-loan-calculator',
+  category: 'finance',
+
+  defaultInput: () => ({ loanAmount: 15000, rate: 10.5, tenureYears: 3, originationFeePercent: 2 }),
+
+  fields: (): EngineField[] => [
+    { name: 'loanAmount', labelKey: 'field.loanAmount', type: 'number', defaultValue: '15000', min: 500, step: 500, currency: true },
+    { name: 'rate', labelKey: 'field.rate', type: 'number', defaultValue: '10.5', min: 0, max: 50, step: 0.1, suffixKey: '%' },
+    { name: 'tenureYears', labelKey: 'field.tenureYears', type: 'number', defaultValue: '3', min: 0.5, max: 10, step: 0.5, suffixKey: 'years' },
+    { name: 'originationFeePercent', labelKey: 'field.originationFeePercent', type: 'number', defaultValue: '2', min: 0, max: 10, step: 0.5, suffixKey: '%' },
+  ],
+
+  parseInput: (v): PersonalLoanInput => ({
+    loanAmount: num(v.loanAmount, 0),
+    rate: num(v.rate, 0),
+    tenureYears: num(v.tenureYears, 0),
+    originationFeePercent: num(v.originationFeePercent, 0),
+  }),
+
+  validate: (input) => {
+    if (input.loanAmount <= 0 || input.tenureYears <= 0) return fail('finance.personalLoanRequired');
+    return ok();
+  },
+
+  compute: (input) => {
+    const P = input.loanAmount;
+    const r = input.rate / 100 / 12;
+    const n = Math.min(input.tenureYears * 12, 120);
+
+    const emi = pmt(r, n, P);
+    const feeAmount = P * (input.originationFeePercent / 100);
+    const totalInterest = emi * n - P;
+    const totalCost = emi * n + feeAmount;
+
+    return {
+      items: [
+        { key: 'monthlyEmi', value: emi, format: 'currency', primary: true },
+        { key: 'totalInterest', value: totalInterest, format: 'currency', tone: 'warning' },
+        { key: 'feeAmount', value: feeAmount, format: 'currency' },
+        { key: 'totalCost', value: totalCost, format: 'currency' },
+      ],
+      charts: [
+        {
+          type: 'pie',
+          titleKey: 'personalLoan.pieTitle',
+          format: 'currency',
+          slices: [
+            { labelKey: 'principal', value: P, color: '#0070f3' },
+            { labelKey: 'interest', value: totalInterest, color: '#f5a623' },
+            { labelKey: 'feeAmount', value: feeAmount, color: '#7928ca' },
+          ],
+        },
+      ],
+    };
+  },
+};
+
+// =====================================================================
+// Lease Calculator
+// =====================================================================
+
+export interface LeaseInput {
+  price: number;
+  downPayment: number;
+  termMonths: number;
+  apr: number;
+  residualPercent: number;
+}
+
+export interface LeaseResult extends EngineResult {}
+
+export const leaseEngine: CalculatorEngine<LeaseInput, LeaseResult> = {
+  slug: 'lease-calculator',
+  category: 'finance',
+
+  defaultInput: () => ({ price: 35000, downPayment: 3000, termMonths: 36, apr: 4.5, residualPercent: 55 }),
+
+  fields: (): EngineField[] => [
+    { name: 'price', labelKey: 'field.price', type: 'number', defaultValue: '35000', min: 1000, step: 1000, currency: true },
+    { name: 'downPayment', labelKey: 'field.downPayment', type: 'number', defaultValue: '3000', min: 0, step: 500, currency: true },
+    { name: 'termMonths', labelKey: 'field.termMonths', type: 'number', defaultValue: '36', min: 12, max: 72, step: 6, suffixKey: 'months' },
+    { name: 'apr', labelKey: 'field.apr', type: 'number', defaultValue: '4.5', min: 0, max: 30, step: 0.1, suffixKey: '%' },
+    { name: 'residualPercent', labelKey: 'field.residualPercent', type: 'number', defaultValue: '55', min: 10, max: 90, step: 1, suffixKey: '%' },
+  ],
+
+  parseInput: (v): LeaseInput => ({
+    price: num(v.price, 0),
+    downPayment: num(v.downPayment, 0),
+    termMonths: num(v.termMonths, 0),
+    apr: num(v.apr, 0),
+    residualPercent: num(v.residualPercent, 0),
+  }),
+
+  validate: (input) => {
+    if (input.price <= 0 || input.termMonths <= 0) return fail('finance.leaseRequired');
+    return ok();
+  },
+
+  compute: (input) => {
+    const netCap = Math.max(input.price - input.downPayment, 0);
+    const residual = input.price * (input.residualPercent / 100);
+    const term = Math.min(input.termMonths, 120);
+
+    const monthlyDep = Math.max((netCap - residual) / term, 0);
+    const moneyFactor = input.apr / 100 / 24;
+    const monthlyFinance = (netCap + residual) * moneyFactor;
+    const monthlyLease = monthlyDep + monthlyFinance;
+    const totalLeaseCost = input.downPayment + monthlyLease * term;
+
+    return {
+      items: [
+        { key: 'monthlyLease', value: monthlyLease, format: 'currency', primary: true },
+        { key: 'monthlyDepreciation', value: monthlyDep, format: 'currency' },
+        { key: 'monthlyFinance', value: monthlyFinance, format: 'currency' },
+        { key: 'totalLeaseCost', value: totalLeaseCost, format: 'currency' },
+      ],
+      charts: [
+        {
+          type: 'pie',
+          titleKey: 'lease.pieTitle',
+          format: 'currency',
+          slices: [
+            { labelKey: 'depreciation', value: monthlyDep * term, color: '#0070f3' },
+            { labelKey: 'finance', value: monthlyFinance * term, color: '#f5a623' },
+            { labelKey: 'downPayment', value: input.downPayment, color: '#7928ca' },
+          ],
+        },
+      ],
+    };
+  },
+};
+
+// =====================================================================
+// Down Payment Calculator
+// =====================================================================
+
+export interface DownPaymentInput {
+  homePrice: number;
+  downPercent: number;
+  currentSavings: number;
+  monthlySavings: number;
+  savingsYield: number;
+}
+
+export interface DownPaymentResult extends EngineResult {}
+
+export const downPaymentEngine: CalculatorEngine<DownPaymentInput, DownPaymentResult> = {
+  slug: 'down-payment-calculator',
+  category: 'finance',
+
+  defaultInput: () => ({ homePrice: 350000, downPercent: 20, currentSavings: 20000, monthlySavings: 1500, savingsYield: 4.5 }),
+
+  fields: (): EngineField[] => [
+    { name: 'homePrice', labelKey: 'field.homePrice', type: 'number', defaultValue: '350000', min: 10000, step: 5000, currency: true },
+    { name: 'downPercent', labelKey: 'field.downPercent', type: 'number', defaultValue: '20', min: 1, max: 100, step: 1, suffixKey: '%' },
+    { name: 'currentSavings', labelKey: 'field.currentSavings', type: 'number', defaultValue: '20000', min: 0, step: 1000, currency: true },
+    { name: 'monthlySavings', labelKey: 'field.monthlySavings', type: 'number', defaultValue: '1500', min: 50, step: 50, currency: true },
+    { name: 'savingsYield', labelKey: 'field.savingsYield', type: 'number', defaultValue: '4.5', min: 0, max: 20, step: 0.1, suffixKey: '%' },
+  ],
+
+  parseInput: (v): DownPaymentInput => ({
+    homePrice: num(v.homePrice, 0),
+    downPercent: num(v.downPercent, 0),
+    currentSavings: num(v.currentSavings, 0),
+    monthlySavings: num(v.monthlySavings, 0),
+    savingsYield: num(v.savingsYield, 0),
+  }),
+
+  validate: (input) => {
+    if (input.homePrice <= 0) return fail('finance.downPaymentRequired');
+    return ok();
+  },
+
+  compute: (input) => {
+    const target = input.homePrice * (input.downPercent / 100);
+    const r = input.savingsYield / 100 / 12;
+    const pmt = input.monthlySavings;
+
+    let bal = input.currentSavings;
+    let months = 0;
+    const monthLabels: string[] = ['0'];
+    const balancePts: number[] = [bal];
+
+    while (bal < target && months < 600) {
+      months++;
+      bal = bal * (1 + r) + pmt;
+      if (months % 6 === 0 || bal >= target) {
+        monthLabels.push(String(months));
+        balancePts.push(bal);
+      }
+    }
+
+    const totalContributed = input.currentSavings + pmt * months;
+    const interestEarned = Math.max(target - totalContributed, 0);
+
+    return {
+      items: [
+        { key: 'targetDownPayment', value: target, format: 'currency', primary: true },
+        { key: 'monthsToGoal', value: months, format: 'integer' },
+        { key: 'remainingToSave', value: Math.max(target - input.currentSavings, 0), format: 'currency' },
+        { key: 'interestEarned', value: interestEarned, format: 'currency', tone: 'success' },
+      ],
+      charts: [
+        {
+          type: 'pie',
+          titleKey: 'downPayment.pieTitle',
+          format: 'currency',
+          slices: [
+            { labelKey: 'currentSavings', value: input.currentSavings, color: '#0070f3' },
+            { labelKey: 'contributed', value: pmt * months, color: '#7928ca' },
+            { labelKey: 'interest', value: interestEarned, color: '#50e3c2' },
+          ],
+        },
+        {
+          type: 'line',
+          titleKey: 'downPayment.growthTitle',
+          format: 'currency',
+          labels: monthLabels,
+          series: [{ labelKey: 'balance', points: balancePts, color: '#0070f3' }],
+        },
+      ],
+    };
+  },
+};
+
+// =====================================================================
+// Amortization Calculator
+// =====================================================================
+
+export interface AmortizationInput {
+  loanAmount: number;
+  rate: number;
+  termYears: number;
+}
+
+export interface AmortizationResult extends EngineResult {}
+
+export const amortizationEngine: CalculatorEngine<AmortizationInput, AmortizationResult> = {
+  slug: 'amortization-calculator',
+  category: 'finance',
+
+  defaultInput: () => ({ loanAmount: 250000, rate: 6.5, termYears: 30 }),
+
+  fields: (): EngineField[] => [
+    { name: 'loanAmount', labelKey: 'field.loanAmount', type: 'number', defaultValue: '250000', min: 1000, step: 5000, currency: true },
+    { name: 'rate', labelKey: 'field.rate', type: 'number', defaultValue: '6.5', min: 0, max: 30, step: 0.1, suffixKey: '%' },
+    { name: 'termYears', labelKey: 'field.termYears', type: 'number', defaultValue: '30', min: 1, max: 50, step: 1, suffixKey: 'years' },
+  ],
+
+  parseInput: (v): AmortizationInput => ({
+    loanAmount: num(v.loanAmount, 0),
+    rate: num(v.rate, 0),
+    termYears: num(v.termYears, 0),
+  }),
+
+  validate: (input) => {
+    if (input.loanAmount <= 0 || input.termYears <= 0) return fail('finance.amortizationRequired');
+    return ok();
+  },
+
+  compute: (input) => {
+    const P = input.loanAmount;
+    const r = input.rate / 100 / 12;
+    const n = Math.min(input.termYears * 12, 600);
+    const m = pmt(r, n, P);
+    const totalPaid = m * n;
+    const totalInterest = totalPaid - P;
+
+    const yearLabels: string[] = ['0'];
+    const balancePts: number[] = [P];
+    const interestPts: number[] = [0];
+    let bal = P;
+    let cumInterest = 0;
+
+    for (let k = 1; k <= n; k++) {
+      const interest = bal * r;
+      bal = Math.max(bal - (m - interest), 0);
+      cumInterest += interest;
+      if (k % 12 === 0 || k === n) {
+        yearLabels.push(String(Math.round(k / 12)));
+        balancePts.push(bal);
+        interestPts.push(cumInterest);
+      }
+    }
+
+    return {
+      items: [
+        { key: 'monthlyPayment', value: m, format: 'currency', primary: true },
+        { key: 'totalInterest', value: totalInterest, format: 'currency', tone: 'warning' },
+        { key: 'totalPaid', value: totalPaid, format: 'currency' },
+      ],
+      charts: [
+        {
+          type: 'pie',
+          titleKey: 'amortization.pieTitle',
+          format: 'currency',
+          slices: [
+            { labelKey: 'principal', value: P, color: '#0070f3' },
+            { labelKey: 'interest', value: totalInterest, color: '#f5a623' },
+          ],
+        },
+        {
+          type: 'line',
+          titleKey: 'amortization.growthTitle',
+          format: 'currency',
+          labels: yearLabels,
+          series: [
+            { labelKey: 'balance', points: balancePts, color: '#0070f3' },
+            { labelKey: 'totalInterest', points: interestPts, color: '#f5a623' },
+          ],
+        },
+      ],
+    };
+  },
+};
+
+// =====================================================================
+// Net Worth Calculator
+// =====================================================================
+
+export interface NetWorthInput {
+  cash: number;
+  investments: number;
+  realEstate: number;
+  vehicles: number;
+  otherAssets: number;
+  mortgage: number;
+  autoLoan: number;
+  creditCards: number;
+  otherDebts: number;
+}
+
+export interface NetWorthResult extends EngineResult {}
+
+export const netWorthEngine: CalculatorEngine<NetWorthInput, NetWorthResult> = {
+  slug: 'net-worth-calculator',
+  category: 'finance',
+
+  defaultInput: () => ({
+    cash: 15000,
+    investments: 85000,
+    realEstate: 350000,
+    vehicles: 25000,
+    otherAssets: 5000,
+    mortgage: 220000,
+    autoLoan: 12000,
+    creditCards: 3000,
+    otherDebts: 0,
+  }),
+
+  fields: (): EngineField[] => [
+    { name: 'cash', labelKey: 'field.cash', type: 'number', defaultValue: '15000', min: 0, step: 500, currency: true },
+    { name: 'investments', labelKey: 'field.investments', type: 'number', defaultValue: '85000', min: 0, step: 1000, currency: true },
+    { name: 'realEstate', labelKey: 'field.realEstate', type: 'number', defaultValue: '350000', min: 0, step: 5000, currency: true },
+    { name: 'vehicles', labelKey: 'field.vehicles', type: 'number', defaultValue: '25000', min: 0, step: 500, currency: true },
+    { name: 'otherAssets', labelKey: 'field.otherAssets', type: 'number', defaultValue: '5000', min: 0, step: 500, currency: true },
+    { name: 'mortgage', labelKey: 'field.mortgage', type: 'number', defaultValue: '220000', min: 0, step: 5000, currency: true },
+    { name: 'autoLoan', labelKey: 'field.autoLoan', type: 'number', defaultValue: '12000', min: 0, step: 500, currency: true },
+    { name: 'creditCards', labelKey: 'field.creditCards', type: 'number', defaultValue: '3000', min: 0, step: 100, currency: true },
+    { name: 'otherDebts', labelKey: 'field.otherDebts', type: 'number', defaultValue: '0', min: 0, step: 100, currency: true },
+  ],
+
+  parseInput: (v): NetWorthInput => ({
+    cash: num(v.cash, 0),
+    investments: num(v.investments, 0),
+    realEstate: num(v.realEstate, 0),
+    vehicles: num(v.vehicles, 0),
+    otherAssets: num(v.otherAssets, 0),
+    mortgage: num(v.mortgage, 0),
+    autoLoan: num(v.autoLoan, 0),
+    creditCards: num(v.creditCards, 0),
+    otherDebts: num(v.otherDebts, 0),
+  }),
+
+  validate: () => ok(),
+
+  compute: (input) => {
+    const totalAssets = input.cash + input.investments + input.realEstate + input.vehicles + input.otherAssets;
+    const totalLiabilities = input.mortgage + input.autoLoan + input.creditCards + input.otherDebts;
+    const netWorth = totalAssets - totalLiabilities;
+    const assetDebtRatio = totalLiabilities > 0 ? totalAssets / totalLiabilities : totalAssets;
+
+    return {
+      items: [
+        { key: 'netWorth', value: netWorth, format: 'currency', primary: true, tone: netWorth >= 0 ? 'success' : 'warning' },
+        { key: 'totalAssets', value: totalAssets, format: 'currency', tone: 'success' },
+        { key: 'totalLiabilities', value: totalLiabilities, format: 'currency', tone: 'warning' },
+        { key: 'assetDebtRatio', value: assetDebtRatio, format: 'decimal' },
+      ],
+      charts: [
+        {
+          type: 'pie',
+          titleKey: 'netWorth.pieTitle',
+          format: 'currency',
+          slices: [
+            { labelKey: 'cash', value: input.cash, color: '#0070f3' },
+            { labelKey: 'investments', value: input.investments, color: '#50e3c2' },
+            { labelKey: 'realEstate', value: input.realEstate, color: '#7928ca' },
+            { labelKey: 'vehicles', value: input.vehicles, color: '#f5a623' },
+            { labelKey: 'otherAssets', value: input.otherAssets, color: '#ff0080' },
+          ],
+        },
+      ],
+    };
+  },
+};
+
+// =====================================================================
 // Export
 // =====================================================================
 
@@ -977,4 +2338,20 @@ export const financeEngines: AnyEngine[] = [
   aprEngine as AnyEngine,
   interestEngine as AnyEngine,
   retirementEngine as AnyEngine,
+  fdEngine as AnyEngine,
+  rdEngine as AnyEngine,
+  swpEngine as AnyEngine,
+  ppfEngine as AnyEngine,
+  npsEngine as AnyEngine,
+  mutualFundEngine as AnyEngine,
+  lumpsumEngine as AnyEngine,
+  simpleInterestEngine as AnyEngine,
+  creditCardPayoffEngine as AnyEngine,
+  debtPayoffEngine as AnyEngine,
+  personalLoanEngine as AnyEngine,
+  leaseEngine as AnyEngine,
+  downPaymentEngine as AnyEngine,
+  amortizationEngine as AnyEngine,
+  netWorthEngine as AnyEngine,
 ];
+

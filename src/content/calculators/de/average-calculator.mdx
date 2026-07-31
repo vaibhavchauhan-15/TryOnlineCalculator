@@ -1,28 +1,42 @@
 ---
 slug: "average-calculator"
 category: "math"
-title: "Durchschnittsrechner"
-description: "Berechnen Sie Mittelwert, Median, Modus, Spannweite und Summe einer Zahlenreihe."
-keywords: ["Durchschnittsrechner", "Mittelwert berechnen", "Durchschnitt berechnen", "Median Rechner", "Arithmetisches Mittel"]
-calculatorVersion: 1
+title: "Durchschnittsrechner — Mittelwert, Median & Modus"
+description: "Berechnen Sie Mittelwert, Median, Modus, Spannweite und Summe von Zahlenmengen mit Schritt-für-Schritt Erklärung."
+keywords: ["durchschnittsrechner","mittelwert median modus","mittelwert berechnen","modus berechnen"]
+calculatorVersion: 2
 seoVersion: 2
 translationVersion: 2
 source: "en"
 translatedFromVersion: 1
-model: "manual-de-v2"
-searchIntent: "Den Durchschnitt, Median und andere statistische Kennzahlen einer Zahlenreihe berechnen."
-readingLevel: "general"
-market: "DE"
-audience: "Schüler, Studenten und alle, die schnell statistische Kennzahlen berechnen möchten"
+model: "gemini-3.6-flash"
 labels: {"count":"Anzahl","field.values":"Werte","max":"Maximum","mean":"Mittelwert","median":"Median","mode":"Modus","range":"Spannweite","sum":"Summe"}
-intro: "Geben Sie Ihre Zahlen ein, getrennt durch Kommas, Leerzeichen oder Zeilenumbrüche."
-formulaIntro: "Der Mittelwert ist die gebräuchlichste Maßzahl für den Durchschnitt."
-formulaItems: [{"name":"Arithmetisches Mittel","expr":"Mittelwert = Summe aller Werte / Anzahl"}]
-howto: ["Geben Sie Ihre Zahlen ein, getrennt durch Kommas, Leerzeichen oder Zeilenumbrüche.","Das Ergebnis wird sofort angezeigt: Mittelwert, Median, Modus, Summe, Spannweite."]
-faq: [{"q":"Was ist der Unterschied zwischen Mittelwert und Median?","a":"Der Mittelwert ist die Summe geteilt durch die Anzahl. Der Median ist der mittlere Wert der sortierten Reihe und wird weniger durch Ausreißer beeinflusst."},{"q":"Was ist der Modus?","a":"Der Modus ist der Wert, der am häufigsten vorkommt. Wenn kein Wert mehrfach auftritt, gibt es keinen Modus."}]
-related: ["percentage-calculator","basic-calculator","average-grade-calculator"]
+intro: "Berechnen Sie die Lageparameter Mittelwert, Median und Modus sowie die Spannweite für eine beliebige Zahlenmenge."
+formulaItems:
+  - name: "Mittelwert"
+    expr: "Mittelwert = Summe / Anzahl"
+    desc: "Summe aller Werte geteilt durch die Gesamtzahl."
+  - name: "Median"
+    expr: "Mittlerer Wert nach Sortierung"
+    desc: "Der mittlere Wert in einer geordneten Zahlenreihe."
+  - name: "Modus"
+    expr: "Häufigster Wert"
+    desc: "Der am häufigsten vorkommende Wert."
+howto:
+  - "Geben Sie Ihre Zahlen durch Kommas, Leerzeichen oder Zeilenumbrüche getrennt ein."
+  - "Der Rechner ermittelt sofort Mittelwert, Median, Modus, Summe und Spannweite."
+  - "Vergleichen Sie die statistischen Kennzahlen miteinander."
+examples:
+  - title: "Beispiel für Mittelwert, Median und Modus"
+    body: "Für die Daten [4, 8, 8, 12, 18]: Mittelwert = 10, Median = 8, Modus = 8 (kommt doppelt vor)."
+faq:
+  - q: "Was ist der Unterschied zwischen Mittelwert, Median und Modus?"
+    a: "Der Mittelwert ist der arithmetische Durchschnitt. Der Median ist der mittlere Wert in einer sortierten Liste. Der Modus ist der am häufigsten auftretende Wert."
+  - q: "Wann sollte man den Median statt des Mittelwerts nutzen?"
+    a: "Der Median ist bevorzugt zu nutzen, wenn die Daten extreme Ausreißer enthalten, da er im Gegensatz zum Mittelwert nicht von extremen Werten verzerrt wird."
+related: ["standard-deviation-calculator","basic-calculator","percentage-calculator"]
 ---
 
-Geben Sie eine beliebige Zahlenreihe ein und erhalten Sie sofort den
-Mittelwert (Durchschnitt), Median, Modus, Summe, Spannweite sowie Maximum
-und Minimum.
+## Grundlagen von Mittelwert, Median und Modus
+
+In der Statistik sind **Mittelwert**, **Median** und **Modus** die drei wichtigsten Maße der zentralen Tendenz. Jedes dieser Maße liefert eine eigene Perspektive auf die Mitte einer Datenverteilung.

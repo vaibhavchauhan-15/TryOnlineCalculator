@@ -1,0 +1,44 @@
+---
+slug: "log-calculator"
+category: "math"
+title: "Log Calculator — Logarithm & Natural Log (ln)"
+description: "Calculate logarithms for any base, natural log ln(x), and base 10 log10(x) instantly with formulas and step-by-step guidance."
+keywords: ["log calculator","logarithm calculator","ln calculator","log base 10"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+labels: {"field.x":"Value (x)","field.base":"Base (b)","result":"Logarithm log_b(x)","ln":"Natural Log ln(x)","log10":"Common Log log10(x)","log2":"Binary Log log2(x)"}
+intro: "Compute logarithm log_b(x) for any custom base, as well as natural log (ln), common log (log10), and binary log (log2)."
+formulaItems:
+  - name: "Logarithm Definition"
+    expr: "log_b(x) = y  ⇔  b^y = x"
+    desc: "The exponent to which base b must be raised to produce x."
+  - name: "Change of Base Formula"
+    expr: "log_b(x) = ln(x) / ln(b)"
+    desc: "Used to compute logarithms for arbitrary bases."
+howto:
+  - "Enter a positive number x."
+  - "Enter the desired logarithm base b (default is 10)."
+  - "View log_b(x), natural log ln(x), common log log10(x), and binary log log2(x)."
+examples:
+  - title: "Logarithm Calculation"
+    body: "log_10(100) = 2 because 10^2 = 100. log_2(8) = 3 because 2^3 = 8."
+faq:
+  - q: "What is a logarithm?"
+    a: "A logarithm is the inverse operation to exponentiation. It calculates the exponent to which a base must be raised to produce a given number."
+  - q: "What is the difference between log and ln?"
+    a: "log usually refers to base 10 (common logarithm), while ln refers to base e (natural logarithm, where e ≈ 2.71828)."
+related: ["exponent-calculator","scientific-calculator","basic-calculator"]
+---
+
+## Understanding Logarithms
+
+A **logarithm** answers the question: *To what power must we raise the base b to get the value x?*
+
+### Core Properties of Logarithms
+
+- **Product Rule**: `log_b(x · y) = log_b(x) + log_b(y)`
+- **Quotient Rule**: `log_b(x / y) = log_b(x) - log_b(y)`
+- **Power Rule**: `log_b(x^k) = k · log_b(x)`
+- **Identity Property**: `log_b(b) = 1` and `log_b(1) = 0`

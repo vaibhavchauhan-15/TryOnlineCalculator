@@ -1,0 +1,39 @@
+---
+slug: "lcm-calculator"
+category: "math"
+title: "kgV-Rechner — Kleinstes gemeinsames Vielfaches"
+description: "Berechnen Sie das kleinste gemeinsame Vielfache (kgV) von zwei oder mehr Zahlen schnell und einfach."
+keywords: ["kgv rechner","kleinstes gemeinsames vielfaches","kgv berechnen","vielfaches berechnen"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "gemini-3.6-flash"
+labels: {"field.values":"Zahlen","lcm":"Kleinstes gemeinsames Vielfaches (kgV)","gcf":"Größter gemeinsamer Teiler (ggT)","count":"Anzahl"}
+intro: "Berechnen Sie das kleinste gemeinsame Vielfache (kgV) und den größten gemeinsamen Teiler (ggT) beliebiger Zahlen."
+formulaItems:
+  - name: "kgV-Formel über ggT"
+    expr: "kgV(a, b) = (|a × b|) / ggT(a, b)"
+    desc: "Berechnung des kgV durch Teilen des Produkts durch den ggT."
+  - name: "Primfaktorzerlegungs-Methode"
+    expr: "kgV = Produkt der höchsten Potenzen aller Primfaktoren"
+    desc: "Multiplikation aller vorkommenden Primfaktoren mit ihrem höchsten Exponenten."
+howto:
+  - "Geben Sie zwei oder mehr ganze Zahlen ein (getrennt durch Kommas)."
+  - "Der Rechner bestimmt das kleinste gemeinsame Vielfache."
+  - "Lesen Sie die berechneten Werte für kgV und ggT ab."
+examples:
+  - title: "kgV von 12, 15 und 20 berechnen"
+    body: "Vielfache von 12, 15 und 20: Das kleinste gemeinsame Vielfache ist 60."
+faq:
+  - q: "Was ist das kleinste gemeinsame Vielfache (kgV)?"
+    a: "Das kgV ist die kleinste positive ganze Zahl, die ein Vielfaches von allen gegebenen Zahlen ist."
+  - q: "Wozu benötigt man das kgV?"
+    a: "Das kgV wird vor allem beim Bruchrechnen zur Bestimmung des Hauptnenners bei der Addition und Subtraktion ungleichnamiger Brüche benötigt."
+related: ["gcf-calculator","fraction-calculator","prime-number-calculator"]
+---
+
+## Das kleinste gemeinsame Vielfache (kgV)
+
+Das **kleinste gemeinsame Vielfache (kgV)** zweier oder mehrerer ganzer Zahlen ist die kleinste natürliche Zahl, die von allen diesen Zahlen ohne Rest geteilt wird.

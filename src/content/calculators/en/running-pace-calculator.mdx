@@ -1,0 +1,62 @@
+---
+slug: running-pace-calculator
+category: health
+title: Running Pace Calculator
+description: Predict your 5k, 10k, Half Marathon, and Marathon race finish times and target running pace using Riegel’s formula.
+keywords:
+  - running pace calculator
+  - marathon pace calculator
+  - 5k pace calculator
+  - 10k pace calculator
+  - race time predictor
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: en
+searchIntent: Predict my marathon, half marathon, 10k, and 5k finish times and target pace.
+readingLevel: general
+market: global
+audience: runners training for 5k, 10k, half marathon, or full marathon races
+labels:
+  targetPace: Target Running Pace (min/km)
+  predicted5k: Predicted 5k Time (min)
+  predicted10k: Predicted 10k Time (min)
+  predictedHalfMarathon: Predicted Half Marathon (min)
+  predictedMarathon: Predicted Marathon (min)
+  field.unitSystem: Units
+  field.targetDistance: Target Race Distance
+  field.hours: Hours
+  field.minutes: Minutes
+  field.seconds: Seconds
+enums:
+  metric: Metric (km)
+  imperial: Imperial (miles)
+  race.5k: 5k (5 km)
+  race.10k: 10k (10 km)
+  race.halfMarathon: Half Marathon (21.1 km)
+  race.marathon: Marathon (42.2 km)
+hints:
+  targetPaceHint: Minutes and seconds per kilometer for target race
+chartTitles:
+  runningPace.chartPredictions: Predicted Finish Times Across Distances
+intro: Predict your 5k, 10k, Half Marathon, and Marathon finish times and calculate your exact target running pace.
+formulaIntro: The Riegel race time predictor models fatigue accumulation across increasing race distances.
+formulaItems:
+  - name: Riegel Race Predictor Formula
+    expr: T2 = T1 · (D2 / D1)^1.06
+howto:
+  - Choose your reference race distance (5k, 10k, Half Marathon, or Marathon).
+  - Enter your recent finish time for that distance.
+  - View your required target running pace and predicted race times for other distances.
+faq:
+  - q: How accurate is Riegel’s race predictor formula?
+    a: Riegel’s formula is accurate within 1% to 3% for well-trained runners who build adequate aerobic volume for the target distance.
+  - q: What is a good marathon target pace?
+    a: A good marathon target pace is one that allows consistent even or negative splits throughout all 42.2 kilometers.
+related:
+  - pace-calculator
+  - heart-rate-zone-calculator
+  - tdee-calculator
+---
+
+Running pace calculation enables structured marathon and half-marathon training. Setting realistic target paces prevents hitting the wall early in endurance races.

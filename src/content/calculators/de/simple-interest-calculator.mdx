@@ -1,0 +1,33 @@
+---
+slug: "simple-interest-calculator"
+category: "finance"
+title: "Einfacher Zinsrechner - Berechne Z = K × p × t"
+description: "Berechnen Sie einfache Zinsen, Grundkapital und Gesamtbetrag ohne Zinseszins mit der Formel Z = K × p × t."
+keywords: ["einfacher zinsrechner","zinsrechner einfach","einfache zinseszins rechner","zinsbetrag rechner","zinsformel rechner"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "gemini-3.6-flash"
+labels: {"balance":"Gesamtbetrag","field.principal":"Anfangskapital","field.rate":"Zinssatz (p.a.)","field.termYears":"Laufzeit (Jahre)","interest":"Einfache Zinsen","principal":"Anfangskapital","principalAmount":"Anfangskapital","totalAmount":"Gesamtsumme (K + Z)","totalInterest":"Gesamte Zinsen"}
+enums: {}
+hints: {}
+chartTitles: {"simpleInterest.growthTitle":"Lineare Zinsentwicklung","simpleInterest.pieTitle":"Kapital vs. Einfache Zinsen"}
+intro: "Einfache Zinsen werden ausschließlich auf das ursprüngliche Anfangskapital berechnet, ohne Zinseszins. Nutzen Sie diesen Rechner für Darlehen und Anleihen."
+formulaIntro: "Die einfachen Zinsen verhalten sich direkt proportional zu Kapital, Zinssatz und Laufzeit."
+formulaItems: [{"name":"Einfache Zinsformel","expr":"Z = K × p × t","desc":"Z = Zinsbetrag, K = Kapital, p = Zinssatz (Dezimalzahl), t = Zeit in Jahren."},{"name":"Gesamtbetrag","expr":"A = K + Z = K × (1 + p × t)","desc":"A = Gesamtsumme aus Kapital und Zinsen."}]
+howto: ["Geben Sie das Anfangskapital ein.","Tragen Sie den jährlichen Zinssatz ein.","Wählen Sie die Laufzeit in Jahren.","Lesen Sie die Zinsen und die Gesamtsumme ab."]
+examples: [{"title":"10.000 € Kapital zu 5 % einfachen Zinsen für 3 Jahre","body":"Bei 10.000 € Kapital zu 5 % p.a. über 3 Jahre betragen die Zinsen 10.000 × 0,05 × 3 = 1.500 €, Gesamtsumme 11.500 €."},{"title":"50.000 € Kredit zu 8 % einfachen Zinsen für 5 Jahre","body":"Ein Kredit von 50.000 € zu 8 % einfachen Zinsen über 5 Jahre ergibt 20.000 € Zinsen (70.000 € Gesamtrückzahlung)."}]
+faq: [{"q":"Was sind einfache Zinsen?","a":"Einfache Zinsen werden rein auf den Ursprungsbetrag berechnet. Frühere Zinsen werden nicht mitverzinst."},{"q":"Was unterscheidet einfache Zinsen vom Zinseszins?","a":"Bei einfachen Zinsen bleibt der jährliche Zinsbetrag konstant, während beim Zinseszins das Guthaben exponentiell wächst."}]
+related: ["compound-interest-calculator","interest-calculator","loan-calculator","apr-calculator"]
+---
+
+## Was ist ein Einfacher Zinsrechner?
+
+Ein Einfacher Zinsrechner ermittelt die Zinskosten für Kredite oder Erträge für Festgeldanlagen ohne Zinseszins.
+
+## Einfache Zinsen vs. Zinseszins
+
+- **Einfache Zinsen (Z = K × p × t)**: Der jährliche Zinsbetrag bleibt immer gleich.
+- **Zinseszins (A = K × (1 + p)^t)**: Zinsen erzeugen Zinsen und führen zu exponentiellem Wachstum.

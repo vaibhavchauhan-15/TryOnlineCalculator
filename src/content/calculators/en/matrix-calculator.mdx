@@ -1,0 +1,44 @@
+---
+slug: "matrix-calculator"
+category: "math"
+title: "Matrix Calculator — Add, Subtract & Multiply Matrices"
+description: "Free online matrix calculator for matrix addition, subtraction, multiplication, scalar multiplication, and transpose operations."
+keywords: ["matrix calculator","matrix multiplication","matrix addition","matrix transpose"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+labels: {"field.op":"Operation","op.add":"Add (A + B)","op.sub":"Subtract (A - B)","op.mul":"Multiply (A × B)","op.scalar":"Scalar (k × A)","op.transpose":"Transpose (Aᵀ)","field.a11":"A (1,1)","field.a12":"A (1,2)","field.a21":"A (2,1)","field.a22":"A (2,2)","field.b11":"B (1,1)","field.b12":"B (1,2)","field.b21":"B (2,1)","field.b22":"B (2,2)","field.k":"Scalar k","r11":"Result (1,1)","r12":"Result (1,2)","r21":"Result (2,1)","r22":"Result (2,2)"}
+intro: "Perform 2x2 matrix operations: addition, subtraction, matrix multiplication, scalar multiplication, and transposition."
+formulaItems:
+  - name: "Matrix Addition"
+    expr: "(A + B)_[i,j] = A_[i,j] + B_[i,j]"
+    desc: "Element-wise addition of corresponding entries."
+  - name: "Matrix Multiplication"
+    expr: "(A × B)_[i,j] = ∑ A_[i,k] × B_[k,j]"
+    desc: "Dot product of row i from A and column j from B."
+howto:
+  - "Select the matrix operation (Add, Subtract, Multiply, Scalar, Transpose)."
+  - "Enter the elements of Matrix A and Matrix B."
+  - "View the resulting matrix entries instantly."
+examples:
+  - title: "Matrix Addition Example"
+    body: "For A = [[1, 2], [3, 4]] and B = [[5, 6], [7, 8]], A + B = [[6, 8], [10, 12]]."
+faq:
+  - q: "What is matrix multiplication?"
+    a: "Matrix multiplication involves multiplying elements of a row in the first matrix by corresponding elements of a column in the second matrix and summing the products."
+  - q: "What is a transpose matrix?"
+    a: "The transpose of a matrix is formed by swapping its rows and columns."
+related: ["determinant-calculator","scientific-calculator","basic-calculator"]
+---
+
+## Understanding Matrix Operations
+
+Matrices are rectangular arrays of numbers arranged in rows and columns used in linear algebra, computer graphics, physics, and statistics.
+
+### Supported Operations
+
+- **Matrix Addition & Subtraction**: Performed on matrices of identical dimensions by adding or subtracting corresponding elements.
+- **Matrix Multiplication**: Requires that the number of columns in the first matrix equals the number of rows in the second matrix.
+- **Scalar Multiplication**: Multiplies every element in the matrix by a real number $k$.
+- **Transpose ($A^T$)**: Flips a matrix over its diagonal, switching row and column indices.

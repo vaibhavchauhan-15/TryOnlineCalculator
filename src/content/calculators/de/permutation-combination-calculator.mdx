@@ -1,0 +1,39 @@
+---
+slug: "permutation-combination-calculator"
+category: "math"
+title: "Permutationen & Kombinationen Rechner (nPr & nCr)"
+description: "Berechnen Sie Permutationen nPr und Kombinationen nCr mit oder ohne Wiederholung sowie Fakultäten."
+keywords: ["permutationen rechner","kombinationen rechner","npr ncr rechner","kombinatorik rechner"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "gemini-3.6-flash"
+labels: {"field.n":"Gesamtzahl (n)","field.r":"Auswahl (r)","nPr":"Permutationen nPr","nCr":"Kombinationen nCr","nPrRep":"Permutationen mit Wiederholung (n^r)","nCrRep":"Kombinationen mit Wiederholung","nFact":"n Fakultät (n!)","rFact":"r Fakultät (r!)"}
+intro: "Berechnen Sie Permutationen nPr, Kombinationen nCr, Anordnungen mit Wiederholung und Fakultäten n! und r!."
+formulaItems:
+  - name: "Permutationen (nPr)"
+    expr: "nPr = n! / (n - r)!"
+    desc: "Reihenfolge ist WICHTIG. Auswahl ohne Wiederholung."
+  - name: "Kombinationen (nCr)"
+    expr: "nCr = n! / [ r! × (n - r)! ]"
+    desc: "Reihenfolge ist EGAL. Auswahl ohne Wiederholung."
+howto:
+  - "Geben Sie die Gesamtzahl der Elemente n ein."
+  - "Geben Sie die Anzahl der auszuwählenden Elemente r ein (mit r ≤ n)."
+  - "Lesen Sie nPr, nCr, Wiederholungswerte und Fakultäten ab."
+examples:
+  - title: "Berechnung von nPr und nCr für n = 10, r = 3"
+    body: "Permutationen nPr = 10! / 7! = 720. Kombinationen nCr = 10! / (3! × 7!) = 120."
+faq:
+  - q: "Was ist der Unterschied zwischen Permutation und Kombination?"
+    a: "Bei einer Permutation kommt es auf die Reihenfolge der Anordnung an (z. B. Passwort). Bei einer Kombination spielt die Reihenfolge der Auswahl keine Rolle (z. B. Lottozahlen)."
+  - q: "Was bedeutet n-Fakultät (n!)?"
+    a: "Die Fakultät n! ist das Produkt aller natürlichen Zahlen von 1 bis n (z. B. 5! = 5 × 4 × 3 × 2 × 1 = 120)."
+related: ["scientific-calculator","basic-calculator","exponent-calculator"]
+---
+
+## Kombinatorik: Permutationen und Kombinationen
+
+In der **Kombinatorik** bestimmen Permutationen und Kombinationen die Anzahl der Möglichkeiten, aus einer Menge von $n$ Elementen eine Teilmenge von $r$ Elementen auszuwählen.

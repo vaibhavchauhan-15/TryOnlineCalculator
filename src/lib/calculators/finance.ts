@@ -938,4 +938,154 @@ export const financeCalculators: Calculator[] = [
     ],
     related: ['investment-calculator', 'sip-calculator', 'compound-interest-calculator', 'savings-calculator'],
   },
+  /* ---------------------------------------------------------------- FD */
+  {
+    slug: 'fd-calculator',
+    category: 'finance',
+    title: 'FD Calculator',
+    description: 'Calculate your fixed deposit (FD) maturity amount, interest earned, and growth over time.',
+    keywords: ['fd calculator', 'fixed deposit calculator', 'fd interest calculator'],
+    inputs: [],
+    compute: () => ({ results: [] }),
+  },
+  /* ---------------------------------------------------------------- RD */
+  {
+    slug: 'rd-calculator',
+    category: 'finance',
+    title: 'RD Calculator',
+    description: 'Calculate recurring deposit (RD) maturity value, total invested amount, and interest earned.',
+    keywords: ['rd calculator', 'recurring deposit calculator', 'rd interest calculator'],
+    inputs: [],
+    compute: () => ({ results: [] }),
+  },
+  /* ---------------------------------------------------------------- SWP */
+  {
+    slug: 'swp-calculator',
+    category: 'finance',
+    title: 'SWP Calculator',
+    description: 'Calculate monthly income, remaining portfolio balance, and total returns from an SWP.',
+    keywords: ['swp calculator', 'systematic withdrawal plan calculator'],
+    inputs: [],
+    compute: () => ({ results: [] }),
+  },
+  /* ---------------------------------------------------------------- PPF */
+  {
+    slug: 'ppf-calculator',
+    category: 'finance',
+    title: 'PPF Calculator',
+    description: 'Calculate Public Provident Fund (PPF) maturity value and tax-free interest compounding.',
+    keywords: ['ppf calculator', 'public provident fund calculator'],
+    inputs: [],
+    compute: () => ({ results: [] }),
+  },
+  /* ---------------------------------------------------------------- NPS */
+  {
+    slug: 'nps-calculator',
+    category: 'finance',
+    title: 'NPS Calculator',
+    description: 'Calculate National Pension System (NPS) retirement corpus, 60% lump sum, and monthly pension.',
+    keywords: ['nps calculator', 'national pension system calculator'],
+    inputs: [],
+    compute: () => ({ results: [] }),
+  },
+  /* ---------------------------------------------------------------- Mutual Fund */
+  {
+    slug: 'mutual-fund-calculator',
+    category: 'finance',
+    title: 'Mutual Fund Calculator',
+    description: 'Calculate expected returns and portfolio value for monthly SIP or lump sum mutual fund investments.',
+    keywords: ['mutual fund calculator', 'mutual fund return calculator'],
+    inputs: [],
+    compute: () => ({ results: [] }),
+  },
+  /* ---------------------------------------------------------------- Lumpsum */
+  {
+    slug: 'lumpsum-calculator',
+    category: 'finance',
+    title: 'Lumpsum Calculator',
+    description: 'Calculate maturity value, total capital growth, and compound interest for lump sum investments.',
+    keywords: ['lumpsum calculator', 'lump sum investment calculator'],
+    inputs: [],
+    compute: () => ({ results: [] }),
+  },
+  /* ---------------------------------------------------------------- Simple Interest */
+  {
+    slug: 'simple-interest-calculator',
+    category: 'finance',
+    title: 'Simple Interest Calculator',
+    description: 'Calculate simple interest earned, principal amount, and total accumulated balance.',
+    keywords: ['simple interest calculator', 'simple interest formula calculator'],
+    inputs: [],
+    compute: () => ({ results: [] }),
+  },
+  /* ---------------------------------------------------------------- Credit Card Payoff */
+  {
+    slug: 'credit-card-payoff-calculator',
+    category: 'finance',
+    title: 'Credit Card Payoff Calculator',
+    description: 'Calculate months required to pay off credit card balance, total interest cost, and optimal monthly payments.',
+    keywords: ['credit card payoff calculator', 'credit card interest calculator'],
+    inputs: [],
+    compute: () => ({ results: [] }),
+  },
+  /* ---------------------------------------------------------------- Debt Payoff */
+  {
+    slug: 'debt-payoff-calculator',
+    category: 'finance',
+    title: 'Debt Payoff Calculator',
+    description: 'Calculate how extra monthly payments reduce debt payoff time, save interest, and accelerate debt freedom.',
+    keywords: ['debt payoff calculator', 'debt free calculator'],
+    inputs: [],
+    compute: () => ({ results: [] }),
+  },
+  /* ---------------------------------------------------------------- Personal Loan */
+  {
+    slug: 'personal-loan-calculator',
+    category: 'finance',
+    title: 'Personal Loan Calculator',
+    description: 'Calculate monthly EMI payments, origination fees, interest costs, and total repayment for personal loans.',
+    keywords: ['personal loan calculator', 'personal loan emi calculator'],
+    inputs: [],
+    compute: () => ({ results: [] }),
+  },
+  /* ---------------------------------------------------------------- Lease */
+  {
+    slug: 'lease-calculator',
+    category: 'finance',
+    title: 'Lease Calculator',
+    description: 'Calculate monthly auto lease payments, depreciation charges, finance money factor fees, and total lease expenses.',
+    keywords: ['lease calculator', 'auto lease calculator'],
+    inputs: [],
+    compute: () => ({ results: [] }),
+  },
+  /* ---------------------------------------------------------------- Down Payment */
+  {
+    slug: 'down-payment-calculator',
+    category: 'finance',
+    title: 'Down Payment Calculator',
+    description: 'Calculate house down payment target amount, remaining savings needed, and months to reach your goal.',
+    keywords: ['down payment calculator', 'house down payment calculator'],
+    inputs: [],
+    compute: () => ({ results: [] }),
+  },
+  /* ---------------------------------------------------------------- Amortization */
+  {
+    slug: 'amortization-calculator',
+    category: 'finance',
+    title: 'Amortization Calculator',
+    description: 'Calculate loan monthly payments, annual principal vs interest split, and complete amortization schedules.',
+    keywords: ['amortization calculator', 'loan amortization calculator'],
+    inputs: [],
+    compute: () => ({ results: [] }),
+  },
+  /* ---------------------------------------------------------------- Net Worth */
+  {
+    slug: 'net-worth-calculator',
+    category: 'finance',
+    title: 'Net Worth Calculator',
+    description: 'Calculate your personal net worth by subtracting total liabilities (debts) from total assets (wealth).',
+    keywords: ['net worth calculator', 'calculate net worth'],
+    inputs: [],
+    compute: () => ({ results: [] }),
+  },
 ];

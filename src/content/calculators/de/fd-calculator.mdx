@@ -1,0 +1,40 @@
+---
+slug: "fd-calculator"
+category: "finance"
+title: "FD Rechner - Festgeld Zinsen & Ertrag Rechner"
+description: "Berechnen Sie Festgeld (FD) Endbetrag, Zinserträge und Wertentwicklung mit monatlicher, vierteljährlicher oder jährlicher Verzinsung."
+keywords: ["festgeld rechner","festgeldrechner","fd rechner","festgeld zinsen rechner","festgeld ertrag rechner"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "gemini-3.6-flash"
+labels: {"balance":"Gesamtguthaben","field.compounding":"Zinseszins-Frequenz","field.depositAmount":"Anlagebetrag","field.rate":"Zinssatz (p.a.)","field.tenureYears":"Laufzeit (Jahre)","interest":"Zinsertrag","maturityAmount":"Endbetrag","principal":"Kapitalbetrag","totalInterest":"Gesamte Zinserträge","totalInvestment":"Gesamteinzahlung"}
+enums: {"compounding.halfYearly":"Halbjährlich","compounding.monthly":"Monatlich","compounding.quarterly":"Vierteljährlich","compounding.yearly":"Jährlich"}
+hints: {}
+chartTitles: {"fd.growthTitle":"Guthabenentwicklung über die Zeit","fd.pieTitle":"Aufteilung des Endbetrags"}
+intro: "Ein Festgeld (FD) garantiert feste Erträge durch die Anlage eines Geldbetrags über einen vereinbarten Zeitraum zu einem festen Zinssatz. Nutzen Sie diesen Rechner zur Ermittlung Ihres Endbetrags."
+formulaIntro: "Festgelderträge hängen vom Anlagekapital, dem Zinssatz, der Laufzeit und der Zinseszinsfrequenz ab."
+formulaItems: [{"name":"Festgeld-Zinseszins-Formel","expr":"A = P × (1 + r / n)^(n × t)","desc":"A = Endbetrag, P = Anlagebetrag, r = jährlicher Zinssatz, n = Zinsperiode pro Jahr, t = Laufzeit in Jahren."},{"name":"Gesamter Zinsertrag","expr":"I = A − P","desc":"I = Gesamte Zinserträge über die gesamte Laufzeit."}]
+howto: ["Geben Sie Ihren Anlagebetrag ein.","Tragen Sie den jährlichen Zinssatz Ihrer Bank ein.","Wählen Sie die Laufzeit in Jahren.","Wählen Sie die Zinsfrequenz (vierteljährlich ist Standard bei vielen Banken).","Lesen Sie den garantierten Endbetrag und Zinsertrag ab."]
+examples: [{"title":"10.000 € Festgeld zu 7 % p.a. für 5 Jahre (Vierteljährlich)","body":"Eine Anlage von 10.000 € zu 7 % p.a. mit vierteljährlicher Verzinsung ergibt nach 5 Jahren einen Endbetrag von ca. 14.147,78 € und 4.147,78 € Zinsertrag."},{"title":"50.000 € Festgeld zu 6.5 % p.a. für 3 Jahre (Monatlich)","body":"Bei 50.000 € zu 6,5 % monatlich verzinst wächst Ihr Guthaben nach 3 Jahren auf 60.733,64 €."}]
+faq: [{"q":"Was ist ein Festgeld (FD)?","a":"Ein Festgeld ist eine Geldanlage bei einer Bank, bei der das Kapital für eine feste Laufzeit zu einem garantierten Zinssatz angelegt wird."},{"q":"Wie werden Festgeldzinsen berechnet?","a":"Festgeldzinsen werden mit der Zinseszinsformel A = P(1 + r/n)^(nt) berechnet, wobei die Zinsgutschrift monatlich, vierteljährlich oder jährlich erfolgt."},{"q":"Wie oft werden Zinsen gutgeschrieben?","a":"Die meisten Banken schreiben Festgeldzinsen vierteljährlich oder jährlich gut, was den Zinseszinseffekt erhöht."},{"q":"Sind Festgeldzinsen steuerpflichtig?","a":"Ja, Zinserträge aus Festgeldern unterliegen der Kapitalertragsteuer gemäß den geltenden Steuergesetzen."}]
+related: ["compound-interest-calculator","savings-calculator","investment-calculator","sip-calculator"]
+---
+
+## Was ist ein Festgeld Rechner?
+
+Ein Festgeld Rechner ist ein Online-Tool zur genauen Berechnung der Zinserträge und des Fälligkeitsbetrags von Festgeldanlagen. Festgelder gelten als besonders sichere Geldanlage mit garantierter Rendite.
+
+## Einfluss der Zinsfrequenz auf die Rendite
+
+- **Vierteljährlich**: Zinsen werden alle 3 Monate gutgeschrieben und mitverzinst.
+- **Monatlich**: Maximiert den Zinseszinseffekt durch monatliche Zinsgutschriften.
+- **Jährlich**: Zinsgutschrift erfolgt einmal pro Jahr am Ende der Periode.
+
+## Vorteile des Festgeld Rechners
+
+1. Exakte Berechnung ohne manuelle Formelfehler.
+2. Schneller Vergleich verschiedener Angebote und Laufzeiten.
+3. Sichere Finanzplanung für Ihre Sparziele.

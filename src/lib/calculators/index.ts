@@ -7,6 +7,7 @@ import { salaryCalculators } from './salary';
 import { shoppingCalculators } from './shopping';
 import { dateTimeCalculators } from './date-time';
 import { travelCalculators } from './travel';
+import { businessCalculators } from './business';
 
 export const allCalculators: Calculator[] = [
   ...financeCalculators,
@@ -17,6 +18,7 @@ export const allCalculators: Calculator[] = [
   ...shoppingCalculators,
   ...dateTimeCalculators,
   ...travelCalculators,
+  ...businessCalculators,
 ];
 
 const bySlug = new Map<string, Calculator>(allCalculators.map((c) => [c.slug, c]));

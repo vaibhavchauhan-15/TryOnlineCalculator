@@ -1,0 +1,40 @@
+---
+slug: "gst-calculator"
+category: "finance"
+title: "GST-Rechner (Goods and Services Tax)"
+description: "GST auf einen Betrag aufschlagen oder aus einem Bruttobetrag herausrechnen — sofort und kostenlos. Mit CGST/SGST-Aufteilung."
+keywords: ["gst rechner", "gst rechner online", "gst berechnen", "goods and services tax rechner", "gst indien rechner", "gst steuer berechnen", "18 prozent gst"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "manual-de-v1"
+searchIntent: "GST auf einen Betrag aufschlagen oder aus einem Bruttobetrag herausrechnen."
+readingLevel: "general"
+market: "global"
+audience: "Unternehmer, Buchhalter und Verbraucher in GST-Ländern wie Indien, Australien und Singapur"
+labels: {"field.mode": "Modus", "field.amount": "Betrag", "field.rate": "GST-Satz", "gstAmount": "GST-Betrag", "netAmount": "Nettobetrag", "grossAmount": "Bruttobetrag", "cgst": "CGST (Hälfte)", "sgst": "SGST (Hälfte)"}
+enums: {"mode.addGst": "GST aufschlagen (exklusiv)", "mode.removeGst": "GST herausrechnen (inklusiv)"}
+chartTitles: {"gst.pieTitle": "Netto- und GST-Anteil"}
+intro: "Geben Sie einen Betrag und den GST-Satz ein, um sofort den GST-Betrag, den Nettobetrag und den Bruttobetrag zu sehen. Wechseln Sie den Modus, um GST aufzuschlagen oder herauszurechnen."
+formulaIntro: "Die GST wird auf den Nettobetrag aufgeschlagen oder aus dem Bruttobetrag herausgerechnet."
+formulaItems: [{"name": "GST aufschlagen", "expr": "Brutto = Netto × (1 + Satz / 100)"}, {"name": "GST herausrechnen", "expr": "Netto = Brutto / (1 + Satz / 100)"}, {"name": "GST-Betrag", "expr": "GST = Brutto − Netto"}, {"name": "CGST / SGST", "expr": "CGST = SGST = GST / 2"}]
+howto: ["Wählen Sie, ob Sie GST aufschlagen oder herausrechnen möchten.", "Geben Sie den Betrag ein.", "Legen Sie den GST-Satz fest (z. B. 18 % für Indien, 10 % für Australien).", "Lesen Sie Netto, GST, Brutto und die CGST/SGST-Aufteilung ab."]
+examples: [{"title": "₹1.000 bei 18 % GST", "body": "Ein Nettobetrag von ₹1.000 ergibt bei 18 % GST ₹180 Steuer (₹90 CGST + ₹90 SGST) und einen Bruttobetrag von ₹1.180."}]
+faq: [{"q": "Was ist die GST?", "a": "Die GST (Goods and Services Tax) ist eine umfassende indirekte Steuer auf die Lieferung von Waren und Dienstleistungen. Sie ersetzte in Ländern wie Indien (2017), Australien und Singapur mehrere Einzelsteuern."}, {"q": "Wie wird die GST berechnet?", "a": "Bei exklusiver GST: GST = Betrag × Satz / 100, Gesamt = Betrag + GST. Bei inklusiver GST: Netto = Gesamt / (1 + Satz / 100), GST = Gesamt − Netto."}, {"q": "Was ist der Unterschied zwischen CGST, SGST und IGST?", "a": "In Indien wird die GST bei innerstaatlichen Verkäufen gleichmäßig in CGST (zentral) und SGST (staatlich) aufgeteilt. Bei zwischenstaatlichen Verkäufen wird die volle Rate als IGST erhoben."}, {"q": "Welchen GST-Satz soll ich verwenden?", "a": "Übliche Sätze sind 5 %, 12 %, 18 % und 28 % in Indien; 10 % in Australien; 7 % in Singapur. Verwenden Sie den für Ihr Produkt geltenden Satz."}, {"q": "Wie entferne ich die GST aus einem Preis?", "a": "Wechseln Sie in den Modus „GST inklusiv". Der Rechner teilt den Gesamtbetrag durch (1 + Satz / 100), um den ursprünglichen Preis vor GST zu ermitteln."}]
+related: ["vat-calculator", "sales-tax-calculator", "margin-calculator", "discount-calculator"]
+---
+
+Ein GST-Rechner (Goods and Services Tax) schlägt die Steuer auf einen
+Nettobetrag auf oder rechnet sie aus einem Bruttobetrag heraus. Geben Sie den
+Betrag ein, wählen Sie den Modus, legen Sie den Satz fest — und Netto, GST und
+Brutto erscheinen sofort.
+
+Die GST wird in vielen Ländern erhoben — Indien mit Sätzen von 5 %, 12 %, 18 %
+und 28 %; Australien mit 10 %; Singapur mit 9 %. In Indien wird die GST bei
+innerstaatlichen Geschäften gleichmäßig in CGST und SGST aufgeteilt, bei
+zwischenstaatlichen Transaktionen als IGST erhoben. Dieser Rechner zeigt die
+CGST/SGST-Aufteilung automatisch an.
+
+Er eignet sich für Rechnungen, Angebote, Spesenberichte und die Steuererklärung.

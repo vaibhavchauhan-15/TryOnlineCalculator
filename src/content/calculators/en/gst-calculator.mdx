@@ -1,0 +1,41 @@
+---
+slug: "gst-calculator"
+category: "finance"
+title: "GST Calculator"
+description: "Add GST to a price or remove GST from a total. Works for India, Australia, Singapore and other GST countries. Instant net, GST and gross amounts with CGST/SGST split."
+keywords: ["gst calculator", "gst calculator online", "gst calculator india", "cgst sgst calculator", "goods and services tax calculator", "18% gst calculator", "gst tax calculator"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+searchIntent: "Calculate GST on a price or extract GST from a GST-inclusive amount."
+readingLevel: "general"
+market: "global"
+audience: "Business owners, accountants and consumers in GST countries like India, Australia and Singapore"
+labels: {"field.mode": "Mode", "field.amount": "Amount", "field.rate": "GST rate", "gstAmount": "GST amount", "netAmount": "Net amount", "grossAmount": "Gross amount", "cgst": "CGST (half)", "sgst": "SGST (half)"}
+enums: {"mode.addGst": "Add GST (exclusive)", "mode.removeGst": "Remove GST (inclusive)"}
+chartTitles: {"gst.pieTitle": "Net vs GST"}
+intro: "Enter an amount and GST rate to instantly calculate the GST amount, net price and gross total. Switch modes to add GST or extract GST from a GST-inclusive price."
+formulaIntro: "GST is added on top of the net price or extracted from the gross price."
+formulaItems: [{"name": "Add GST", "expr": "Gross = Net × (1 + rate / 100)"}, {"name": "Remove GST", "expr": "Net = Gross / (1 + rate / 100)"}, {"name": "GST amount", "expr": "GST = Gross − Net"}, {"name": "CGST / SGST", "expr": "CGST = SGST = GST / 2"}]
+howto: ["Choose whether to add GST to a net amount or remove it from a GST-inclusive price.", "Enter the amount.", "Set the GST rate (e.g. 18% for India, 10% for Australia).", "Read the net price, GST amount, gross total and CGST/SGST split below."]
+examples: [{"title": "₹1,000 at 18% GST", "body": "A net price of ₹1,000 at 18% GST adds ₹180 of GST (₹90 CGST + ₹90 SGST) for a gross total of ₹1,180."}]
+faq: [{"q": "What is GST?", "a": "GST (Goods and Services Tax) is a comprehensive indirect tax on the supply of goods and services. It replaced multiple cascading taxes in countries like India (2017), Australia, Singapore and others."}, {"q": "How is GST calculated?", "a": "For exclusive GST: GST = Amount × Rate / 100, and Total = Amount + GST. For inclusive GST: Net = Total / (1 + Rate / 100), and GST = Total − Net."}, {"q": "What is the difference between CGST, SGST and IGST?", "a": "In India, for intra-state sales GST is split equally into CGST (Central) and SGST (State). For inter-state sales the full rate is charged as IGST (Integrated GST)."}, {"q": "What GST rate should I use?", "a": "Common rates are 5%, 12%, 18% and 28% in India; 10% in Australia; 7% in Singapore. Use the rate applicable to your product or service."}, {"q": "How do I remove GST from a price?", "a": "Switch to GST Inclusive mode. The calculator divides the total by (1 + rate / 100) to find the original price before GST."}]
+related: ["vat-calculator", "sales-tax-calculator", "margin-calculator", "discount-calculator"]
+---
+
+A GST (Goods and Services Tax) calculator lets you add tax to a net price or
+strip it out of a GST-inclusive price in one step. Enter the amount, choose
+whether you are working from an exclusive or inclusive figure, set the rate, and
+the net price, GST amount and gross total appear instantly.
+
+GST is used in many countries around the world — India charges rates of 5%, 12%,
+18% and 28%; Australia uses a flat 10%; Singapore levies 9%. In India,
+intra-state GST is split equally into CGST (Central) and SGST (State), while
+inter-state transactions attract IGST at the full rate. This calculator shows
+the CGST/SGST split automatically.
+
+It is handy for invoices, quotations, expense reports and tax filing. Adding GST
+multiplies the net price by one plus the rate; removing GST divides the gross
+price by the same factor to recover the original net amount and reveal the tax
+portion.

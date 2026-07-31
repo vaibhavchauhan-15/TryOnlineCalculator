@@ -1,0 +1,38 @@
+---
+slug: "hex-rgb-converter"
+category: "math"
+title: "Hex ↔ RGB Converter"
+description: "Convert hex color codes to RGB values and RGB to hex instantly. Supports 3-digit and 6-digit hex codes."
+keywords: ["hex to rgb", "rgb to hex", "hex color converter", "color code converter", "hex to rgb converter", "rgb to hex converter", "html color codes"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+searchIntent: "Convert between hex color codes and RGB color values."
+readingLevel: "general"
+market: "global"
+audience: "Web developers, designers and anyone working with digital colors"
+labels: {"field.mode": "Convert", "field.hex": "Hex code", "field.r": "Red (R)", "field.g": "Green (G)", "field.b": "Blue (B)", "hexValue": "Hex", "rgbValue": "RGB", "red": "Red", "green": "Green", "blue": "Blue"}
+enums: {"mode.hexToRgb": "Hex → RGB", "mode.rgbToHex": "RGB → Hex"}
+intro: "Enter a hex color code or RGB values to convert between the two formats instantly."
+formulaIntro: "Hex and RGB are two representations of the same color space."
+formulaItems: [{"name": "Hex to RGB", "expr": "R = hex[0:2] in base 10, G = hex[2:4], B = hex[4:6]"}, {"name": "RGB to Hex", "expr": "Hex = R.toString(16) + G.toString(16) + B.toString(16)"}]
+howto: ["Choose Hex → RGB or RGB → Hex.", "Enter the hex code or R, G, B values.", "Read the converted values below."]
+examples: [{"title": "#FF5733 to RGB", "body": "The hex code #FF5733 converts to RGB(255, 87, 51) — a vivid red-orange color."}, {"title": "RGB(0, 128, 255) to Hex", "body": "RGB values of 0, 128, 255 convert to the hex code #0080FF — a bright blue."}]
+faq: [{"q": "What is a hex color code?", "a": "A hex color code is a 6-character string (e.g. #FF5733) representing a color using hexadecimal values for Red, Green, and Blue channels, each ranging from 00 to FF."}, {"q": "How do I convert hex to RGB?", "a": "Split the 6-digit hex into three pairs. Convert each pair from base-16 to base-10. For example, #FF5733 → R: 255, G: 87, B: 51."}, {"q": "What is the difference between hex and RGB?", "a": "They represent the same colors differently. Hex uses a compact 6-digit base-16 format (#RRGGBB), while RGB uses three decimal values from 0 to 255."}, {"q": "Can I use 3-digit hex codes?", "a": "Yes. A 3-digit hex like #F53 is shorthand for #FF5533 — each digit is doubled."}, {"q": "Where are hex color codes used?", "a": "Hex codes are used in HTML, CSS, and web design to specify colors. They are also common in graphic design tools and digital art applications."}]
+related: ["binary-decimal-converter", "percentage-calculator", "basic-calculator"]
+---
+
+A hex to RGB converter translates color codes between the two most common
+digital color formats. Enter a hex code like #FF5733 and get the Red, Green and
+Blue channel values (255, 87, 51), or enter RGB values and get the hex code
+back.
+
+The converter supports both 3-digit shorthand codes (like #F53, which expands to
+#FF5533) and full 6-digit codes. This is essential for web developers writing
+CSS, designers matching brand colors, and anyone working with digital color
+across different tools.
+
+Hex uses base-16 notation (0–9, A–F) to represent each channel in two
+characters, while RGB uses familiar decimal values from 0 to 255. Both describe
+the same 16.7 million colors in the sRGB color space.

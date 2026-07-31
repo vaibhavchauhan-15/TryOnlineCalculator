@@ -165,7 +165,10 @@ function mount(root: HTMLElement): void {
       return;
     }
     const result = engine.compute(input);
-    const display = createResolver(pack, fallback, ctx).resolve(result);
+    const activeCtx: FormatContext = (values.unitSystem === 'metric' || values.unitSystem === 'imperial')
+      ? { ...ctx, unitSystem: values.unitSystem as UnitSystem }
+      : ctx;
+    const display = createResolver(pack, fallback, activeCtx).resolve(result);
     output.innerHTML = renderLocalizedResultHTML(display);
     saveState(storeKey, values);
   };

@@ -1,0 +1,35 @@
+---
+slug: "time-duration-calculator"
+category: "date-time"
+title: "Time Duration Calculator"
+description: "Calculate the duration between two times in hours, minutes and seconds. Handles overnight time spans automatically."
+keywords: ["time duration calculator", "time calculator hours minutes", "hours between times", "time difference calculator", "elapsed time calculator", "calculate time difference", "time span calculator"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+searchIntent: "Find the elapsed time between two clock times."
+readingLevel: "general"
+market: "global"
+audience: "Anyone needing to calculate work hours, travel time or elapsed duration between two times"
+labels: {"field.start": "Start time", "field.end": "End time", "duration": "Duration", "totalMinutes": "Total minutes", "totalSeconds": "Total seconds", "decimalHours": "Decimal hours"}
+hints: {"duration.hm": "Duration hint"}
+intro: "Enter a start time and an end time in HH:MM format to see the elapsed duration. Overnight spans are handled automatically."
+formulaIntro: "Duration is the difference between end and start times."
+formulaItems: [{"name": "Duration", "expr": "Duration = End time − Start time"}, {"name": "Overnight", "expr": "If End < Start, Duration = (End + 24:00) − Start"}]
+howto: ["Enter the start time in HH:MM (24-hour format).", "Enter the end time.", "Read the duration in hours and minutes below."]
+examples: [{"title": "9:00 to 17:30", "body": "From 9:00 AM to 5:30 PM is 8 hours 30 minutes (510 total minutes)."}, {"title": "23:00 to 02:00 (overnight)", "body": "From 23:00 to 02:00 crosses midnight and gives 3 hours (180 minutes)."}]
+faq: [{"q": "How do I calculate time duration?", "a": "Enter the start time and end time in HH:MM format. The calculator finds the difference in hours and minutes, handling overnight spans automatically."}, {"q": "Does it handle overnight time spans?", "a": "Yes. If the end time is earlier than the start time (e.g. 23:00 to 02:00), the calculator assumes the span crosses midnight and gives you 3 hours."}, {"q": "Can I use 12-hour format?", "a": "Enter times in 24-hour format (e.g. 2:30 PM = 14:30). This avoids AM/PM confusion."}, {"q": "How do I convert minutes to hours and minutes?", "a": "Divide total minutes by 60. The quotient is hours, the remainder is minutes. For example, 150 minutes = 2 hours 30 minutes."}]
+related: ["date-difference-calculator", "age-calculator", "business-days-calculator", "countdown-calculator"]
+---
+
+A time duration calculator works out the elapsed time between two clock times.
+Enter start and end times in 24-hour HH:MM format and the calculator instantly
+shows the duration in hours and minutes, total minutes and total seconds.
+
+It automatically handles overnight spans — if you enter 23:00 as the start and
+02:00 as the end, it correctly calculates 3 hours across midnight. The decimal
+hours breakdown is useful for timesheet calculations and billing.
+
+This tool is handy for tracking work hours, calculating travel time, measuring
+cooking or exercise duration, and billing by the hour.

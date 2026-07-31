@@ -1,0 +1,44 @@
+---
+slug: "permutation-combination-calculator"
+category: "math"
+title: "Permutation & Combination Calculator (nPr & nCr)"
+description: "Calculate permutations nPr and combinations nCr for set size n and selection r, with or without repetition, plus factorials."
+keywords: ["permutation calculator","combination calculator","npr ncr calculator","permutations and combinations"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+labels: {"field.n":"Total Items (n)","field.r":"Chosen Items (r)","nPr":"Permutations nPr","nCr":"Combinations nCr","nPrRep":"Permutations with Repetition (n^r)","nCrRep":"Combinations with Repetition","nFact":"n Factorial (n!)","rFact":"r Factorial (r!)"}
+intro: "Calculate permutations nPr, combinations nCr, arrangements with repetition, and factorials for any total items n and selection r."
+formulaItems:
+  - name: "Permutations (nPr)"
+    expr: "nPr = n! / (n - r)!"
+    desc: "Order matters. Selections without repetition."
+  - name: "Combinations (nCr)"
+    expr: "nCr = n! / [ r! × (n - r)! ]"
+    desc: "Order does NOT matter. Selections without repetition."
+howto:
+  - "Enter the total number of items n."
+  - "Enter the number of items to select r (where r ≤ n)."
+  - "View nPr, nCr, repetitions, and factorial values instantly."
+examples:
+  - title: "Calculating nPr and nCr for n = 10, r = 3"
+    body: "Permutations nPr = 10! / 7! = 720. Combinations nCr = 10! / (3! × 7!) = 120."
+faq:
+  - q: "What is the key difference between permutations and combinations?"
+    a: "Permutations count arrangements where order matters (e.g. lock combinations, race standings). Combinations count selections where order does not matter (e.g. lottery picks, team selections)."
+  - q: "What is n factorial (n!)?"
+    a: "n factorial is the product of all positive integers less than or equal to n (e.g., 5! = 5 × 4 × 3 × 2 × 1 = 120)."
+related: ["scientific-calculator","basic-calculator","exponent-calculator"]
+---
+
+## Understanding Permutations and Combinations
+
+**Permutations** and **combinations** are counting principles in combinatorics used to determine the total number of possible outcomes when selecting $r$ elements from a set of $n$ elements.
+
+### Formulas Overview
+
+- **Permutations without Repetition (nPr)**: Order matters, elements cannot repeat. `P(n, r) = n! / (n - r)!`
+- **Combinations without Repetition (nCr)**: Order does not matter, elements cannot repeat. `C(n, r) = n! / [r! × (n - r)!]`
+- **Permutations with Repetition**: `n^r`
+- **Combinations with Repetition**: `(n + r - 1)! / [r! × (n - 1)!]`

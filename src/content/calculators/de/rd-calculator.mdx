@@ -1,0 +1,34 @@
+---
+slug: "rd-calculator"
+category: "finance"
+title: "RD Rechner - Sparplan & Dauerauftrag Zinsrechner"
+description: "Berechnen Sie den Endbetrag, das eingezahlte Kapital und die Zinserträge eines monatlichen Sparplans (Recurring Deposit)."
+keywords: ["sparplan rechner","monatlicher sparplan rechner","rd rechner","dauersparplan rechner","sparguthaben rechner"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "gemini-3.6-flash"
+labels: {"balance":"Gesamtguthaben","field.monthlyDeposit":"Monatliche Sparrate","field.rate":"Zinssatz (p.a.)","field.tenureYears":"Laufzeit (Jahre)","interest":"Zinsertrag","invested":"Eingezahlter Betrag","maturityAmount":"Endbetrag","totalInterest":"Gesamte Zinserträge","totalInvested":"Gesamte Einzahlungen"}
+enums: {}
+hints: {}
+chartTitles: {"rd.growthTitle":"Wertentwicklung des Sparplans","rd.pieTitle":"Aufteilung von Einzahlungen & Zinsen"}
+intro: "Mit einem monatlichen Sparplan legen Sie regelmäßige Festbeträge an und profitieren vom Zinseszinseffekt. Berechnen Sie das Fälligkeitsguthaben Ihres Sparplans."
+formulaIntro: "Die Erträge eines Sparplans ergeben sich aus der Verzinsung jeder einzelnen monatlichen Einzahlung."
+formulaItems: [{"name":"Sparplan-Endwert-Formel","expr":"M = P × ((1 + r/4)^(4n/12) − 1) / (1 − (1 + r/4)^(-1/3))","desc":"M = Endbetrag, P = monatliche Sparrate, r = Jahreszinssatz, n = Gesamtzahl der Monate."},{"name":"Gesamteinzahlung","expr":"Gesamteinzahlung = P × n","desc":"Summe aller monatlichen Einzahlungen."}]
+howto: ["Geben Sie Ihre monatliche Sparrate ein.","Tragen Sie den jährlichen Zinssatz ein.","Wählen Sie die Laufzeit in Jahren.","Lesen Sie die Gesamteinzahlungen, Zinserträge und den Endbetrag ab."]
+examples: [{"title":"500 €/Monat Sparplan zu 7 % p.a. für 3 Jahre","body":"Bei 500 € monatlich über 3 Jahre (18.000 € Gesamteinzahlung) zu 7 % Zinsen beträgt der Endbetrag ca. 20.086,12 € (2.086,12 € Zinsen)."},{"title":"1.000 €/Monat Sparplan zu 6,5 % p.a. für 5 Jahre","body":"1.000 € monatlich über 5 Jahre (60.000 € eingezahlt) wachsen bei 6,5 % Zinsen auf 70.892,45 € an."}]
+faq: [{"q":"Was ist ein RD Sparplan?","a":"Ein monatlicher Festzins-Sparplan ist eine Form der Geldanlage, bei der jeden Monat ein fester Betrag angespart und verzinst wird."},{"q":"Wie wird die Verzinsung berechnet?","a":"Jede Ratenzahlung wird entsprechend ihrer verbleibenden Restlaufzeit bis zum Ende des Sparplans verzinst."},{"q":"Was unterscheidet einen RD Sparplan von einem Fonds-SIP?","a":"RD Sparpläne bieten garantierte Zinsen ohne Kursrisiko, während Investmentfonds-SIPs marktpreisabhängig sind."}]
+related: ["fd-calculator","sip-calculator","savings-calculator","compound-interest-calculator"]
+---
+
+## Was ist ein RD Sparplan Rechner?
+
+Ein Sparplan Rechner ermittelt das Fälligkeitsguthaben regelmäßiger monatlicher Einzahlungen. Er hilft Sparern bei der gezielten Vorbereitung mittel- und langfristiger Sparziele.
+
+## Vorteile des monatlichen Sparplans
+
+1. Disziplinierte Ersparnis durch regelmäßige Raten.
+2. Garantierte Erträge ohne Verlustrisiko.
+3. Flexibel wählbare Laufzeiten.

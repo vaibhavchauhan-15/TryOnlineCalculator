@@ -1,0 +1,32 @@
+---
+slug: "lease-calculator"
+category: "finance"
+title: "Lease Calculator - Auto & Vehicle Lease Payment Calculator"
+description: "Calculate monthly auto lease payments, depreciation charges, finance money factor fees, and total lease expenses."
+keywords: ["lease calculator","auto lease calculator","car lease payment calculator","vehicle lease calculator","monthly lease calculator"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+labels: {"depreciation":"Total depreciation cost","downPayment":"Down payment / Trade-in","field.apr":"Interest rate APR (%)","field.downPayment":"Down payment / Trade-in","field.price":"Vehicle MSRP / Price","field.residualPercent":"Residual value (%)","field.termMonths":"Lease term (months)","finance":"Total finance fee","monthlyDepreciation":"Monthly depreciation fee","monthlyFinance":"Monthly finance charge","monthlyLease":"Total monthly lease payment","totalLeaseCost":"Total cost of lease"}
+enums: {}
+hints: {}
+chartTitles: {"lease.pieTitle":"Lease Cost Breakdown"}
+intro: "Estimate monthly lease payments for cars, trucks, or equipment by breaking down vehicle depreciation, interest money factor, and down payment contributions."
+formulaIntro: "Monthly lease payments consist of two core components: depreciation fee and finance charge."
+formulaItems: [{"name":"Monthly Depreciation Fee","expr":"Depreciation = (Capitalized Cost − Residual Value) / Term","desc":"Net vehicle value lost divided by lease term in months."},{"name":"Monthly Finance Charge","expr":"Finance = (Capitalized Cost + Residual Value) × Money Factor","desc":"Interest charged on the combined vehicle value."},{"name":"Money Factor Conversion","expr":"Money Factor = APR / 2400","desc":"Converts annual percentage rate (APR) to money factor format."}]
+howto: ["Enter the vehicle sticker price or negotiated purchase price (MSRP).","Input your down payment or trade-in allowance.","Select lease duration in months (typically 24, 36, or 48 months).","Enter the quoted APR or interest rate.","Set the expected residual value percentage (value at lease end).","Review monthly lease payment, depreciation cost, and total lease cost."]
+examples: [{"title":"$35,000 car lease, $3,000 down payment, 36 months at 4.5% APR (55% residual)","body":"Leasing a $35,000 car with $3,000 down at 4.5% APR over 36 months with 55% residual results in a $354.17 monthly depreciation fee and $96.09 finance fee ($450.26 total monthly lease payment). Total lease cost is $19,209.25."},{"title":"$50,000 luxury vehicle lease with $5,000 down for 36 months at 3.9%","body":"A $50,000 vehicle at 60% residual ($30,000) over 36 months yields a ~$515 monthly payment."}]
+faq: [{"q":"What is residual value in an auto lease?","a":"Residual value is the estimated wholesale worth of the vehicle at the end of the lease term, expressed as a percentage of original MSRP."},{"q":"What is a money factor?","a":"Money factor (or rent charge) is the interest rate method used in vehicle leasing. Multiply money factor by 2,400 to find equivalent APR."},{"q":"Should I make a large down payment on a car lease?","a":"Financial experts generally advise making minimal down payment on leases, as down payments are lost if the car is totaled or stolen shortly after leasing."}]
+related: ["auto-loan-calculator","car-payment-calculator","loan-calculator","personal-loan-calculator"]
+---
+
+## What is a Lease Calculator?
+
+A Lease calculator projects monthly payments when leasing a vehicle or equipment. It separates monthly depreciation costs from finance fees to reveal where your lease dollars go.
+
+## Anatomy of a Monthly Lease Payment
+
+1. **Depreciation Charge**: Pays for the value lost by the car during your lease term.
+2. **Finance Fee (Rent Charge)**: Pays interest to the leasing company on the asset tied up.
+3. **Sales Tax**: State and local taxes applied onto monthly payments in most jurisdictions.

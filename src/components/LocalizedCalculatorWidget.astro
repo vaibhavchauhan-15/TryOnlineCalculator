@@ -55,7 +55,10 @@ for (const f of fields) values[f.name] = f.defaultValue;
 const runtime: Record<string, unknown> = slug === 'currency-converter' ? { usdPer: STATIC_USD_PER } : {};
 const seedInput = engine.parseInput(values, runtime);
 const seedResult = engine.compute(seedInput);
-const initialHTML = renderLocalizedResultHTML(createResolver(pack, fallback, ctx).resolve(seedResult));
+const seedCtx: FormatContext = (values.unitSystem === 'metric' || values.unitSystem === 'imperial')
+  ? { ...ctx, unitSystem: values.unitSystem as FormatContext['unitSystem'] }
+  : ctx;
+const initialHTML = renderLocalizedResultHTML(createResolver(pack, fallback, seedCtx).resolve(seedResult));
 
 const isVisible = (f: (typeof fields)[number]) =>
   !f.showWhen || f.showWhen.equals.includes(values[f.showWhen.field]);

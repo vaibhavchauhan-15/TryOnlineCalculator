@@ -1,0 +1,39 @@
+---
+slug: "standard-deviation-calculator"
+category: "math"
+title: "Standardabweichung Rechner — Stichprobe & Gesamtheit"
+description: "Berechnen Sie Stichproben-Standardabweichung s, empirische Standardabweichung σ, Varianz und Mittelwert für Zahlenmengen."
+keywords: ["standardabweichung rechner","varianz berechnen","stichprobenabweichung","standardabweichung formel"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "gemini-3.6-flash"
+labels: {"field.values":"Zahlenreihe","sampleSd":"Stichproben-Standardabweichung (s)","popSd":"Gesamtheits-Standardabweichung (σ)","sampleVar":"Stichprobenvarianz (s²)","popVar":"Gesamtheitsvarianz (σ²)","mean":"Mittelwert (μ)","count":"Anzahl (N)","sum":"Summe (∑x)"}
+intro: "Berechnen Sie die Stichproben-Standardabweichung (s), die Gesamtheits-Standardabweichung (σ), Varianz und Mittelwert."
+formulaItems:
+  - name: "Stichproben-Standardabweichung"
+    expr: "s = √[ ∑(x_i - x̄)² / (N - 1) ]"
+    desc: "N-1 Korrektur (Bessel-Korrektur) für Stichproben."
+  - name: "Gesamtheits-Standardabweichung"
+    expr: "σ = √[ ∑(x_i - μ)² / N ]"
+    desc: "Berechnung mit Gesamtzahl N für die Grundgesamtheit."
+howto:
+  - "Geben Sie Ihre Zahlenreihe ein (getrennt durch Kommas oder Leerzeichen)."
+  - "Der Rechner ermittelt sofort die Standardabweichung s und σ."
+  - "Lesen Sie Varianz, Mittelwert, Summe und Anzahl ab."
+examples:
+  - title: "Berechnung der Standardabweichung"
+    body: "Für die Zahlen [10, 12, 23, 23, 16, 23, 21, 16]: Mittelwert = 18, Stichproben-Standardabweichung s ≈ 5,237."
+faq:
+  - q: "Warum teilt man bei der Stichprobe durch N-1?"
+    a: "Die Division durch N-1 (Bessel-Korrektur) korrigiert die systematische Unterschätzung der Varianz bei Stichproben."
+  - q: "Was ist die Standardabweichung?"
+    a: "Die Standardabweichung ist ein Maß für die Streubreite der Werte rund um den Mittelwert."
+related: ["average-calculator","percentage-calculator","basic-calculator"]
+---
+
+## Bedeutung der Standardabweichung
+
+Die **Standardabweichung** ist das wichtigste Streuungsmaß der Statistik. Sie gibt an, wie stark die einzelnen Messwerte im Durchschnitt von ihrem gemeinsamen Mittelwert abweichen.

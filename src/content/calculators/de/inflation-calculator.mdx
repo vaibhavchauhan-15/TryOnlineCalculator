@@ -1,0 +1,36 @@
+---
+slug: "inflation-calculator"
+category: "finance"
+title: "Inflationsrechner"
+description: "Sehen Sie, wie die Inflation die zukünftigen Kosten und die Kaufkraft von Geld über die Zeit verändert."
+keywords: ["inflationsrechner","kaufkraft rechner","kaufkraftverlust berechnen","inflation berechnen","geldwert rechner"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "manual-de-v1"
+searchIntent: "Die zukünftigen Kosten und die Kaufkraft von Geld unter Inflation berechnen."
+readingLevel: "general"
+market: "global"
+audience: "Sparer und Verbraucher, die den Kaufkraftverlust einschätzen möchten"
+labels: {"field.amount":"Betrag","field.inflationRate":"Jährliche Inflationsrate","field.years":"Jahre","futureCost":"Zukünftige Kosten","purchasingPower":"Kaufkraft","totalInflation":"Gesamtinflation","price":"Preis"}
+chartTitles: {"inflation.growthTitle":"Steigende Kosten über die Zeit"}
+intro: "Inflation mindert den Wert des Geldes über die Zeit. Geben Sie einen Betrag, eine erwartete jährliche Inflationsrate und eine Anzahl von Jahren ein, um die zukünftigen Kosten derselben Güter und den Kaufkraftverlust zu sehen."
+formulaIntro: "Die Inflation verzinst sich jährlich, erhöht die Preise und senkt die Kaufkraft."
+formulaItems: [{"name":"Zukünftige Kosten","expr":"Zukunft = Betrag × (1 + Rate / 100)^Jahre"},{"name":"Kaufkraft","expr":"Kaufkraft = Betrag / (1 + Rate / 100)^Jahre"}]
+howto: ["Geben Sie den Geldbetrag ein.","Geben Sie die erwartete jährliche Inflationsrate ein.","Geben Sie die Anzahl der zu projizierenden Jahre ein."]
+examples: [{"title":"1.000 € bei 3 % über 10 Jahre","body":"Bei 3 % Inflation kosten Güter, die heute 1.000 € kosten, in zehn Jahren etwa 1.344 €, und 1.000 € kaufen dann nur noch rund 744 € der heutigen Güter."}]
+faq: [{"q":"Wie hoch ist eine typische Inflationsrate?","a":"Viele Zentralbanken streben etwa 2 % pro Jahr an. Die tatsächliche Inflation schwankt — verwenden Sie eine Rate, die zu Ihrer Region und Ihrem Zeithorizont passt."},{"q":"Was bedeutet Kaufkraft?","a":"Sie beschreibt, wie viel Ihr Geld tatsächlich kaufen kann. Bei 3 % Inflation hat 1.000 € heute in zehn Jahren die Kaufkraft von etwa 744 €."},{"q":"Wie schütze ich mich vor Inflation?","a":"Anlagen, die historisch die Inflation übertreffen — etwa breit gestreute Aktien oder inflationsindexierte Anleihen — helfen, die Kaufkraft zu erhalten, bergen aber Risiken."}]
+related: ["compound-interest-calculator","cagr-calculator","investment-calculator","retirement-calculator"]
+---
+
+Ein Inflationsrechner zeigt, wie steigende Preise den Wert des Geldes verändern.
+Geben Sie einen Betrag, eine erwartete jährliche Inflationsrate und einen
+Zeithorizont ein, und Sie erhalten die zukünftigen Kosten desselben Warenkorbs
+sowie die schrumpfende Kaufkraft dieses Geldes in heutigen Werten.
+
+Weil sich die Inflation verzinst, summieren sich kleine Jahresraten. Bei 3 %
+pro Jahr verdoppeln sich die Preise in etwa 24 Jahren, während die Kaufkraft
+eines festen Betrags stetig sinkt. Beide Seiten dieser Medaille zu sehen,
+erleichtert die Planung von Ersparnissen, Gehältern und langfristigen Zielen.

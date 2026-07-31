@@ -1,0 +1,34 @@
+---
+slug: "ppf-calculator"
+category: "finance"
+title: "PPF Rechner - Public Provident Fund Zinsrechner"
+description: "Berechnen Sie den Fälligkeitsbetrag, die jährliche Verzinsung und den steuerfreien Vermögensaufbau Ihres PPF-Sparkontos über 15 bis 50 Jahre."
+keywords: ["ppf rechner","indien ppf rechner","steuerfreier sparplan rechner","ppf zinsrechner","vorsorge rechner"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "gemini-3.6-flash"
+labels: {"balance":"Gesamtguthaben","field.rate":"Zinssatz (p.a.)","field.tenureYears":"Laufzeit (Jahre)","field.yearlyInvestment":"Jährlicher Sparbeitrag","interest":"Zinsertrag gesamt","invested":"Eingezahltes Kapital","maturityValue":"Fälligkeitswert","totalInterest":"Gesamte Zinserträge","totalInvested":"Gesamte Einzahlungen"}
+enums: {}
+hints: {}
+chartTitles: {"ppf.growthTitle":"Wertentwicklung des PPF-Guthabens","ppf.pieTitle":"Aufteilung von Einzahlung und Zinsen"}
+intro: "Der Public Provident Fund (PPF) ist ein staatlich geförderter, steuerfreier Langzeit-Sparplan. Berechnen Sie das Fälligkeitsguthaben und die Zinserträge."
+formulaIntro: "Die PPF-Verzinsung erfolgt jährlich zum Ende des Finanzjahres auf Basis der Jahreseinzahlungen."
+formulaItems: [{"name":"PPF-Zinseszins-Formel","expr":"F = P × [((1 + i)^n − 1) / i]","desc":"F = Endbetrag, P = jährliche Einzahlung, i = Zinssatz, n = Laufzeit in Jahren."},{"name":"Mindestlaufzeit","expr":"Mindestlaufzeit = 15 Jahre","desc":"PPF-Konten haben eine gesetzliche Mindestlaufzeit von 15 Jahren, verlängerbar in 5-Jahres-Blöcken."}]
+howto: ["Geben Sie Ihren geplanten jährlichen Sparbeitrag ein.","Prüfen Sie den Zinssatz (Standard 7,1 %).","Wählen Sie die Laufzeit (mindestens 15 Jahre).","Analysieren Sie das steuerfreie Endguthaben und die Zinserträge."]
+examples: [{"title":"150.000 Einzahlung jährlich zu 7,1 % für 15 Jahre","body":"Bei 150.000 jährlicher Einzahlung über 15 Jahre (2.250.000 gesamt) wächst das Guthaben auf ca. 4.068.209 (1.818.209 Zinsen)."},{"title":"100.000 Einzahlung jährlich zu 7,1 % für 25 Jahre","body":"100.000 jährlich über 25 Jahre (2,5 Mio. eingezahlt) ergeben ein steuerfreies Guthaben von ca. 6.700.000."}]
+faq: [{"q":"Was ist der PPF (Public Provident Fund)?","a":"Der PPF ist ein staatlich garantierter Langzeit-Sparplan mit steuerfreien Erträgen und hoher Kapitalsicherheit."},{"q":"Wie lange ist die Mindestlaufzeit?","a":"Die Mindestlaufzeit beträgt 15 Finanzjahre und kann danach um jeweils 5 Jahre verlängert werden."},{"q":"Sind die Zinserträge steuerfrei?","a":"Ja, PPF-Einzahlungen, Zinsen und die Fälligkeitsauszahlung sind vollständig steuerfrei (EEE-Status)."}]
+related: ["fd-calculator","nps-calculator","compound-interest-calculator","retirement-calculator"]
+---
+
+## Was ist ein PPF Rechner?
+
+Ein PPF Rechner berechnet den Vermögensaufbau und die Zinserträge staatlich geschützter Langzeit-Sparkonten. Er zeigt den Zinseszinseffekt über Laufzeiten von 15 bis 50 Jahren.
+
+## Vorteile des PPF Sparplans
+
+1. Staatliche Garantie für 100 % Kapitalsicherheit.
+2. Vollständige Steuerfreiheit aller Zinserträge.
+3. Hoher Zinseszinseffekt bei langfristiger Anlage.

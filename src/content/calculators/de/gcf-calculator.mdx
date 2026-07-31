@@ -1,0 +1,39 @@
+---
+slug: "gcf-calculator"
+category: "math"
+title: "ggT-Rechner — Größter gemeinsamer Teiler"
+description: "Berechnen Sie den größten gemeinsamen Teiler (ggT) von zwei oder mehr Zahlen mit dem euklidischen Algorithmus."
+keywords: ["ggt rechner","groesster gemeinsamer teiler","ggt berechnen","teiler berechnen"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "gemini-3.6-flash"
+labels: {"field.values":"Zahlen","gcf":"Größter gemeinsamer Teiler (ggT)","count":"Anzahl der Zahlen"}
+intro: "Ermitteln Sie den größten gemeinsamen Teiler (ggT) von zwei oder mehr ganzen Zahlen."
+formulaItems:
+  - name: "Euklidischer Algorithmus"
+    expr: "ggT(a, b) = ggT(b, a mod b)"
+    desc: "Wiederholte Division bis der Rest Null beträgt."
+  - name: "Primfaktorzerlegungs-Methode"
+    expr: "ggT = Produkt der kleinsten Potenzen gemeinsamer Primfaktoren"
+    desc: "Multiplikation aller gemeinsamen Primfaktoren."
+howto:
+  - "Geben Sie zwei oder mehr positive ganze Zahlen ein (getrennt durch Kommas)."
+  - "Der Rechner ermittelt den größten gemeinsamen Teiler mit dem euklidischen Algorithmus."
+  - "Lesen Sie den ggT-Wert ab."
+examples:
+  - title: "ggT von 24, 36 und 48 finden"
+    body: "Teiler von 24, 36 und 48: Der größte gemeinsame Teiler aller drei Zahlen ist 12."
+faq:
+  - q: "Was ist der größte gemeinsame Teiler (ggT)?"
+    a: "Der ggT (Größter gemeinsamer Teiler) ist die größte ganze Zahl, durch die sich zwei oder mehrere Zahlen ohne Rest teilen lassen."
+  - q: "Welcher Zusammenhang besteht zwischen ggT und kgV?"
+    a: "Für zwei Zahlen a und b gilt: ggT(a, b) × kgV(a, b) = a × b."
+related: ["lcm-calculator","fraction-calculator","prime-number-calculator"]
+---
+
+## Der größte gemeinsame Teiler (ggT)
+
+Der **Größte gemeinsame Teiler (ggT)** ist die größte natürliche Zahl, die zwei oder mehr vorgegebene Zahlen ohne Rest teilt.
