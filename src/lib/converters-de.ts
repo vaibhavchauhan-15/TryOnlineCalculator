@@ -132,11 +132,11 @@ const temperatureDe: ConverterI18n = {
     'Tauschen Sie die Richtung mit den Pfeilen.',
   ],
   factorRows: [
-    { label: '0 °C', value: '32 °F = 273,15 K' },
+    { label: '0 °C', value: '32 °F = 273,15 K = 491,67 °R' },
     { label: '100 °C', value: '212 °F = 373,15 K' },
     { label: '37 °C (Körpertemperatur)', value: '98,6 °F' },
     { label: '−40 °C', value: '−40 °F (Schnittpunkt)' },
-    { label: '0 K (absoluter Nullpunkt)', value: '−273,15 °C = −459,67 °F' },
+    { label: '0 K (absoluter Nullpunkt)', value: '−273,15 °C = −459,67 °F = 0 °R' },
   ],
   faqs: [
     { q: 'Wie rechne ich Celsius in Fahrenheit um?', a: 'Multiplizieren Sie die Celsius-Temperatur mit 9/5 und addieren Sie 32. Beispiel: 25 °C × 9/5 + 32 = 77 °F.' },

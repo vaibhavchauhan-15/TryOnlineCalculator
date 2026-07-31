@@ -49,7 +49,10 @@ function ymdDiff(from: Date, to: Date) {
   if (days < 0) {
     months--;
     const prevMonth = new Date(b.getFullYear(), b.getMonth(), 0).getDate();
-    days += prevMonth;
+    // Clamp the borrowed month to a's day-of-month so the day count never
+    // stays negative when a's day exceeds the length of the month preceding b
+    // (e.g. 2000-01-31 -> 2000-03-01 is 1 month 1 day, not 1 month -1 day).
+    days += Math.max(prevMonth, a.getDate());
   }
   if (months < 0) {
     years--;

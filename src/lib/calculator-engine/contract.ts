@@ -79,9 +79,10 @@ export interface ResultRange {
 }
 
 /**
- * One line of output. Exactly one of `value` / `range` / `enumKey` is the
- * payload; all three are raw. `key` is the semantic label key the localization
- * layer resolves to a localized label.
+ * One line of output. Exactly one of `value` / `range` / `enumKey` / `text` is
+ * the payload; `value`/`range`/`enumKey` are raw, `text` is a raw computed
+ * string passed through verbatim. `key` is the semantic label key the
+ * localization layer resolves to a localized label.
  */
 export interface ResultItem {
   /** Semantic label key, e.g. "bmi", "monthlyPayment", "healthyRange". */
@@ -92,6 +93,8 @@ export interface ResultItem {
   range?: ResultRange;
   /** Categorical payload — an enum key localized downstream (e.g. "normal"). */
   enumKey?: string;
+  /** Raw computed string payload passed through verbatim (e.g. "#FF5733"). */
+  text?: string;
   /** Formatting intent for `value`/`range`. */
   format?: ValueFormat;
   /** Decimal-precision hint for the formatter. */

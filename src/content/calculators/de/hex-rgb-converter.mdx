@@ -1,0 +1,40 @@
+---
+slug: "hex-rgb-converter"
+category: "math"
+title: "Hex-zu-RGB-Umrechner"
+description: "Hex-Farbcodes in RGB-Werte umrechnen und RGB in Hex umwandeln. Unterstützt 3- und 6-stellige Hex-Codes."
+keywords: ["hex zu rgb", "rgb zu hex", "hex farbcode umrechner", "farbcode konverter", "hex farben umrechnen", "html farben rechner", "farbcode rechner"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "manual-de-v1"
+searchIntent: "Zwischen Hex-Farbcodes und RGB-Farbwerten umrechnen."
+readingLevel: "general"
+market: "global"
+audience: "Webentwickler, Designer und alle, die mit digitalen Farben arbeiten"
+labels: {"field.mode": "Umwandeln", "field.hex": "Hex-Code", "field.r": "Rot (R)", "field.g": "Grün (G)", "field.b": "Blau (B)", "hexValue": "Hex", "rgbValue": "RGB", "red": "Rot", "green": "Grün", "blue": "Blau"}
+enums: {"mode.hexToRgb": "Hex → RGB", "mode.rgbToHex": "RGB → Hex"}
+intro: "Geben Sie einen Hex-Farbcode oder RGB-Werte ein, um sofort zwischen den beiden Formaten umzurechnen."
+formulaIntro: "Hex und RGB sind zwei Darstellungen desselben Farbraums."
+formulaItems: [{"name": "Hex zu RGB", "expr": "R = hex[0:2] zur Basis 10, G = hex[2:4], B = hex[4:6]"}, {"name": "RGB zu Hex", "expr": "Hex = R.toString(16) + G.toString(16) + B.toString(16)"}]
+howto: ["Wählen Sie Hex → RGB oder RGB → Hex.", "Geben Sie den Hex-Code oder die R-, G-, B-Werte ein.", "Lesen Sie die umgerechneten Werte ab."]
+examples: [{"title": "#FF5733 in RGB", "body": "Der Hex-Code #FF5733 entspricht RGB(255, 87, 51) — ein kräftiges Rot-Orange."}, {"title": "RGB(0, 128, 255) in Hex", "body": "Die RGB-Werte 0, 128, 255 ergeben den Hex-Code #0080FF — ein leuchtendes Blau."}]
+faq: [{"q": "Was ist ein Hex-Farbcode?", "a": "Ein Hex-Farbcode ist eine 6-stellige Zeichenfolge (z. B. #FF5733), die eine Farbe mit Hexadezimalwerten für die Kanäle Rot, Grün und Blau darstellt, jeweils von 00 bis FF."}, {"q": "Wie rechne ich Hex in RGB um?", "a": "Teilen Sie den 6-stelligen Hex-Code in drei Paare. Rechnen Sie jedes Paar von Basis 16 in Basis 10 um. Beispiel: #FF5733 → R: 255, G: 87, B: 51."}, {"q": "Was ist der Unterschied zwischen Hex und RGB?", "a": "Beide stellen dieselben Farben unterschiedlich dar. Hex verwendet ein kompaktes 6-stelliges Basis-16-Format (#RRGGBB), RGB drei Dezimalwerte von 0 bis 255."}, {"q": "Kann ich 3-stellige Hex-Codes verwenden?", "a": "Ja. Ein 3-stelliger Hex-Code wie #F53 ist die Kurzform für #FF5533 — jede Ziffer wird verdoppelt."}, {"q": "Wo werden Hex-Farbcodes verwendet?", "a": "Hex-Codes werden in HTML, CSS und Webdesign zur Farbangabe genutzt. Sie sind auch in Grafikprogrammen und digitaler Kunst verbreitet."}]
+related: ["binary-decimal-converter", "percentage-calculator", "basic-calculator"]
+---
+
+Ein Hex-zu-RGB-Umrechner übersetzt Farbcodes zwischen den beiden gängigsten
+digitalen Farbformaten. Geben Sie einen Hex-Code wie #FF5733 ein und erhalten
+Sie die Kanalwerte für Rot, Grün und Blau (255, 87, 51) — oder geben Sie
+RGB-Werte ein und lassen Sie sich den Hex-Code zurückgeben.
+
+Der Umrechner unterstützt sowohl 3-stellige Kurzformen (wie #F53, das zu
+#FF5533 erweitert wird) als auch vollständige 6-stellige Codes. Das ist
+unverzichtbar für Webentwickler, die CSS schreiben, Designer, die Markenfarben
+abgleichen, und alle, die in verschiedenen Tools mit digitalen Farben arbeiten.
+
+Hex verwendet die Basis-16-Notation (0–9, A–F), um jeden Kanal in zwei Zeichen
+darzustellen, während RGB vertraute Dezimalwerte von 0 bis 255 nutzt. Beide
+beschreiben dieselben 16,7 Millionen Farben im sRGB-Farbraum.

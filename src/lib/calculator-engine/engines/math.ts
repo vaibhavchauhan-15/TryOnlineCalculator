@@ -1001,8 +1001,8 @@ export const hexRgbConverterEngine: CalculatorEngine<HexRgbInput, EngineResult> 
       const b = parseInt(hex.slice(4, 6), 16);
       return {
         items: [
-          { key: 'hexValue', enumKey: `#${hex.toUpperCase()}`, primary: true },
-          { key: 'rgbValue', enumKey: `rgb(${r}, ${g}, ${b})` },
+          { key: 'hexValue', text: `#${hex.toUpperCase()}`, primary: true },
+          { key: 'rgbValue', text: `rgb(${r}, ${g}, ${b})` },
           { key: 'red', value: r, format: 'integer' },
           { key: 'green', value: g, format: 'integer' },
           { key: 'blue', value: b, format: 'integer' },
@@ -1015,8 +1015,8 @@ export const hexRgbConverterEngine: CalculatorEngine<HexRgbInput, EngineResult> 
       const hex = [r, g, b].map((c) => c.toString(16).padStart(2, '0')).join('').toUpperCase();
       return {
         items: [
-          { key: 'hexValue', enumKey: `#${hex}`, primary: true },
-          { key: 'rgbValue', enumKey: `rgb(${r}, ${g}, ${b})` },
+          { key: 'hexValue', text: `#${hex}`, primary: true },
+          { key: 'rgbValue', text: `rgb(${r}, ${g}, ${b})` },
           { key: 'red', value: r, format: 'integer' },
           { key: 'green', value: g, format: 'integer' },
           { key: 'blue', value: b, format: 'integer' },
@@ -1075,19 +1075,19 @@ export const binaryDecimalConverterEngine: CalculatorEngine<BinaryDecimalInput, 
       return {
         items: [
           { key: 'decimalValue', value: dec, format: 'integer', primary: true },
-          { key: 'binaryValue', enumKey: input.binary.trim() },
-          { key: 'octalValue', enumKey: dec.toString(8) },
-          { key: 'hexValue', enumKey: dec.toString(16).toUpperCase() },
+          { key: 'binaryValue', text: input.binary.trim() },
+          { key: 'octalValue', text: dec.toString(8) },
+          { key: 'hexValue', text: dec.toString(16).toUpperCase() },
         ],
       };
     } else {
       const dec = Math.max(0, Math.round(input.decimal));
       return {
         items: [
-          { key: 'binaryValue', enumKey: dec.toString(2), primary: true },
+          { key: 'binaryValue', text: dec.toString(2), primary: true },
           { key: 'decimalValue', value: dec, format: 'integer' },
-          { key: 'octalValue', enumKey: dec.toString(8) },
-          { key: 'hexValue', enumKey: dec.toString(16).toUpperCase() },
+          { key: 'octalValue', text: dec.toString(8) },
+          { key: 'hexValue', text: dec.toString(16).toUpperCase() },
         ],
       };
     }
