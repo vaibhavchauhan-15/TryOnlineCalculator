@@ -1009,19 +1009,10 @@ export const heartRateZoneEngine: CalculatorEngine<HeartRateZoneInput, HeartRate
     const maxHr = Math.round(208 - 0.7 * input.age);
     const hrr = maxHr - input.restingHeartRate;
 
-    const z1Low = Math.round(input.restingHeartRate + hrr * 0.50);
     const z1High = Math.round(input.restingHeartRate + hrr * 0.60);
-
-    const z2Low = z1High;
     const z2High = Math.round(input.restingHeartRate + hrr * 0.70);
-
-    const z3Low = z2High;
     const z3High = Math.round(input.restingHeartRate + hrr * 0.80);
-
-    const z4Low = z3High;
     const z4High = Math.round(input.restingHeartRate + hrr * 0.90);
-
-    const z5Low = z4High;
     const z5High = maxHr;
 
     return {

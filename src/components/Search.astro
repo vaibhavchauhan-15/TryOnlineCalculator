@@ -38,12 +38,12 @@ const listboxId = `search-list-${Math.random().toString(36).slice(2, 10)}`;
     spellcheck="false"
     data-search-input
   />
-  <button class="search-clear" type="button" aria-label="Clear search" tabindex="-1" hidden data-search-clear>
+  <button class="search-clear" type="button" aria-label="Clear search" hidden data-search-clear>
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
       <path d="M18 6 6 18"></path><path d="m6 6 12 12"></path>
     </svg>
   </button>
-  <div class="search-results" id={listboxId} data-search-results role="listbox" hidden></div>
+  <div class="search-results" id={listboxId} data-search-results role="listbox" aria-label="Search results" hidden></div>
 </div>
 
 <script>
@@ -58,6 +58,8 @@ const listboxId = `search-list-${Math.random().toString(36).slice(2, 10)}`;
       ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] as string
     );
 
+  const regexCache = new Map<string, RegExp>();
+
   // Wrap the matched tokens inside the (already escaped) title with <mark>.
   const highlight = (title: string, tokens: string[]) => {
     const escaped = escapeHtml(title);
@@ -69,7 +71,13 @@ const listboxId = `search-list-${Math.random().toString(36).slice(2, 10)}`;
       .join('|');
     if (!pattern) return escaped;
     try {
-      return escaped.replace(new RegExp(`(${pattern})`, 'gi'), '<mark>$1</mark>');
+      let re = regexCache.get(pattern);
+      if (!re) {
+        re = new RegExp(`(${pattern})`, 'gi');
+        regexCache.set(pattern, re);
+      }
+      re.lastIndex = 0;
+      return escaped.replace(re, '<mark>$1</mark>');
     } catch {
       return escaped;
     }
@@ -115,9 +123,20 @@ const listboxId = `search-list-${Math.random().toString(36).slice(2, 10)}`;
     const render = (list: Indexed[]) => {
       current = list;
       active = -1;
+      const announcer = document.getElementById('a11y-announcer');
       if (!list.length) {
         const empty = root.dataset.noResults || 'No calculators match your search.';
-        results.innerHTML = `<p class="search-empty">${escapeHtml(empty)}</p>`;
+        results.innerHTML = `<div class="search-empty-wrap">` +
+          `<p class="search-empty">${escapeHtml(empty)}</p>` +
+          `<div class="search-suggestions">` +
+            `<span class="search-suggest-label">Try searching:</span>` +
+            `<button type="button" class="search-suggest-chip" data-search-suggest="Mortgage">Mortgage</button>` +
+            `<button type="button" class="search-suggest-chip" data-search-suggest="BMI">BMI</button>` +
+            `<button type="button" class="search-suggest-chip" data-search-suggest="Percentage">Percentage</button>` +
+            `<button type="button" class="search-suggest-chip" data-search-suggest="Loan">Loan</button>` +
+          `</div>` +
+        `</div>`;
+        if (announcer) announcer.textContent = empty;
       } else {
         results.innerHTML = list
           .map(
@@ -129,6 +148,7 @@ const listboxId = `search-list-${Math.random().toString(36).slice(2, 10)}`;
               `</a>`
           )
           .join('');
+        if (announcer) announcer.textContent = `${list.length} calculators found`;
       }
       results.hidden = false;
       input.setAttribute('aria-expanded', 'true');
@@ -211,6 +231,16 @@ const listboxId = `search-list-${Math.random().toString(36).slice(2, 10)}`;
         const target = current[active] ?? current[0];
         if (target) { e.preventDefault(); window.location.href = target.p; }
       } else if (e.key === 'Escape') { close(); input.blur(); }
+    });
+
+    results.addEventListener('click', (e) => {
+      const chip = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-search-suggest]');
+      if (chip && chip.dataset.searchSuggest) {
+        input.value = chip.dataset.searchSuggest;
+        syncClear();
+        query(input.value);
+        input.focus();
+      }
     });
 
     document.addEventListener('click', (e) => {
@@ -384,12 +414,46 @@ const listboxId = `search-list-${Math.random().toString(36).slice(2, 10)}`;
     background-color: var(--color-canvas-soft);
     box-shadow: inset 0 0 0 1px var(--color-hairline);
   }
+  .search-results :global(.search-empty-wrap) {
+    padding: 0.875rem 0.75rem;
+    text-align: center;
+  }
   .search-results :global(.search-empty) {
     margin: 0;
-    padding: 0.875rem 0.75rem;
     font-size: 14px;
     color: var(--color-mute);
-    text-align: center;
+  }
+  .search-results :global(.search-suggestions) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    margin-top: 0.625rem;
+  }
+  .search-results :global(.search-suggest-label) {
+    font-size: 12px;
+    color: var(--color-mute);
+    margin-right: 0.25rem;
+  }
+  .search-results :global(.search-suggest-chip) {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.625rem;
+    font-size: 12px;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    color: var(--color-link);
+    background-color: var(--color-canvas-soft-2);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-full, 9999px);
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+  }
+  .search-results :global(.search-suggest-chip:hover) {
+    background-color: var(--color-link-soft);
+    border-color: var(--color-link);
+    transform: translateY(-1px);
   }
 
   /* Phones: give the panel more room and larger tap targets, and stop the

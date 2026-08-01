@@ -90,6 +90,7 @@ export function localizedHowToSchema(
   locale: string,
   opts: { title: string; description: string; pagePath: string; steps: string[] },
 ) {
+  const stepPrefix = locale === 'de' ? 'Schritt' : 'Step';
   return {
     '@context': 'https://schema.org',
     '@type': 'HowTo',
@@ -100,6 +101,7 @@ export function localizedHowToSchema(
     step: opts.steps.map((text, i) => ({
       '@type': 'HowToStep',
       position: i + 1,
+      name: `${stepPrefix} ${i + 1}`,
       text,
     })),
   };

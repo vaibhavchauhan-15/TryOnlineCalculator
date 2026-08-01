@@ -947,6 +947,7 @@ export const financeCalculators: Calculator[] = [
     keywords: ['fd calculator', 'fixed deposit calculator', 'fd interest calculator'],
     inputs: [],
     compute: () => ({ results: [] }),
+    faq: [],
   },
   /* ---------------------------------------------------------------- RD */
   {
@@ -957,6 +958,7 @@ export const financeCalculators: Calculator[] = [
     keywords: ['rd calculator', 'recurring deposit calculator', 'rd interest calculator'],
     inputs: [],
     compute: () => ({ results: [] }),
+    faq: [],
   },
   /* ---------------------------------------------------------------- SWP */
   {
@@ -967,6 +969,7 @@ export const financeCalculators: Calculator[] = [
     keywords: ['swp calculator', 'systematic withdrawal plan calculator'],
     inputs: [],
     compute: () => ({ results: [] }),
+    faq: [],
   },
   /* ---------------------------------------------------------------- PPF */
   {
@@ -977,6 +980,7 @@ export const financeCalculators: Calculator[] = [
     keywords: ['ppf calculator', 'public provident fund calculator'],
     inputs: [],
     compute: () => ({ results: [] }),
+    faq: [],
   },
   /* ---------------------------------------------------------------- NPS */
   {
@@ -987,6 +991,7 @@ export const financeCalculators: Calculator[] = [
     keywords: ['nps calculator', 'national pension system calculator'],
     inputs: [],
     compute: () => ({ results: [] }),
+    faq: [],
   },
   /* ---------------------------------------------------------------- Mutual Fund */
   {
@@ -997,6 +1002,7 @@ export const financeCalculators: Calculator[] = [
     keywords: ['mutual fund calculator', 'mutual fund return calculator'],
     inputs: [],
     compute: () => ({ results: [] }),
+    faq: [],
   },
   /* ---------------------------------------------------------------- Lumpsum */
   {
@@ -1007,6 +1013,7 @@ export const financeCalculators: Calculator[] = [
     keywords: ['lumpsum calculator', 'lump sum investment calculator'],
     inputs: [],
     compute: () => ({ results: [] }),
+    faq: [],
   },
   /* ---------------------------------------------------------------- Simple Interest */
   {
@@ -1017,6 +1024,7 @@ export const financeCalculators: Calculator[] = [
     keywords: ['simple interest calculator', 'simple interest formula calculator'],
     inputs: [],
     compute: () => ({ results: [] }),
+    faq: [],
   },
   /* ---------------------------------------------------------------- Credit Card Payoff */
   {
@@ -1027,6 +1035,7 @@ export const financeCalculators: Calculator[] = [
     keywords: ['credit card payoff calculator', 'credit card interest calculator'],
     inputs: [],
     compute: () => ({ results: [] }),
+    faq: [],
   },
   /* ---------------------------------------------------------------- Debt Payoff */
   {
@@ -1037,6 +1046,7 @@ export const financeCalculators: Calculator[] = [
     keywords: ['debt payoff calculator', 'debt free calculator'],
     inputs: [],
     compute: () => ({ results: [] }),
+    faq: [],
   },
   /* ---------------------------------------------------------------- Personal Loan */
   {
@@ -1047,6 +1057,7 @@ export const financeCalculators: Calculator[] = [
     keywords: ['personal loan calculator', 'personal loan emi calculator'],
     inputs: [],
     compute: () => ({ results: [] }),
+    faq: [],
   },
   /* ---------------------------------------------------------------- Lease */
   {
@@ -1057,6 +1068,7 @@ export const financeCalculators: Calculator[] = [
     keywords: ['lease calculator', 'auto lease calculator'],
     inputs: [],
     compute: () => ({ results: [] }),
+    faq: [],
   },
   /* ---------------------------------------------------------------- Down Payment */
   {
@@ -1067,6 +1079,7 @@ export const financeCalculators: Calculator[] = [
     keywords: ['down payment calculator', 'house down payment calculator'],
     inputs: [],
     compute: () => ({ results: [] }),
+    faq: [],
   },
   /* ---------------------------------------------------------------- Amortization */
   {
@@ -1077,6 +1090,7 @@ export const financeCalculators: Calculator[] = [
     keywords: ['amortization calculator', 'loan amortization calculator'],
     inputs: [],
     compute: () => ({ results: [] }),
+    faq: [],
   },
   /* ---------------------------------------------------------------- Net Worth */
   {
@@ -1087,5 +1101,6 @@ export const financeCalculators: Calculator[] = [
     keywords: ['net worth calculator', 'calculate net worth'],
     inputs: [],
     compute: () => ({ results: [] }),
+    faq: [],
   },
 ];

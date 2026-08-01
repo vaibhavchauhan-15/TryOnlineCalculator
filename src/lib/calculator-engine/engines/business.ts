@@ -15,10 +15,8 @@ import { num } from '../units';
 
 // Shared chart palette (mirrors the brand tokens used across the other engines).
 const BLUE = '#0070f3';
-const VIOLET = '#7928ca';
 const AMBER = '#f5a623';
 const CYAN = '#50e3c2';
-const PINK = '#ff0080';
 
 // =====================================================================
 // VAT (value added tax) — add VAT to a net amount or remove it from gross
@@ -687,6 +685,7 @@ export const gstEngine: CalculatorEngine<GstInput, EngineResult> = {
 
   validate: (input) => {
     if (input.amount < 0) return fail('gst.amountRequired', { field: 'amount' });
+    if (input.rate <= -100) return fail('gst.rateInvalid', { field: 'rate' });
     return ok();
   },
 
@@ -696,7 +695,8 @@ export const gstEngine: CalculatorEngine<GstInput, EngineResult> = {
     let gross: number;
     if (input.mode === 'inclusive') {
       gross = input.amount;
-      net = r > -1 ? gross / (1 + r) : gross;
+      const denom = 1 + r;
+      net = Math.abs(denom) > 1e-9 ? gross / denom : gross;
     } else {
       net = input.amount;
       gross = net * (1 + r);

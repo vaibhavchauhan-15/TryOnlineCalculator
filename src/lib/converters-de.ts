@@ -4,7 +4,7 @@
 // in converters.ts — only the display strings are translated here.
 
 import type { FaqItem } from './types';
-import type { ConverterConfig, FactorRow } from './converters';
+import type { FactorRow } from './converters';
 
 export interface ConverterI18n {
   name: string;

@@ -8,7 +8,6 @@
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import Search from '../../components/Search.astro';
-import LinkCard from '../../components/LinkCard.astro';
 import CategoryCard from '../../components/CategoryCard.astro';
 import CalculatorCard from '../../components/CalculatorCard.astro';
 import KeypadCalculator from '../../components/KeypadCalculator.astro';
@@ -17,9 +16,8 @@ import { enabledLocaleCodes, DEFAULT_LOCALE, isIndexedLocale } from '../../lib/i
 import { uiPack, categoryName } from '../../lib/i18n/ui-pack';
 import { to } from '../../lib/i18n/paths';
 import { hreflangAlternates } from '../../lib/i18n/seo-head';
-import { categories, getCategory } from '../../lib/categories';
+import { categories } from '../../lib/categories';
 import { allCalculators, popularCalculators, calculatorsByCategory, getCalculator } from '../../lib/calculators';
-import { calculatorIcon } from '../../lib/icons';
 import { websiteSchema, organizationSchema, itemListSchema, faqPageSchema, calculatorSchema } from '../../lib/seo';
 import { homeFaqItems, getHomeFaqItems } from '../../lib/faq';
 
@@ -30,7 +28,6 @@ export function getStaticPaths() {
 const { locale } = Astro.params as { locale: string };
 const isDefault = locale === DEFAULT_LOCALE;
 
-const chrome = uiPack(locale).chrome ?? {};
 const home = uiPack(locale).home ?? {};
 
 // Localized calculator titles from this locale's MDX content.
@@ -39,7 +36,6 @@ const titleBySlug = new Map(entries.map((e) => [e.id.slice(locale.length + 1), e
 const locTitle = (slug: string, fallback: string) => titleBySlug.get(slug) ?? fallback;
 
 const popular = popularCalculators(8);
-const openLabel = home.open ?? 'Open';
 const total = allCalculators.length;
 
 // Hero calculator + pills for all locales
@@ -81,11 +77,11 @@ const homeKeywords = isDefault ? [
 
 <Layout
   title={isDefault
-    ? 'Free Online Calculator — Mortgage, BMI, Loan, Percentage & Scientific Calculator'
-    : (home.metaTitle ?? 'Free Online Calculators')}
+    ? 'Free Online Calculators — Mortgage, BMI, Loan & Math'
+    : (home.metaTitle ?? 'Kostenlose Online-Rechner')}
   description={isDefault
-    ? `Free online calculator hub with ${total}+ fast, accurate tools: mortgage, loan/EMI, SIP, BMI, calorie, percentage, scientific, GPA, age and compound interest calculators. Instant results, no sign-up, works on any device.`
-    : (home.metaDescription ?? 'Free, fast, privacy-friendly online calculators.')}
+    ? `Free online calculator hub with ${total}+ fast, accurate tools: mortgage, loan, BMI, calorie, percentage, scientific & age calculators. No sign-up required.`
+    : (home.metaDescription ?? 'Kostenlose Online-Rechner: Hypotheken-, BMI-, Kredit-, Prozent- und Wissenschaftsrechner. Schnelle Ergebnisse, ohne Anmeldung.')}
   path={to('/', locale)}
   locale={locale}
   alternates={hreflangAlternates('/')}

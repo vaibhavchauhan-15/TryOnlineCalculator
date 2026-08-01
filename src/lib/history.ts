@@ -160,13 +160,13 @@ export function createHistoryUI(opts: { key: string; mount: HTMLElement }): Hist
   root.className = 'calc-history';
   root.innerHTML = `
     <div class="calc-history-head">
-      <button type="button" class="calc-history-toggle" aria-expanded="false">
+      <button type="button" class="calc-history-toggle" aria-expanded="false" aria-label="Toggle calculation history">
         <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v5h5"></path><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"></path><path d="M12 7v5l4 2"></path></svg>
         <span>History</span>
         <span class="calc-history-count" data-hist-count>0</span>
         <svg class="calc-history-caret" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
       </button>
-      <button type="button" class="calc-history-clear" data-hist-clear>Clear</button>
+      <button type="button" class="calc-history-clear" data-hist-clear aria-label="Clear calculation history">Clear</button>
     </div>
     <ul class="calc-history-list" data-hist-list></ul>
   `;
@@ -181,7 +181,7 @@ export function createHistoryUI(opts: { key: string; mount: HTMLElement }): Hist
     listEl.innerHTML = list
       .map(
         (e) => `
-      <li class="calc-history-item">
+      <li class="calc-history-item" data-hist-item data-value="${esc(e.value)}" data-expr="${esc(e.expr)}" role="button" tabindex="0" aria-label="Use calculation ${esc(e.expr || e.value)}">
         <div class="calc-history-info">
           <span class="calc-history-value">${esc(e.value)}</span>
           ${e.expr ? `<span class="calc-history-expr">${esc(e.expr)}</span>` : ''}
@@ -193,6 +193,12 @@ export function createHistoryUI(opts: { key: string; mount: HTMLElement }): Hist
       </li>`,
       )
       .join('');
+  }
+
+  function triggerBadgePop(): void {
+    countEl.classList.remove('is-popping');
+    void countEl.offsetWidth;
+    countEl.classList.add('is-popping');
   }
 
   function render(): void {
@@ -219,11 +225,33 @@ export function createHistoryUI(opts: { key: string; mount: HTMLElement }): Hist
     render();
   });
 
-  // One delegated listener handles every per-row copy button.
+  // Delegated listener: item click loads entry into calculator display, copy button copies.
   listEl.addEventListener('click', (e) => {
-    const btn = (e.target as HTMLElement).closest<HTMLElement>('[data-copy]');
-    if (!btn) return;
-    void copyWithFeedback(btn, btn.getAttribute('data-copy') ?? '');
+    const copyBtn = (e.target as HTMLElement).closest<HTMLElement>('[data-copy]');
+    if (copyBtn) {
+      e.stopPropagation();
+      void copyWithFeedback(copyBtn, copyBtn.getAttribute('data-copy') ?? '');
+      return;
+    }
+    const item = (e.target as HTMLElement).closest<HTMLElement>('[data-hist-item]');
+    if (item) {
+      const val = item.getAttribute('data-value') ?? '';
+      const expr = item.getAttribute('data-expr') ?? '';
+      const calcDev = mount.closest<HTMLElement>('[data-keypad]');
+      if (calcDev) {
+        calcDev.dispatchEvent(new CustomEvent('calculator:load-history', { detail: { value: val, expr } }));
+      }
+    }
+  });
+
+  listEl.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      const item = (e.target as HTMLElement).closest<HTMLElement>('[data-hist-item]');
+      if (item && !(e.target as HTMLElement).closest('[data-copy]')) {
+        e.preventDefault();
+        item.click();
+      }
+    }
   });
 
   render();
@@ -238,6 +266,7 @@ export function createHistoryUI(opts: { key: string; mount: HTMLElement }): Hist
       if (list.length > MAX) list.length = MAX;
       saveHistory(key, list);
       render();
+      triggerBadgePop();
       return true;
     },
   };

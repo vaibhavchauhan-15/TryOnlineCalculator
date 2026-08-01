@@ -160,7 +160,7 @@ export interface ChartData {
   type: ChartType;
   titleKey?: string;
   /** Numeric axis formatting intent. */
-  format?: 'currency' | 'decimal';
+  format?: 'currency' | 'decimal' | 'integer';
   slices?: ChartSlice[];
   bars?: ChartBar[];
   series?: ChartSeries[];

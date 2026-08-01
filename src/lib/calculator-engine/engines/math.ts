@@ -22,7 +22,7 @@
 //   • fraction-calculator / average-calculator map to simple inputs, so they
 //     DO provide fields() and are rendered by the generic form renderer.
 
-import type { CalculatorEngine, EngineResult, ResultItem, EngineField } from '../contract';
+import type { CalculatorEngine, EngineResult, ResultItem, EngineField, ValueFormat } from '../contract';
 import type { AnyEngine } from '../index';
 import { ok, fail } from '../contract';
 import { isFiniteNumber, num } from '../units';
@@ -999,10 +999,10 @@ export const hexRgbConverterEngine: CalculatorEngine<HexRgbInput, EngineResult> 
       const r = parseInt(hex.slice(0, 2), 16);
       const g = parseInt(hex.slice(2, 4), 16);
       const b = parseInt(hex.slice(4, 6), 16);
+      const hexDec = parseInt(hex, 16);
       return {
         items: [
-          { key: 'hexValue', enumKey: `#${hex.toUpperCase()}`, primary: true },
-          { key: 'rgbValue', enumKey: `rgb(${r}, ${g}, ${b})` },
+          { key: 'hexDec', value: hexDec, format: 'plain', primary: true },
           { key: 'red', value: r, format: 'integer' },
           { key: 'green', value: g, format: 'integer' },
           { key: 'blue', value: b, format: 'integer' },
@@ -1012,11 +1012,10 @@ export const hexRgbConverterEngine: CalculatorEngine<HexRgbInput, EngineResult> 
       const r = Math.max(0, Math.min(255, Math.round(input.r)));
       const g = Math.max(0, Math.min(255, Math.round(input.g)));
       const b = Math.max(0, Math.min(255, Math.round(input.b)));
-      const hex = [r, g, b].map((c) => c.toString(16).padStart(2, '0')).join('').toUpperCase();
+      const hexDec = (r << 16) | (g << 8) | b;
       return {
         items: [
-          { key: 'hexValue', enumKey: `#${hex}`, primary: true },
-          { key: 'rgbValue', enumKey: `rgb(${r}, ${g}, ${b})` },
+          { key: 'hexDec', value: hexDec, format: 'plain', primary: true },
           { key: 'red', value: r, format: 'integer' },
           { key: 'green', value: g, format: 'integer' },
           { key: 'blue', value: b, format: 'integer' },
@@ -1075,19 +1074,17 @@ export const binaryDecimalConverterEngine: CalculatorEngine<BinaryDecimalInput, 
       return {
         items: [
           { key: 'decimalValue', value: dec, format: 'integer', primary: true },
-          { key: 'binaryValue', enumKey: input.binary.trim() },
-          { key: 'octalValue', enumKey: dec.toString(8) },
-          { key: 'hexValue', enumKey: dec.toString(16).toUpperCase() },
+          { key: 'octalDec', value: dec, format: 'plain' },
+          { key: 'hexDec', value: dec, format: 'plain' },
         ],
       };
     } else {
       const dec = Math.max(0, Math.round(input.decimal));
       return {
         items: [
-          { key: 'binaryValue', enumKey: dec.toString(2), primary: true },
-          { key: 'decimalValue', value: dec, format: 'integer' },
-          { key: 'octalValue', enumKey: dec.toString(8) },
-          { key: 'hexValue', enumKey: dec.toString(16).toUpperCase() },
+          { key: 'decimalValue', value: dec, format: 'integer', primary: true },
+          { key: 'octalDec', value: dec, format: 'plain' },
+          { key: 'hexDec', value: dec, format: 'plain' },
         ],
       };
     }

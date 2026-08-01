@@ -6,11 +6,11 @@ export function pmt(rate: number, nper: number, pv: number): number {
   if (nper <= 0) return NaN;
   if (pv === 0) return 0;
   if (rate === 0) return pv / nper;
-  const factor = Math.pow(1 + rate, -nper);
-  // Guard: when rate is extremely negative (≤ -1), the power blows up.
-  if (!Number.isFinite(factor)) return NaN;
-  const denom = 1 - factor;
-  if (denom === 0) return NaN;
+  if (rate <= -1) return NaN;
+  
+  // Use expm1 and log1p for high floating-point precision on small interest rates
+  const denom = -Math.expm1(-nper * Math.log1p(rate));
+  if (denom === 0 || !Number.isFinite(denom)) return NaN;
   return (pv * rate) / denom;
 }
 
@@ -18,9 +18,13 @@ export function pmt(rate: number, nper: number, pv: number): number {
 export function futureValue(rate: number, nper: number, pmtAmt: number, pv: number): number {
   if (!Number.isFinite(rate) || !Number.isFinite(nper) || !Number.isFinite(pmtAmt) || !Number.isFinite(pv)) return NaN;
   if (rate === 0) return pv + pmtAmt * nper;
+  if (rate <= -1) return NaN;
+  
   const growth = Math.pow(1 + rate, nper);
   if (!Number.isFinite(growth)) return NaN;
-  return pv * growth + pmtAmt * ((growth - 1) / rate);
+  
+  const pmtPart = pmtAmt * (Math.expm1(nper * Math.log1p(rate)) / rate);
+  return pv * growth + pmtPart;
 }
 
 /** Solve for the periodic rate of a loan given payment, periods and principal (Newton's method). */
@@ -45,3 +49,4 @@ export function solveRate(nper: number, pmtAmt: number, pv: number): number {
 export function clamp(n: number, min: number, max: number): number {
   return Math.min(Math.max(n, min), max);
 }
+

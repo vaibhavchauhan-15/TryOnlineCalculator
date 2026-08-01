@@ -344,14 +344,26 @@ export function getCurrencySymbol(): string {
  * locale, and decimals default to the currency (2, or 0 for yen-like) unless
  * an explicit override is given.
  */
+const currencyFmtCache = new Map<string, Intl.NumberFormat>();
+
+function getCurrencyFormatter(locale: string, decimals: number): Intl.NumberFormat {
+  const key = `${locale}:${decimals}`;
+  let fmt = currencyFmtCache.get(key);
+  if (!fmt) {
+    fmt = new Intl.NumberFormat(locale, {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals,
+    });
+    currencyFmtCache.set(key, fmt);
+  }
+  return fmt;
+}
+
 export function formatCurrency(n: number, opts: { decimals?: number } = {}): string {
   if (!Number.isFinite(n)) return '—';
   const cur = getActiveCurrency();
   const decimals = opts.decimals ?? cur.decimals;
   const sign = n < 0 ? '-' : '';
-  const body = Math.abs(n).toLocaleString(cur.locale, {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
-  });
+  const body = getCurrencyFormatter(cur.locale, decimals).format(Math.abs(n));
   return `${sign}${cur.symbol}${body}`;
 }

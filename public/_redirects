@@ -1,4 +1,9 @@
- hhhhfds      sjfgkhs
-
-
- skhfgl    
+# Cloudflare Pages redirects.
+#
+# Root-path routing ("/") is handled by the edge function
+# (functions/index.ts) which performs Accept-Language + cookie-based
+# locale detection. Non-prefixed legacy paths are caught by
+# functions/_middleware.ts and 301-redirected to /en/*.
+#
+# No blanket /* /en/:splat rule here — that would re-prefix already
+# locale-prefixed paths and cause infinite /en/en/en/… redirect loops.

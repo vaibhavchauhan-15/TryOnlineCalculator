@@ -5,8 +5,18 @@ var __name = (target, value) => __defProp(target, "name", { value, configurable:
 var ENABLED_LOCALES = /* @__PURE__ */ new Set(["en", "de"]);
 var SKIP_PATTERN = /^\/(?:fonts|_astro|_image|favicon|robots\.txt|sitemap|site\.webmanifest|web-app-manifest|apple-touch-icon|search\/)/;
 function getCookie(cookieHeader, name) {
-  const match2 = cookieHeader.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`));
-  return match2 ? decodeURIComponent(match2[1]) : null;
+  const prefix = name + "=";
+  for (const part of cookieHeader.split("; ")) {
+    const trimmed = part.trimStart();
+    if (trimmed.startsWith(prefix)) {
+      try {
+        return decodeURIComponent(trimmed.slice(prefix.length));
+      } catch {
+        return null;
+      }
+    }
+  }
+  return null;
 }
 __name(getCookie, "getCookie");
 function splitLocaleFromPath(pathname) {
@@ -87,8 +97,18 @@ function matchAcceptLanguage(header) {
 __name(matchAcceptLanguage, "matchAcceptLanguage");
 function getCookie2(cookieHeader, name) {
   if (!cookieHeader) return null;
-  const match2 = cookieHeader.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`));
-  return match2 ? decodeURIComponent(match2[1]) : null;
+  const prefix = name + "=";
+  for (const part of cookieHeader.split("; ")) {
+    const trimmed = part.trimStart();
+    if (trimmed.startsWith(prefix)) {
+      try {
+        return decodeURIComponent(trimmed.slice(prefix.length));
+      } catch {
+        return null;
+      }
+    }
+  }
+  return null;
 }
 __name(getCookie2, "getCookie");
 var onRequest2 = /* @__PURE__ */ __name(async (context) => {
@@ -110,7 +130,7 @@ var onRequest2 = /* @__PURE__ */ __name(async (context) => {
   return Response.redirect(new URL(`/${DEFAULT_LOCALE}/`, url), 302);
 }, "onRequest");
 
-// ../.wrangler/tmp/pages-69svcW/functionsRoutes-0.7702319408916365.mjs
+// ../.wrangler/tmp/pages-kQ5UJj/functionsRoutes-0.8277993609347596.mjs
 var routes = [
   {
     routePath: "/",

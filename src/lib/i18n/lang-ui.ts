@@ -73,11 +73,42 @@ function wireSelector(): void {
 
   toggle.addEventListener('click', () => setOpen(Boolean(menu.hidden)));
 
+  toggle.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      setOpen(true);
+      const firstOpt = menu.querySelector<HTMLElement>('[role="menuitem"]');
+      firstOpt?.focus();
+    }
+  });
+
+  menu.addEventListener('keydown', (e) => {
+    const items = Array.from(menu.querySelectorAll<HTMLElement>('[role="menuitem"]'));
+    const currentIndex = items.indexOf(document.activeElement as HTMLElement);
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      const nextIndex = (currentIndex + 1) % items.length;
+      items[nextIndex]?.focus();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      const prevIndex = (currentIndex - 1 + items.length) % items.length;
+      items[prevIndex]?.focus();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      setOpen(false);
+      toggle.focus();
+    }
+  });
+
   document.addEventListener('click', (e) => {
     if (!root.contains(e.target as Node)) setOpen(false);
   });
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') setOpen(false);
+    if (e.key === 'Escape' && !menu.hidden) {
+      setOpen(false);
+      toggle.focus();
+    }
   });
 
   // Record the choice before navigation follows the anchor.

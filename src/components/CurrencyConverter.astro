@@ -61,7 +61,7 @@ const ranges: { id: string; label: string }[] = [
 ---
 
 <section class="cc card" data-cc aria-label="Currency converter tool">
-  <script type="application/json" data-cc-config set:html={JSON.stringify(clientConfig)} />
+  <script is:inline type="application/json" data-cc-config set:html={JSON.stringify(clientConfig)} />
 
   <!-- Amount + from  →  Result + to -->
   <div class="cc-io">

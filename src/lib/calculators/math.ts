@@ -252,7 +252,6 @@ export const mathCalculators: Calculator[] = [
     description: 'Calculate exponents, powers, roots, and scientific notation instantly.',
     intro: 'Enter a base number and exponent to calculate powers, squares, cubes, and roots.',
     keywords: ['exponent calculator', 'power calculator', 'exponentiation'],
-    visual: 'form',
     inputs: [
       { name: 'base', label: 'Base (x)', type: 'number', default: 2 },
       { name: 'exponent', label: 'Exponent (y)', type: 'number', default: 8 },
@@ -284,7 +283,6 @@ export const mathCalculators: Calculator[] = [
     description: 'Calculate logarithms for any base, including natural log (ln) and base 10 (log10).',
     intro: 'Enter the value x and the logarithm base to get log_b(x), ln(x), and log10(x).',
     keywords: ['log calculator', 'logarithm calculator', 'ln calculator'],
-    visual: 'form',
     inputs: [
       { name: 'x', label: 'Value (x)', type: 'number', default: 100 },
       { name: 'base', label: 'Base (b)', type: 'number', default: 10 },
@@ -317,7 +315,6 @@ export const mathCalculators: Calculator[] = [
     description: 'Add, subtract, multiply matrices and calculate scalar products.',
     intro: 'Enter matrix elements and choose an operation to compute matrix arithmetic.',
     keywords: ['matrix calculator', 'matrix multiplication', 'matrix addition'],
-    visual: 'form',
     inputs: [
       { name: 'op', label: 'Operation', type: 'select', default: 'add', span: 2, options: [{ label: 'Add (A + B)', value: 'add' }, { label: 'Subtract (A - B)', value: 'sub' }, { label: 'Multiply (A × B)', value: 'mul' }, { label: 'Scalar (k × A)', value: 'scalar' }, { label: 'Transpose (Aᵀ)', value: 'transpose' }] },
       { name: 'a11', label: 'A (1,1)', type: 'number', default: 1 },
@@ -356,7 +353,6 @@ export const mathCalculators: Calculator[] = [
     description: 'Calculate the determinant and trace of 2x2 and 3x3 matrices.',
     intro: 'Enter matrix elements to calculate the determinant det(A) and matrix trace.',
     keywords: ['determinant calculator', 'matrix determinant', 'det calculator'],
-    visual: 'form',
     inputs: [
       { name: 'a11', label: 'A (1,1)', type: 'number', default: 4 },
       { name: 'a12', label: 'A (1,2)', type: 'number', default: 3 },
@@ -388,7 +384,6 @@ export const mathCalculators: Calculator[] = [
     description: 'Solve quadratic equations ax² + bx + c = 0, find discriminant and real or complex roots.',
     intro: 'Enter coefficients a, b, and c to solve for roots x1 and x2 and parabola vertex.',
     keywords: ['quadratic equation calculator', 'quadratic formula calculator', 'solve quadratic'],
-    visual: 'form',
     inputs: [
       { name: 'a', label: 'Coefficient a', type: 'number', default: 1 },
       { name: 'b', label: 'Coefficient b', type: 'number', default: -5 },
@@ -431,7 +426,6 @@ export const mathCalculators: Calculator[] = [
     description: 'Calculate sample and population standard deviation, variance, and mean for any dataset.',
     intro: 'Enter numbers separated by commas or spaces to compute standard deviation and variance.',
     keywords: ['standard deviation calculator', 'variance calculator', 'sample standard deviation'],
-    visual: 'form',
     inputs: [
       { name: 'values', label: 'Dataset Numbers', type: 'textarea', span: 2, default: '10, 12, 23, 23, 16, 23, 21, 16' },
     ],
@@ -464,7 +458,6 @@ export const mathCalculators: Calculator[] = [
     description: 'Test if a number is prime and find its prime factorization.',
     intro: 'Enter any positive integer to check primality and find prime factors.',
     keywords: ['prime number calculator', 'prime checker', 'prime factorizer'],
-    visual: 'form',
     inputs: [
       { name: 'n', label: 'Number (N)', type: 'number', default: 29 },
     ],
@@ -492,7 +485,6 @@ export const mathCalculators: Calculator[] = [
     description: 'Find the Greatest Common Factor (GCF / GCD / HCF) of two or more numbers.',
     intro: 'Enter two or more integers separated by commas to find their Greatest Common Factor.',
     keywords: ['gcf calculator', 'greatest common factor', 'gcd calculator', 'hcf calculator'],
-    visual: 'form',
     inputs: [
       { name: 'values', label: 'Numbers', type: 'text', default: '24, 36, 48', span: 2 },
     ],
@@ -521,7 +513,6 @@ export const mathCalculators: Calculator[] = [
     description: 'Find the Least Common Multiple (LCM) of two or more numbers.',
     intro: 'Enter integers to calculate the Least Common Multiple (LCM).',
     keywords: ['lcm calculator', 'least common multiple', 'lcm finder'],
-    visual: 'form',
     inputs: [
       { name: 'values', label: 'Numbers', type: 'text', default: '12, 15, 20', span: 2 },
     ],
@@ -551,7 +542,6 @@ export const mathCalculators: Calculator[] = [
     description: 'Calculate permutations nPr and combinations nCr for any set size n and selection r.',
     intro: 'Enter n (total items) and r (chosen items) to compute permutations and combinations.',
     keywords: ['permutation calculator', 'combination calculator', 'npr ncr calculator'],
-    visual: 'form',
     inputs: [
       { name: 'n', label: 'Total items (n)', type: 'number', default: 10 },
       { name: 'r', label: 'Chosen items (r)', type: 'number', default: 3 },

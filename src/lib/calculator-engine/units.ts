@@ -28,9 +28,11 @@ export function isFiniteNumber(n: unknown): n is number {
  * (default 0) for empty/non-numeric input so compute()/validate() stay in
  * control of what counts as invalid.
  */
-export function num(raw: string | undefined, fallback = 0): number {
-  if (raw === undefined) return fallback;
-  const cleaned = raw.replace(/,/g, '').trim();
+export function num(raw: unknown, fallback = 0): number {
+  if (raw === undefined || raw === null) return fallback;
+  if (typeof raw === 'number') return Number.isFinite(raw) ? raw : fallback;
+  const str = typeof raw === 'string' ? raw : String(raw);
+  const cleaned = str.replace(/,/g, '').trim();
   if (cleaned === '') return fallback;
   const n = Number(cleaned);
   return Number.isFinite(n) ? n : fallback;

@@ -7,7 +7,13 @@
 import type { DisplayResult, DisplayChart } from './resolver';
 import type { ChartSpec } from '../types';
 import { renderCharts } from '../charts';
-import { esc } from '../render';
+const esc = (s: string) =>
+  String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 
 const toneClass: Record<string, string> = {
   success: 'is-success',

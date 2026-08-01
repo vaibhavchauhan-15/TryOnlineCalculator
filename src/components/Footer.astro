@@ -33,7 +33,7 @@ const cols = categories.slice(0, 4).map((c) => ({
 
     {cols.map((col) => (
       <nav class="footer-col" aria-label={categoryName(locale, col.cat.id)}>
-        <span class="footer-heading">{categoryName(locale, col.cat.id)}</span>
+        <h2 class="footer-heading">{categoryName(locale, col.cat.id)}</h2>
         <ul>
           {col.items.map((calc) => (
             <li><a href={link(`/${calc.category}/${calc.slug}`)}>{calc.title.replace(' Calculator', '').replace('-Rechner', '').replace('rechner', '')}</a></li>
@@ -44,7 +44,7 @@ const cols = categories.slice(0, 4).map((c) => ({
     ))}
 
     <nav class="footer-col" aria-label={footer.siteHeading ?? 'Site'}>
-      <span class="footer-heading">{footer.siteHeading ?? 'Site'}</span>
+      <h2 class="footer-heading">{footer.siteHeading ?? 'Site'}</h2>
       <ul>
         <li><a href={link('/unit-converter')}>{chrome.converters ?? 'Unit Converter'}</a></li>
         <li><a href={link('/about')}>{footer.about ?? 'About'}</a></li>

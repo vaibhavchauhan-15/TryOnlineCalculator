@@ -102,21 +102,33 @@ const jsonLd = localizedCalculatorPageSchemas(locale, {
   howto: fm.howto,
 });
 
-// Build SEO-optimized title: if title already includes "Calculator"/"Rechner",
-// append a value-proposition suffix for CTR; otherwise use as-is.
+// Build SEO-optimized title tailored per locale to stay strictly within 60-65 chars with brand suffix
 const seoTitle = (() => {
   const t = fm.title;
-  // Already has "Calculator"/"Rechner" — add a free/online suffix for search
-  if (t.toLowerCase().includes('calculator') || t.toLowerCase().includes('rechner')) {
-    return `${t} — Free Online ${categoryLabel} Tool`;
+  const brand = ' | Try Online Calculator'; // 25 chars
+  if (locale === 'de') {
+    const base = t.toLowerCase().includes('rechner') || t.toLowerCase().includes('umrechner') ? t : `${t}-Rechner`;
+    if ((base + ' — Kostenlos' + brand).length <= 65) return `${base} — Kostenlos`;
+    return base;
   }
-  return `${t} Calculator — Free Online Tool`;
+  const base = t.toLowerCase().includes('calculator') || t.toLowerCase().includes('converter') ? t : `${t} Calculator`;
+  if ((base + ' — Free Online Tool' + brand).length <= 65) return `${base} — Free Online Tool`;
+  if ((base + ' — Free Tool' + brand).length <= 65) return `${base} — Free Tool`;
+  return base;
 })();
 
-// Enhanced meta description: include a call-to-action and mention key features
-const seoDescription = fm.description.length > 120
-  ? fm.description
-  : `${fm.description} Free, instant results with formula explanation. No sign-up required.`;
+// Enhanced meta description: localized call-to-action, capped between 110 and 155 chars
+const seoDescription = (() => {
+  const desc = fm.description;
+  if (desc.length >= 110 && desc.length <= 155) return desc;
+  if (desc.length > 155) return desc.slice(0, 152).replace(/\s+\S*$/, '...');
+  if (locale === 'de') {
+    const s = `${desc} Kostenlos, schnell & präzise.`;
+    return s.length <= 165 ? s : desc;
+  }
+  const s = `${desc} Free, instant results with formula.`;
+  return s.length <= 165 ? s : desc;
+})();
 ---
 
 <Layout

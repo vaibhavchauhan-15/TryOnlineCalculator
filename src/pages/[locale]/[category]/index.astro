@@ -62,6 +62,7 @@ const calcs = allCategorySlugs.map((slug) => {
       keywords: [],
       inputs: [],
       compute: () => ({ results: [] }),
+      faq: [],
     }
   );
 });
@@ -112,17 +113,21 @@ const catKeywords = isDefault ? Array.from(
     ...entries.flatMap((e) => (e.data.keywords as string[]) ?? []),
   ]),
 ).slice(0, 20) : []);
-// Build SEO-optimized meta description with top calculator names
-const topCalcNames = calcs.slice(0, 5).map((c) => locTitle(c.slug, c.title).replace(' Calculator', '').replace(' Rechner', '')).join(', ');
-const seoDescription = isDefault
-  ? `Free online ${cat.name.toLowerCase()} calculators: ${topCalcNames} and more. ${calcs.length} accurate tools with instant results — no sign-up needed.`
-  : (localizedCatDesc || home.metaDescription || 'Free, fast, privacy-friendly online calculators.');
+// Build SEO-optimized meta description with top calculator names, capped under 155 chars
+const topCalcNames = calcs.slice(0, 3).map((c) => c.title).join(', ');
+const seoDescription = (() => {
+  if (isDefault) {
+    const raw = `Free online ${cat.name.toLowerCase()} calculators: ${topCalcNames} and more. ${calcs.length} accurate tools.`;
+    return raw.length <= 155 ? raw : `Free online ${cat.name.toLowerCase()} calculators with instant results. ${calcs.length}+ free tools, no sign-up needed.`;
+  }
+  return localizedCatDesc.length <= 155 ? localizedCatDesc : (home.metaDescription ?? 'Kostenlose, schnelle Online-Rechner.');
+})();
 ---
 
 <Layout
   title={isDefault
-    ? `${cat.name} Calculators — Free Online ${cat.name} Calculator Tools (${calcs.length}+)`
-    : `${catLabel} — ${home.metaTitle ?? 'Free Online Calculators'}`}
+    ? `${cat.name} Calculators — Free Online Tools`
+    : `${catLabel} — Kostenlose Online-Rechner`}
   description={seoDescription}
   path={to(cat.path, locale)}
   locale={locale}
