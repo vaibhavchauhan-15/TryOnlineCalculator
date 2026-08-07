@@ -481,7 +481,7 @@ export const cagrEngine: CalculatorEngine<CagrInput, EngineResult> = {
   compute: (input) => {
     const t = Math.min(input.years, 100);
     const ratio = input.beginningValue > 0 ? input.endingValue / input.beginningValue : 0;
-    const cagr = ratio > 0 && t > 0 ? (Math.pow(ratio, 1 / t) - 1) * 100 : 0;
+    const cagr = ratio >= 0 && t > 0 ? (Math.pow(ratio, 1 / t) - 1) * 100 : 0;
     const totalGrowth = input.endingValue - input.beginningValue;
     const totalReturn = input.beginningValue > 0 ? (ratio - 1) * 100 : 0;
 

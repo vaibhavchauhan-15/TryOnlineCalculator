@@ -1002,7 +1002,8 @@ export const hexRgbConverterEngine: CalculatorEngine<HexRgbInput, EngineResult> 
       const hexDec = parseInt(hex, 16);
       return {
         items: [
-          { key: 'hexDec', value: hexDec, format: 'plain', primary: true },
+          { key: 'hexValue', text: `#${hex.toUpperCase()}`, primary: true },
+          { key: 'rgbValue', text: `rgb(${r}, ${g}, ${b})` },
           { key: 'red', value: r, format: 'integer' },
           { key: 'green', value: g, format: 'integer' },
           { key: 'blue', value: b, format: 'integer' },
@@ -1013,9 +1014,11 @@ export const hexRgbConverterEngine: CalculatorEngine<HexRgbInput, EngineResult> 
       const g = Math.max(0, Math.min(255, Math.round(input.g)));
       const b = Math.max(0, Math.min(255, Math.round(input.b)));
       const hexDec = (r << 16) | (g << 8) | b;
+      const hex = hexDec.toString(16).toUpperCase().padStart(6, '0');
       return {
         items: [
-          { key: 'hexDec', value: hexDec, format: 'plain', primary: true },
+          { key: 'hexValue', text: `#${hex}`, primary: true },
+          { key: 'rgbValue', text: `rgb(${r}, ${g}, ${b})` },
           { key: 'red', value: r, format: 'integer' },
           { key: 'green', value: g, format: 'integer' },
           { key: 'blue', value: b, format: 'integer' },
@@ -1074,17 +1077,19 @@ export const binaryDecimalConverterEngine: CalculatorEngine<BinaryDecimalInput, 
       return {
         items: [
           { key: 'decimalValue', value: dec, format: 'integer', primary: true },
-          { key: 'octalDec', value: dec, format: 'plain' },
-          { key: 'hexDec', value: dec, format: 'plain' },
+          { key: 'binaryValue', text: input.binary.trim() },
+          { key: 'octalValue', text: dec.toString(8) },
+          { key: 'hexValue', text: dec.toString(16).toUpperCase() },
         ],
       };
     } else {
       const dec = Math.max(0, Math.round(input.decimal));
       return {
         items: [
-          { key: 'decimalValue', value: dec, format: 'integer', primary: true },
-          { key: 'octalDec', value: dec, format: 'plain' },
-          { key: 'hexDec', value: dec, format: 'plain' },
+          { key: 'binaryValue', text: dec.toString(2), primary: true },
+          { key: 'decimalValue', value: dec, format: 'integer' },
+          { key: 'octalValue', text: dec.toString(8) },
+          { key: 'hexValue', text: dec.toString(16).toUpperCase() },
         ],
       };
     }

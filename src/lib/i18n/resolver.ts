@@ -154,6 +154,8 @@ export class Resolver {
     }
     // Pure-enum item (e.g. a category): the value IS the localized enum text.
     if (item.enumKey) return this.text(item.enumKey);
+    // Raw computed string (e.g. a hex code or RGB triple) — pass through verbatim.
+    if (item.text !== undefined) return item.text;
     return '';
   }
 

@@ -862,8 +862,11 @@ export const paceEngine: CalculatorEngine<PaceInput, PaceResult> = {
     const dist = input.distance;
 
     const secPerUnit = totalSec / dist;
-    const paceMin = Math.floor(secPerUnit / 60);
-    const paceSec = Math.round(secPerUnit % 60);
+    // Round the total seconds first so the seconds field can never round up to
+    // 60 (which would produce an invalid MM:60 pace).
+    const paceTotalSec = Math.round(secPerUnit);
+    const paceMin = Math.floor(paceTotalSec / 60);
+    const paceSec = paceTotalSec % 60;
     const paceFormatted = paceMin + (paceSec / 100);
 
     const km = input.unitSystem === 'imperial' ? dist * 1.60934 : dist;
@@ -948,8 +951,11 @@ export const runningPaceEngine: CalculatorEngine<RunningPaceInput, RunningPaceRe
     const distKm = RACE_DISTANCES_KM[input.targetDistance] ?? 5;
 
     const secPerKm = totalSec / distKm;
-    const paceMin = Math.floor(secPerKm / 60);
-    const paceSec = Math.round(secPerKm % 60);
+    // Round the total seconds first so the seconds field can never round up to
+    // 60 (which would produce an invalid MM:60 pace).
+    const paceTotalSec = Math.round(secPerKm);
+    const paceMin = Math.floor(paceTotalSec / 60);
+    const paceSec = paceTotalSec % 60;
     const paceKmFormatted = paceMin + (paceSec / 100);
 
     // Riegel race time predictor formula: T2 = T1 * (D2 / D1)^1.06

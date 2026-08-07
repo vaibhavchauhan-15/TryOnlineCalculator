@@ -1206,8 +1206,12 @@ export const swpEngine: CalculatorEngine<SwpInput, SwpResult> = {
 
     for (let m = 1; m <= totalMonths; m++) {
       const interest = bal * r;
-      bal = Math.max(bal + interest - W, 0);
-      totalWithdrawn += W;
+      const available = bal + interest;
+      // In the final months the corpus may not cover the full withdrawal;
+      // only count what is actually paid out so totalWithdrawn is not overstated.
+      const withdrawal = Math.min(W, available);
+      bal = available - withdrawal;
+      totalWithdrawn += withdrawal;
       if (m % 12 === 0 || m === totalMonths) {
         yearLabels.push(String(Math.round(m / 12)));
         balancePts.push(bal);
@@ -2109,7 +2113,10 @@ export const downPaymentEngine: CalculatorEngine<DownPaymentInput, DownPaymentRe
     }
 
     const totalContributed = input.currentSavings + pmt * months;
-    const interestEarned = Math.max(target - totalContributed, 0);
+    // Interest earned is the final balance minus what was contributed, not the
+    // shortfall against the target (which also understates interest whenever the
+    // time limit expires before reaching the goal).
+    const interestEarned = Math.max(bal - totalContributed, 0);
 
     return {
       items: [
