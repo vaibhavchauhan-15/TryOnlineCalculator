@@ -1,0 +1,13 @@
+﻿
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mC:/Users/vaibh/PROGRAMMING/PROJECTS/tryonlinecalculator.com[39m
+
+ [32mΓ£ô[39m src/content/coverage.test.ts[2m > [22mevery registered engine has an English MDX document[32m 4[2mms[22m[39m
+ [32mΓ£ô[39m src/content/coverage.test.ts[2m > [22mevery English MDX document has a registered engine[32m 0[2mms[22m[39m
+ [32mΓ£ô[39m src/content/coverage.test.ts[2m > [22mevery MDX document passes the frontmatter schema[32m 217[2mms[22m[39m
+ [32mΓ£ô[39m src/content/coverage.test.ts[2m > [22mevery engine key is covered by its MDX label pack or the UI units pack[32m 124[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m4 passed[39m[22m[90m (4)[39m
+[2m   Start at [22m 00:55:15
+[2m   Duration [22m 3.08s[2m (transform 412ms, setup 0ms, collect 855ms, tests 348ms, environment 1.07s, prepare 297ms)[22m
+

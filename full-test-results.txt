@@ -1,0 +1,39 @@
+﻿
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mC:/Users/vaibh/PROGRAMMING/PROJECTS/tryonlinecalculator.com[39m
+
+ [32mΓ£ô[39m src/lib/rates.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/charts.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/history.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 57[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/calculator-engine/engines/fields.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/calculator-engine/engines/engines.test.ts [2m([22m[2m15 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/dropdown.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 55[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/calculator-engine/accuracy-benchmark.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/calculator-engine/comprehensive-verification.test.ts [2m([22m[2m21 tests[22m[2m)[22m[33m 660[2mms[22m[39m
+   [33m[2mΓ£ô[22m[39m Phase 14 & 18: Authoritative Comprehensive Verification Test Suite[2m > [22mPhase 6: Property-Based Testing with fast-check[2m > [22mall registered engines handle random string inputs without throwing exceptions [33m 306[2mms[22m[39m
+ [32mΓ£ô[39m src/content/coverage.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 675[2mms[22m[39m
+   [33m[2mΓ£ô[22m[39m every MDX document passes the frontmatter schema [33m 400[2mms[22m[39m
+ [32mΓ£ô[39m scripts/build-search.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 1895[2mms[22m[39m
+   [33m[2mΓ£ô[22m[39m every enabled locale index covers all calculators [33m 914[2mms[22m[39m
+   [33m[2mΓ£ô[22m[39m every locale index path is locale-prefixed [33m 522[2mms[22m[39m
+ [32mΓ£ô[39m scripts/audit-seo.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+ [32mΓ£ô[39m src/components/calculator.component.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 66[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/currency-converter.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 95[2mms[22m[39m
+ [32mΓ£ô[39m scripts/rollout-gate.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/currency-picker.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 42[2mms[22m[39m
+ [32mΓ£ô[39m scripts/translate.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32mΓ£ô[39m scripts/validate.test.ts [2m([22m[2m15 tests[22m[2m)[22m[32m 35[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/format.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 39[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/preferences/store.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32mΓ£ô[39m src/content/schema.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 25[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/calculators/bugfixes.test.ts [2m([22m[2m36 tests[22m[2m)[22m[32m 24[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/calculator-engine/contract.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/i18n/i18n.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/calculator-engine/registry.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 44[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/i18n/localization.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 48[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/i18n/lang-ui.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/i18n/seo-head.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/i18n/seo-schema.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/storage.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/haptics.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/analytics.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/i18n/localized-client.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 202[2mms[22m[39m

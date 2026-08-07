@@ -47,7 +47,10 @@ const DESC_MAX = 165;
 // --- Loading ----------------------------------------------------------------
 
 export function parseDoc(raw: string): Doc | null {
-  const m = raw.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
+  // Normalize CRLF (Windows) line endings so the frontmatter regex matches —
+  // files written on Windows may carry \r\n and would otherwise parse as null.
+  const normalized = raw.replace(/\r\n/g, '\n');
+  const m = normalized.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
   if (!m) return null;
   return { fm: (parse(m[1]) as Record<string, any>) ?? {}, body: (m[2] ?? '').trim() };
 }

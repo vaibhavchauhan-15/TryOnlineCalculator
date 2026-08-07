@@ -42,9 +42,7 @@ describe('Phase 3: Property-Based Testing (fast-check 10,000+ Inputs)', () => {
           fc.double({ min: -1e6, max: 1e6, noNaN: true, noDefaultInfinity: true }),
           (val) => {
             const res = evaluate(val.toString());
-            if (res.ok) {
-              expect(Number.isFinite(res.value)).toBe(true);
-            }
+            expect(Number.isFinite(res)).toBe(true);
           }
         ),
         { numRuns: 1000 }
@@ -94,7 +92,19 @@ describe('Phase 3: Property-Based Testing (fast-check 10,000+ Inputs)', () => {
               fc.constant('')
             );
           } else {
-            arbitraryInput[field.name] = fc.anything();
+            // Text/other fields receive raw DOM form values, which are always
+            // strings. Fuzz with garbage strings (empty, whitespace, long) —
+            // arbitrary objects/arrays are impossible form submissions.
+            arbitraryInput[field.name] = fc.oneof(
+              fc.string(),
+              fc.constant(''),
+              fc.constant('   '),
+              fc.constant('0'),
+              fc.constant('-1'),
+              fc.constant('invalid_text'),
+              fc.constant('NaN'),
+              fc.constant('Infinity')
+            );
           }
         });
 

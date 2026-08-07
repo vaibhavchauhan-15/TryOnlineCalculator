@@ -135,20 +135,6 @@ export function subscribeKey<K extends keyof Preferences>(
 }
 
 function persist(): void {
-  // Before persisting, sync the in-memory theme with the legacy localStorage
-  // key in case the theme was changed directly (e.g. by the pre-paint script
-  // or the Header toggle writing to localStorage before this store loaded).
-  // This prevents setPreferences() calls (like language switch) from
-  // overwriting the user's actual theme choice with a stale default.
-  try {
-    const live = window.localStorage.getItem(LEGACY_THEME_KEY);
-    if ((live === 'light' || live === 'dark') && live !== current.theme) {
-      current = { ...current, theme: live };
-    }
-  } catch {
-    /* ignore */
-  }
-
   saveState(PREFS_KEY, current, 0);
   // Mirror to legacy keys so the pre-paint theme script and currency.ts keep
   // reading a value they understand during the migration window.

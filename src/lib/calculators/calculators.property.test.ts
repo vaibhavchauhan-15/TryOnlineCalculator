@@ -29,7 +29,19 @@ describe('Property-Based Calculator Fuzzing (allCalculators)', () => {
               fc.constant('')
             );
           } else {
-            arbitraryInput[inputDef.name] = fc.anything();
+            // Text/other inputs receive raw DOM form values, which are always
+            // strings. Fuzz with garbage strings — arbitrary objects/arrays are
+            // impossible form submissions and crash calculators on shape mismatch.
+            arbitraryInput[inputDef.name] = fc.oneof(
+              fc.string(),
+              fc.constant(''),
+              fc.constant('   '),
+              fc.constant('0'),
+              fc.constant('-1'),
+              fc.constant('invalid_text'),
+              fc.constant('NaN'),
+              fc.constant('Infinity')
+            );
           }
         });
 
