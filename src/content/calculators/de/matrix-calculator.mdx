@@ -1,0 +1,39 @@
+---
+slug: "matrix-calculator"
+category: "math"
+title: "Matrizenrechner — Matrizen addieren & multiplizieren"
+description: "Kostenloser Matrizenrechner für Addition, Subtraktion, Matrizenmultiplikation, Skalarmultiplikation und Transposition."
+keywords: ["matrizenrechner","matrizen multiplizieren","matrizen addieren","matrix transponieren"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "gemini-3.6-flash"
+labels: {"field.op":"Operation","op.add":"Addieren (A + B)","op.sub":"Subtrahieren (A - B)","op.mul":"Multiplizieren (A × B)","op.scalar":"Skalar (k × A)","op.transpose":"Transponieren (Aᵀ)","field.a11":"A (1,1)","field.a12":"A (1,2)","field.a21":"A (2,1)","field.a22":"A (2,2)","field.b11":"B (1,1)","field.b12":"B (1,2)","field.b21":"B (2,1)","field.b22":"B (2,2)","field.k":"Skalar k","r11":"Ergebnis (1,1)","r12":"Ergebnis (1,2)","r21":"Ergebnis (2,1)","r22":"Ergebnis (2,2)"}
+intro: "Führen Sie 2x2 Matrizenoperationen durch: Addition, Subtraktion, Multiplikation, Skalarmultiplikation und Transposition."
+formulaItems:
+  - name: "Matrizenaddition"
+    expr: "(A + B)_[i,j] = A_[i,j] + B_[i,j]"
+    desc: "Elementweise Addition der entsprechenden Einträge."
+  - name: "Matrizenmultiplikation"
+    expr: "(A × B)_[i,j] = ∑ A_[i,k] × B_[k,j]"
+    desc: "Skalarprodukt von Zeile i aus A und Spalte j aus B."
+howto:
+  - "Wählen Sie die Matrizenoperation (Addieren, Subtrahieren, Multiplizieren, Skalar, Transponieren)."
+  - "Tragen Sie die Elemente für Matrix A und Matrix B ein."
+  - "Lesen Sie die Ergebnismatrix ab."
+examples:
+  - title: "Beispiel für Matrizenaddition"
+    body: "Für A = [[1, 2], [3, 4]] und B = [[5, 6], [7, 8]] ist A + B = [[6, 8], [10, 12]]."
+faq:
+  - q: "Wie funktioniert die Matrizenmultiplikation?"
+    a: "Jeder Eintrag (i,j) der Ergebnis-Matrix entsteht durch das Skalarprodukt der i-ten Zeile der ersten Matrix mit der j-ten Spalte der zweiten Matrix."
+  - q: "Was ist eine transponierte Matrix?"
+    a: "Die Transponierte einer Matrix entsteht durch das Vertauschen ihrer Zeilen und Spalten."
+related: ["determinant-calculator","scientific-calculator","basic-calculator"]
+---
+
+## Matrizenrechnung verstehen
+
+Eine **Matrix** ist eine rechteckige Anordnung von Zahlen in Zeilen und Spalten, die in der linearen Algebra, Physik und Informatik eingesetzt wird.

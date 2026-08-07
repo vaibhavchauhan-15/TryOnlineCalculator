@@ -1,0 +1,38 @@
+---
+slug: "binary-decimal-converter"
+category: "math"
+title: "Binary ↔ Decimal Converter"
+description: "Convert between binary and decimal number systems. Also shows octal and hexadecimal equivalents."
+keywords: ["binary to decimal", "decimal to binary", "binary converter", "binary calculator", "base conversion calculator", "binary number system", "convert binary to decimal"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+searchIntent: "Convert a number between binary (base-2) and decimal (base-10)."
+readingLevel: "general"
+market: "global"
+audience: "Students, programmers, and anyone learning about number systems and computer science"
+labels: {"field.mode": "Convert", "field.binary": "Binary", "field.decimal": "Decimal", "decimalValue": "Decimal", "octalDec": "Octal", "hexDec": "Hexadecimal", "binaryValue": "Binary", "octalValue": "Octal", "hexValue": "Hexadecimal"}
+enums: {"mode.binToDec": "Binary → Decimal", "mode.decToBin": "Decimal → Binary"}
+intro: "Enter a binary number or a decimal number to convert between the two systems. Octal and hex equivalents are shown as well."
+formulaIntro: "Binary uses base 2; decimal uses base 10."
+formulaItems: [{"name": "Binary to Decimal", "expr": "Sum each bit × 2^position (right to left, starting at 0)"}, {"name": "Decimal to Binary", "expr": "Repeatedly divide by 2, read remainders bottom-up"}]
+howto: ["Choose Binary → Decimal or Decimal → Binary.", "Enter the number to convert.", "Read the result plus octal and hex equivalents below."]
+examples: [{"title": "11010110 to decimal", "body": "Binary 11010110 = 128 + 64 + 16 + 4 + 2 = 214 in decimal, D6 in hex, 326 in octal."}, {"title": "255 to binary", "body": "Decimal 255 converts to 11111111 in binary (8 bits all set), FF in hex, 377 in octal."}]
+faq: [{"q": "How do I convert binary to decimal?", "a": "Multiply each binary digit by 2 raised to the power of its position (starting from 0 on the right), then sum the results. For example, 1011 = 1×8 + 0×4 + 1×2 + 1×1 = 11."}, {"q": "How do I convert decimal to binary?", "a": "Repeatedly divide the number by 2 and record the remainders. Read the remainders from bottom to top for the binary result."}, {"q": "What is the binary number system?", "a": "Binary (base-2) uses only the digits 0 and 1. It is the fundamental language of computers, where each digit (bit) represents an on/off state."}, {"q": "What is the largest decimal number with 8 bits?", "a": "With 8 bits, the maximum unsigned value is 11111111 in binary, which equals 255 in decimal."}, {"q": "What are octal and hexadecimal?", "a": "Octal is base-8 (digits 0–7) and hexadecimal is base-16 (digits 0–9, A–F). They are shortcuts for grouping binary digits — 3 bits per octal digit and 4 bits per hex digit."}]
+related: ["hex-rgb-converter", "basic-calculator", "percentage-calculator", "exponent-calculator"]
+---
+
+A binary to decimal converter translates numbers between the base-2 system used
+by computers and the base-10 system humans use every day. Enter a binary string
+like 11010110 and get 214, or enter a decimal number and see its binary
+representation.
+
+The converter also shows the octal (base-8) and hexadecimal (base-16)
+equivalents, making it a complete number base conversion tool. This is
+invaluable for computer science students, programmers debugging bit patterns,
+and anyone studying digital logic.
+
+Binary is the foundation of all digital computing — every file, image and
+instruction ultimately reduces to sequences of 0s and 1s. Understanding binary
+conversion is a core skill in computer science and electrical engineering.

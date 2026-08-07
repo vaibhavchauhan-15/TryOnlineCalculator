@@ -1,0 +1,39 @@
+---
+slug: "log-calculator"
+category: "math"
+title: "Logarithmusrechner — Logarithmus & Natürlicher Log (ln)"
+description: "Berechnen Sie Logarithmen zu beliebigen Basen, den natürlichen Logarithmus ln(x) und den Dekadischen Logarithmus log10(x)."
+keywords: ["logarithmusrechner","logarithmus berechnen","ln berechnen","log10 berechnen"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "gemini-3.6-flash"
+labels: {"field.x":"Wert (x)","field.base":"Basis (b)","result":"Logarithmus log_b(x)","ln":"Natürlicher Log ln(x)","log10":"Dekadischer Log log10(x)","log2":"Binärer Log log2(x)"}
+intro: "Berechnen Sie den Logarithmus log_b(x) zu jeder Basis sowie den natürlichen Logarithmus (ln) und Zehnerlogarithmus."
+formulaItems:
+  - name: "Logarithmus-Definition"
+    expr: "log_b(x) = y  ⇔  b^y = x"
+    desc: "Der Exponent, mit dem b potenziert werden muss, um x zu erhalten."
+  - name: "Basiswechsel-Formel"
+    expr: "log_b(x) = ln(x) / ln(b)"
+    desc: "Ermöglicht die Berechnung beliebiger Basen über den natürlichen Logarithmus."
+howto:
+  - "Geben Sie eine positive Zahl x ein."
+  - "Geben Sie die gewünschte Basis b ein (Standard ist 10)."
+  - "Lesen Sie das Ergebnis log_b(x), ln(x) und log10(x) ab."
+examples:
+  - title: "Logarithmus Berechnung"
+    body: "log_10(100) = 2, da 10^2 = 100. log_2(8) = 3, da 2^3 = 8."
+faq:
+  - q: "Was ist ein Logarithmus?"
+    a: "Der Logarithmus ist die Umkehrfunktion der Potenzierung. Er gibt an, mit welcher Hochzahl eine Basis potenziert werden muss, um den gegebenen Wert zu erreichen."
+  - q: "Was ist der Unterschied zwischen log und ln?"
+    a: "log bezeichnet üblicherweise den Dekadischen Logarithmus zur Basis 10, während ln den natürlichen Logarithmus zur eulerschen Zahl e (≈ 2,71828) darstellt."
+related: ["exponent-calculator","scientific-calculator","basic-calculator"]
+---
+
+## Logarithmen verstehen
+
+Ein **Logarithmus** beantwortet die Frage: *Mit welcher Hochzahl muss man die Basis $b$ potenzieren, um den Wert $x$ zu erhalten?*

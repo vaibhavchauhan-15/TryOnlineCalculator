@@ -49,7 +49,10 @@ function ymdDiff(from: Date, to: Date) {
   if (days < 0) {
     months--;
     const prevMonth = new Date(b.getFullYear(), b.getMonth(), 0).getDate();
-    days += prevMonth;
+    // Clamp the borrowed month to a's day-of-month so the day count never
+    // stays negative when a's day exceeds the length of the month preceding b
+    // (e.g. 2000-01-31 -> 2000-03-01 is 1 month 1 day, not 1 month -1 day).
+    days += Math.max(prevMonth, a.getDate());
   }
   if (months < 0) {
     years--;
@@ -328,6 +331,209 @@ export const workingDaysEngine: CalculatorEngine<WorkingDaysInput, WorkingDaysRe
   },
 };
 
+// ===================================================================== Time Duration
+// Calculate the duration between two times in HH:MM format.
+
+export interface TimeDurationInput {
+  start: string; // HH:MM
+  end: string;   // HH:MM
+}
+
+function parseTime(s: string): number | null {
+  const m = (s || '').match(/^(\d{1,2}):(\d{2})$/);
+  if (!m) return null;
+  const h = parseInt(m[1], 10);
+  const min = parseInt(m[2], 10);
+  if (h < 0 || h > 23 || min < 0 || min > 59) return null;
+  return h * 60 + min;
+}
+
+export const timeDurationEngine: CalculatorEngine<TimeDurationInput, EngineResult> = {
+  slug: 'time-duration-calculator',
+  category: 'date-time',
+
+  defaultInput: () => ({ start: '09:00', end: '17:30' }),
+
+  fields: (): EngineField[] => [
+    { name: 'start', labelKey: 'field.start', type: 'text', defaultValue: '09:00', placeholderKey: 'HH:MM' },
+    { name: 'end', labelKey: 'field.end', type: 'text', defaultValue: '17:30', placeholderKey: 'HH:MM' },
+  ],
+
+  parseInput: (values): TimeDurationInput => ({
+    start: values.start || '',
+    end: values.end || '',
+  }),
+
+  validate: (input) => {
+    if (parseTime(input.start) === null) return fail('time.invalidStart', { field: 'start' });
+    if (parseTime(input.end) === null) return fail('time.invalidEnd', { field: 'end' });
+    return ok();
+  },
+
+  compute: (input) => {
+    const s = parseTime(input.start)!;
+    const e = parseTime(input.end)!;
+    let diff = e - s;
+    if (diff < 0) diff += 1440; // overnight
+    const hrs = Math.floor(diff / 60);
+    const mins = diff % 60;
+    return {
+      items: [
+        { key: 'duration', value: diff, format: 'plain', primary: true, hintKey: 'duration.hm', hintParams: { hours: hrs, minutes: mins } },
+        { key: 'totalMinutes', value: diff, format: 'integer' },
+        { key: 'totalSeconds', value: diff * 60, format: 'integer' },
+      ],
+      breakdown: [
+        { key: 'decimalHours', value: diff / 60, format: 'decimal', precision: 2 },
+      ],
+    };
+  },
+};
+
+// ===================================================================== Time Zone Converter
+// Convert a time from one UTC-offset zone to another.
+
+export interface TimeZoneInput {
+  time: string;       // HH:MM
+  fromOffset: number; // minutes from UTC
+  toOffset: number;   // minutes from UTC
+}
+
+export const timeZoneConverterEngine: CalculatorEngine<TimeZoneInput, EngineResult> = {
+  slug: 'time-zone-converter',
+  category: 'date-time',
+
+  defaultInput: () => ({ time: '12:00', fromOffset: -300, toOffset: 330 }),
+
+  fields: (): EngineField[] => [
+    { name: 'time', labelKey: 'field.time', type: 'text', defaultValue: '12:00', placeholderKey: 'HH:MM', span: 2 },
+    {
+      name: 'from', labelKey: 'field.from', type: 'select', defaultValue: '-300',
+      options: [
+        { value: '-720', labelKey: 'tz.utcM12' }, { value: '-660', labelKey: 'tz.utcM11' },
+        { value: '-600', labelKey: 'tz.utcM10' }, { value: '-540', labelKey: 'tz.utcM9' },
+        { value: '-480', labelKey: 'tz.utcM8' }, { value: '-420', labelKey: 'tz.utcM7' },
+        { value: '-360', labelKey: 'tz.utcM6' }, { value: '-300', labelKey: 'tz.utcM5' },
+        { value: '-240', labelKey: 'tz.utcM4' }, { value: '-180', labelKey: 'tz.utcM3' },
+        { value: '-120', labelKey: 'tz.utcM2' }, { value: '-60', labelKey: 'tz.utcM1' },
+        { value: '0', labelKey: 'tz.utc0' }, { value: '60', labelKey: 'tz.utcP1' },
+        { value: '120', labelKey: 'tz.utcP2' }, { value: '180', labelKey: 'tz.utcP3' },
+        { value: '210', labelKey: 'tz.utcP330' }, { value: '240', labelKey: 'tz.utcP4' },
+        { value: '270', labelKey: 'tz.utcP430' }, { value: '300', labelKey: 'tz.utcP5' },
+        { value: '330', labelKey: 'tz.utcP530' }, { value: '345', labelKey: 'tz.utcP545' },
+        { value: '360', labelKey: 'tz.utcP6' }, { value: '390', labelKey: 'tz.utcP630' },
+        { value: '420', labelKey: 'tz.utcP7' }, { value: '480', labelKey: 'tz.utcP8' },
+        { value: '540', labelKey: 'tz.utcP9' }, { value: '570', labelKey: 'tz.utcP930' },
+        { value: '600', labelKey: 'tz.utcP10' }, { value: '660', labelKey: 'tz.utcP11' },
+        { value: '720', labelKey: 'tz.utcP12' }, { value: '780', labelKey: 'tz.utcP13' },
+      ],
+    },
+    {
+      name: 'to', labelKey: 'field.to', type: 'select', defaultValue: '330',
+      options: [
+        { value: '-720', labelKey: 'tz.utcM12' }, { value: '-660', labelKey: 'tz.utcM11' },
+        { value: '-600', labelKey: 'tz.utcM10' }, { value: '-540', labelKey: 'tz.utcM9' },
+        { value: '-480', labelKey: 'tz.utcM8' }, { value: '-420', labelKey: 'tz.utcM7' },
+        { value: '-360', labelKey: 'tz.utcM6' }, { value: '-300', labelKey: 'tz.utcM5' },
+        { value: '-240', labelKey: 'tz.utcM4' }, { value: '-180', labelKey: 'tz.utcM3' },
+        { value: '-120', labelKey: 'tz.utcM2' }, { value: '-60', labelKey: 'tz.utcM1' },
+        { value: '0', labelKey: 'tz.utc0' }, { value: '60', labelKey: 'tz.utcP1' },
+        { value: '120', labelKey: 'tz.utcP2' }, { value: '180', labelKey: 'tz.utcP3' },
+        { value: '210', labelKey: 'tz.utcP330' }, { value: '240', labelKey: 'tz.utcP4' },
+        { value: '270', labelKey: 'tz.utcP430' }, { value: '300', labelKey: 'tz.utcP5' },
+        { value: '330', labelKey: 'tz.utcP530' }, { value: '345', labelKey: 'tz.utcP545' },
+        { value: '360', labelKey: 'tz.utcP6' }, { value: '390', labelKey: 'tz.utcP630' },
+        { value: '420', labelKey: 'tz.utcP7' }, { value: '480', labelKey: 'tz.utcP8' },
+        { value: '540', labelKey: 'tz.utcP9' }, { value: '570', labelKey: 'tz.utcP930' },
+        { value: '600', labelKey: 'tz.utcP10' }, { value: '660', labelKey: 'tz.utcP11' },
+        { value: '720', labelKey: 'tz.utcP12' }, { value: '780', labelKey: 'tz.utcP13' },
+      ],
+    },
+  ],
+
+  parseInput: (values): TimeZoneInput => ({
+    time: values.time || '',
+    fromOffset: num(values.from, -300),
+    toOffset: num(values.to, 330),
+  }),
+
+  validate: (input) => {
+    if (parseTime(input.time) === null) return fail('time.invalidTime', { field: 'time' });
+    return ok();
+  },
+
+  compute: (input) => {
+    const t = parseTime(input.time)!;
+    const totalMins = t + (input.toOffset - input.fromOffset);
+    let dayShift = 0;
+    let adjusted = totalMins;
+    if (adjusted >= 1440) { adjusted -= 1440; dayShift = 1; }
+    if (adjusted < 0) { adjusted += 1440; dayShift = -1; }
+    const rh = Math.floor(adjusted / 60);
+    const rm = adjusted % 60;
+    const diffHrs = (input.toOffset - input.fromOffset) / 60;
+    return {
+      items: [
+        { key: 'convertedHour', value: rh, format: 'plain', primary: true },
+        { key: 'convertedMinute', value: rm, format: 'plain' },
+        { key: 'dayShift', value: dayShift, format: 'plain' },
+        { key: 'timeDifference', value: diffHrs, format: 'decimal', precision: 1 },
+      ],
+    };
+  },
+};
+
+// ===================================================================== Countdown
+// Count days/weeks/months until a target date (or since, if past).
+
+export interface CountdownInput {
+  target: string; // YYYY-MM-DD
+}
+
+export const countdownEngine: CalculatorEngine<CountdownInput, EngineResult> = {
+  slug: 'countdown-calculator',
+  category: 'date-time',
+
+  defaultInput: () => ({ target: '2027-01-01' }),
+
+  fields: (): EngineField[] => [
+    { name: 'target', labelKey: 'field.target', type: 'text', defaultValue: '2027-01-01', span: 2 },
+  ],
+
+  parseInput: (values): CountdownInput => ({
+    target: values.target || '',
+  }),
+
+  validate: (input) => {
+    if (!parseDate(input.target)) return fail('countdown.invalidDate', { field: 'target' });
+    return ok();
+  },
+
+  compute: (input) => {
+    const target = parseDate(input.target)!;
+    const now = today();
+    const totalDays = Math.round((target.getTime() - now.getTime()) / DAY);
+    const isPast = totalDays < 0;
+    const absDays = Math.abs(totalDays);
+    const { years, months, days } = ymdDiff(now, target);
+
+    return {
+      items: [
+        { key: isPast ? 'daysAgo' : 'daysRemaining', value: absDays, format: 'integer', primary: true, tone: isPast ? 'warning' : 'success' },
+        { key: 'breakdownYears', value: years, format: 'plain' },
+        { key: 'breakdownMonths', value: months, format: 'plain' },
+        { key: 'breakdownDays', value: days, format: 'plain' },
+        { key: 'totalWeeks', value: Math.floor(absDays / 7), format: 'integer' },
+        { key: 'remainderDays', value: absDays % 7, format: 'plain' },
+      ],
+      breakdown: [
+        { key: 'totalHours', value: absDays * 24, format: 'integer' },
+        { key: 'totalMonths', value: years * 12 + months, format: 'integer' },
+      ],
+    };
+  },
+};
+
 // ------------------------------------------------------------------------ Export
 
 export const dateTimeEngines: AnyEngine[] = [
@@ -335,4 +541,8 @@ export const dateTimeEngines: AnyEngine[] = [
   dateDifferenceEngine as AnyEngine,
   businessDaysEngine as AnyEngine,
   workingDaysEngine as AnyEngine,
+  timeDurationEngine as AnyEngine,
+  timeZoneConverterEngine as AnyEngine,
+  countdownEngine as AnyEngine,
 ];
+

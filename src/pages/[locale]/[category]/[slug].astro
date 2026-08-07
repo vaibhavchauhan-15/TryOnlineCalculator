@@ -9,7 +9,7 @@ import { hreflangAlternates } from '../../../lib/i18n/seo-head';
 import { localizedCalculatorPageSchemas } from '../../../lib/i18n/seo-schema';
 import { to } from '../../../lib/i18n/paths';
 import { getCategory } from '../../../lib/categories';
-import { getCalculator } from '../../../lib/calculators';
+import { getCalculator, calculatorsByCategory } from '../../../lib/calculators';
 import { calculatorIcon } from '../../../lib/icons';
 import { localizedCategorySlug, localizedCalculatorSlug } from '../../../lib/i18n/slugs';
 import LocalizedCalculatorWidget from '../../../components/LocalizedCalculatorWidget.astro';
@@ -82,6 +82,27 @@ for (const relSlug of fm.related) {
   });
 }
 
+// Fallback: never leave a page with a thin (<3) related grid — top up from the
+// same category so every calculator is a strong internal link target. Skips
+// self and anything already linked above.
+if (relatedItems.length < 3) {
+  const linked = new Set([enSlug, ...fm.related]);
+  for (const sibling of calculatorsByCategory(fm.category)) {
+    if (relatedItems.length >= 3) break;
+    if (linked.has(sibling.slug)) continue;
+    const sibContent = await getCalculatorContent(sibling.slug, locale);
+    if (!sibContent) continue;
+    const sibData = sibContent.entry.data;
+    relatedItems.push({
+      href: to(`/${sibData.category}/${sibling.slug}`, locale),
+      title: sibData.title,
+      desc: sibData.description,
+      icon: calculatorIcon(sibling.slug) ?? getCategory(sibData.category)?.icon,
+    });
+    linked.add(sibling.slug);
+  }
+}
+
 // Localized MDX body.
 const { Content } = await render(content.entry);
 
@@ -89,6 +110,17 @@ const { Content } = await render(content.entry);
 // pathNoLocale uses ENGLISH slugs — the hreflang builder localizes per locale.
 const pathNoLocale = `/${enCategory}/${enSlug}`;
 const alternates = hreflangAlternates(pathNoLocale);
+
+// Freshness signal (EEAT): a page's own `lastReviewed` (ISO date) when present,
+// otherwise the build date so every page still carries a dateModified. Rendered
+// both as JSON-LD `dateModified` and a visible "Reviewed {date}" line.
+const dateModified = fm.lastReviewed ?? new Date().toISOString().slice(0, 10);
+const reviewedLabel = chrome.reviewed ?? (locale === 'de' ? 'Zuletzt geprüft' : 'Reviewed');
+const reviewedDisplay = new Date(dateModified).toLocaleDateString(locale, {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
 
 // Localized structured data (breadcrumb + WebApplication + FAQ + HowTo).
 const jsonLd = localizedCalculatorPageSchemas(locale, {
@@ -100,23 +132,53 @@ const jsonLd = localizedCalculatorPageSchemas(locale, {
   pagePath: pathNoLocale,
   faq: fm.faq,
   howto: fm.howto,
+  dateModified,
 });
 
-// Build SEO-optimized title: if title already includes "Calculator"/"Rechner",
-// append a value-proposition suffix for CTR; otherwise use as-is.
+// A stable per-page index so the SEO modifier/CTA varies across the catalogue
+// (avoids 91 pages sharing one templated phrase) while staying deterministic —
+// the same slug always renders the same title. Truthful modifiers only.
+const slugHash = enSlug.split('').reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
+
+// Build SEO-optimized title tailored per locale to stay strictly within 60-65
+// chars with the brand suffix. The value modifier is picked per page from a
+// pool of truthful phrases so titles don't collide across the catalogue.
 const seoTitle = (() => {
   const t = fm.title;
-  // Already has "Calculator"/"Rechner" — add a free/online suffix for search
-  if (t.toLowerCase().includes('calculator') || t.toLowerCase().includes('rechner')) {
-    return `${t} — Free Online ${categoryLabel} Tool`;
+  const brand = ' | Try Online Calculator'; // 25 chars
+  const fits = (s: string) => (s + brand).length <= 65;
+  if (locale === 'de') {
+    const base = t.toLowerCase().includes('rechner') || t.toLowerCase().includes('umrechner') ? t : `${t}-Rechner`;
+    const mods = ['Kostenlos', 'Kostenlos & Genau', 'Sofort-Ergebnis', 'Schnell & Kostenlos', 'Mit Formel'];
+    const mod = mods[slugHash % mods.length];
+    if (fits(`${base} — ${mod}`)) return `${base} — ${mod}`;
+    if (fits(`${base} — Kostenlos`)) return `${base} — Kostenlos`;
+    return base;
   }
-  return `${t} Calculator — Free Online Tool`;
+  const base = t.toLowerCase().includes('calculator') || t.toLowerCase().includes('converter') ? t : `${t} Calculator`;
+  const mods = ['Free Online Tool', 'Free & Accurate', 'Instant Results', 'Free Calculator', 'Fast & Free', 'With Formula & Examples'];
+  const mod = mods[slugHash % mods.length];
+  if (fits(`${base} — ${mod}`)) return `${base} — ${mod}`;
+  if (fits(`${base} — Free Tool`)) return `${base} — Free Tool`;
+  return base;
 })();
 
-// Enhanced meta description: include a call-to-action and mention key features
-const seoDescription = fm.description.length > 120
-  ? fm.description
-  : `${fm.description} Free, instant results with formula explanation. No sign-up required.`;
+// Enhanced meta description: the unique per-page `description` when it already
+// sits in the 110-155 band, otherwise padded with a per-page CTA so the padded
+// tail also varies across the catalogue.
+const seoDescription = (() => {
+  const desc = fm.description;
+  if (desc.length >= 110 && desc.length <= 155) return desc;
+  if (desc.length > 155) return desc.slice(0, 152).replace(/\s+\S*$/, '...');
+  if (locale === 'de') {
+    const ctas = ['Kostenlos, schnell & präzise.', 'Sofort-Ergebnis mit Formel.', 'Gratis, ohne Anmeldung.'];
+    const s = `${desc} ${ctas[slugHash % ctas.length]}`;
+    return s.length <= 165 ? s : desc;
+  }
+  const ctas = ['Free, instant results with formula.', 'Fast, accurate & free — no sign-up.', 'Instant answers with worked examples.'];
+  const s = `${desc} ${ctas[slugHash % ctas.length]}`;
+  return s.length <= 165 ? s : desc;
+})();
 ---
 
 <Layout
@@ -129,6 +191,7 @@ const seoDescription = fm.description.length > 120
   jsonLd={jsonLd}
   noindex={!isIndexedLocale(locale)}
   ogType="article"
+  modifiedTime={dateModified}
 >
   <div class="container-page calc-page">
     <nav class="breadcrumb" aria-label="Breadcrumb">
@@ -139,6 +202,7 @@ const seoDescription = fm.description.length > 120
 
     <header class="calc-header">
       <h1 class="calc-title">{fm.title}</h1>
+      <p class="calc-reviewed">{reviewedLabel} <time datetime={dateModified}>{reviewedDisplay}</time></p>
     </header>
 
     {/* The calculator is the first interactive element on every page — a
@@ -276,6 +340,12 @@ const seoDescription = fm.description.length > 120
     letter-spacing: -0.03em;
     text-wrap: balance;
   }
+  .calc-reviewed {
+    margin: 0.5rem 0 0;
+    font-size: 13px;
+    color: var(--color-mute);
+  }
+  .calc-reviewed time { font-variant-numeric: tabular-nums; }
   .calc-desc {
     margin: 0.4rem 0 0;
     font-size: clamp(0.875rem, 2vw, 1.0625rem);

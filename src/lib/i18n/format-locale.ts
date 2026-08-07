@@ -12,6 +12,7 @@
 import type { ValueFormat, ResultRange } from '../calculator-engine/contract';
 import { LB_TO_KG, IN_TO_CM } from '../calculator-engine/units';
 import type { UnitSystem } from '../preferences/store';
+export type { UnitSystem };
 
 export interface FormatContext {
   /** BCP-47 tag for digit grouping, e.g. "en-US", "en-IN", "de-DE". */
@@ -32,8 +33,30 @@ export interface FormattedValue {
   currencyCode?: string;
 }
 
+const nfCache = new Map<string, Intl.NumberFormat>();
+
 function nf(locale: string, min: number, max: number): Intl.NumberFormat {
-  return new Intl.NumberFormat(locale, { minimumFractionDigits: min, maximumFractionDigits: max });
+  const key = `n:${locale}:${min}:${max}`;
+  let formatter = nfCache.get(key);
+  if (!formatter) {
+    formatter = new Intl.NumberFormat(locale, { minimumFractionDigits: min, maximumFractionDigits: max });
+    nfCache.set(key, formatter);
+  }
+  return formatter;
+}
+
+function cnf(locale: string, currency: string, precision?: number): Intl.NumberFormat {
+  const key = `c:${locale}:${currency}:${precision ?? 'default'}`;
+  let formatter = nfCache.get(key);
+  if (!formatter) {
+    formatter = new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency,
+      ...(precision !== undefined ? { minimumFractionDigits: precision, maximumFractionDigits: precision } : {}),
+    });
+    nfCache.set(key, formatter);
+  }
+  return formatter;
 }
 
 /** Group a plain number for the locale. */
@@ -46,11 +69,7 @@ export function formatNumber(value: number, numberFormat: string, precision = 2)
 export function formatCurrency(value: number, ctx: FormatContext, precision?: number): FormattedValue {
   if (!Number.isFinite(value)) return { text: '—' };
   try {
-    const text = new Intl.NumberFormat(ctx.numberFormat, {
-      style: 'currency',
-      currency: ctx.currency,
-      ...(precision !== undefined ? { minimumFractionDigits: precision, maximumFractionDigits: precision } : {}),
-    }).format(value);
+    const text = cnf(ctx.numberFormat, ctx.currency, precision).format(value);
     return { text, currencyCode: ctx.currency };
   } catch {
     return { text: formatNumber(value, ctx.numberFormat, precision ?? 2), currencyCode: ctx.currency };

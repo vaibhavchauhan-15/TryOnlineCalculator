@@ -15,7 +15,7 @@
 import { getEngine } from '../calculator-engine';
 import type { LabelPack } from './resolver';
 import { createResolver } from './resolver';
-import type { FormatContext } from './format-locale';
+import type { FormatContext, UnitSystem } from './format-locale';
 import { renderLocalizedResultHTML } from './render-localized';
 import { getPreferences, subscribe, setPreferences, type Preferences } from '../preferences/store';
 import { isExplicitCurrencyChoice, setLocaleCurrency } from '../currency';
@@ -134,23 +134,51 @@ function mount(root: HTMLElement): void {
 
   let ctx: FormatContext = formatContextFor(getPreferences());
 
+  const symbolCache = new Map<string, string>();
+  const symbolWidthCache = new Map<string, number>();
+
+  const getCurrencySymbolStr = (numFmt: string, curr: string): string => {
+    const key = `${numFmt}:${curr}`;
+    let cached = symbolCache.get(key);
+    if (!cached) {
+      try {
+        const parts = new Intl.NumberFormat(numFmt, { style: 'currency', currency: curr }).formatToParts(0);
+        cached = parts.find((p) => p.type === 'currency')?.value ?? curr;
+      } catch {
+        cached = curr;
+      }
+      symbolCache.set(key, cached);
+    }
+    return cached;
+  };
+
   // Repaint the currency symbol on monetary input prefixes for the active
   // currency, widening the field padding so multi-char symbols never overlap.
   const paintCurrencyPrefix = () => {
-    let sym = ctx.currency;
-    try {
-      const parts = new Intl.NumberFormat(ctx.numberFormat, { style: 'currency', currency: ctx.currency }).formatToParts(0);
-      sym = parts.find((p) => p.type === 'currency')?.value ?? ctx.currency;
-    } catch {
-      /* keep the code as the symbol */
-    }
+    const sym = getCurrencySymbolStr(ctx.numberFormat, ctx.currency);
+    const updates: Array<{ input: HTMLElement; width: number }> = [];
+
     root.querySelectorAll<HTMLElement>('[data-currency-prefix]').forEach((affix) => {
       if (affix.textContent !== sym) affix.textContent = sym;
       const input = affix.closest('.field-wrap')?.querySelector<HTMLElement>('.field');
       if (!input) return;
-      const w = Math.ceil(affix.getBoundingClientRect().width);
-      if (w > 0) input.style.paddingLeft = `calc(0.75rem + ${w}px + 0.35rem)`;
+
+      const cacheKey = `${sym}:${input.className}`;
+      let w = symbolWidthCache.get(cacheKey);
+      if (w === undefined) {
+        w = Math.ceil(affix.getBoundingClientRect().width);
+        if (w > 0) symbolWidthCache.set(cacheKey, w);
+      }
+      if (w > 0) updates.push({ input, width: w });
     });
+
+    if (updates.length > 0) {
+      requestAnimationFrame(() => {
+        updates.forEach(({ input, width }) => {
+          input.style.paddingLeft = `calc(0.75rem + ${width}px + 0.35rem)`;
+        });
+      });
+    }
   };
 
   const render = () => {
@@ -165,7 +193,10 @@ function mount(root: HTMLElement): void {
       return;
     }
     const result = engine.compute(input);
-    const display = createResolver(pack, fallback, ctx).resolve(result);
+    const activeCtx: FormatContext = (values.unitSystem === 'metric' || values.unitSystem === 'imperial')
+      ? { ...ctx, unitSystem: values.unitSystem as UnitSystem }
+      : ctx;
+    const display = createResolver(pack, fallback, activeCtx).resolve(result);
     output.innerHTML = renderLocalizedResultHTML(display);
     saveState(storeKey, values);
   };

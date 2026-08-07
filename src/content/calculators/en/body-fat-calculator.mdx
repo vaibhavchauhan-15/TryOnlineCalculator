@@ -1,0 +1,72 @@
+---
+slug: body-fat-calculator
+category: health
+title: Body Fat Percentage Calculator
+description: Calculate your body fat percentage, fat mass, and lean body mass using the accurate U.S. Navy circumference method.
+keywords:
+  - body fat calculator
+  - navy body fat percentage
+  - calculate body fat
+  - body composition
+  - fat mass vs lean mass
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: en
+searchIntent: Calculate my body fat percentage and see my body composition breakdown.
+readingLevel: general
+market: global
+audience: fitness enthusiasts, adults tracking weight loss and body composition
+labels:
+  bodyFat: Body Fat %
+  fatMass: Fat Mass
+  leanMass: Lean Mass
+  field.unitSystem: Units
+  field.sex: Sex
+  field.age: Age
+  field.height: Height
+  field.weight: Weight
+  field.heightFt: Height (feet)
+  field.heightIn: Height (inches)
+  field.weightLb: Weight
+  field.neck: Neck Circumference
+  field.neckIn: Neck (inches)
+  field.waist: Waist Circumference
+  field.waistIn: Waist (inches)
+  field.hip: Hip Circumference
+  field.hipIn: Hip (inches)
+enums:
+  metric: Metric (cm, kg)
+  imperial: Imperial (in, lb)
+  male: Male
+  female: Female
+hints:
+  bodyFatMethod: U.S. Navy Method formula calculation
+  unit.percent: "%"
+chartTitles:
+  bodyFat.chartComposition: Body Composition Breakdown
+intro: Calculate your body fat percentage, fat mass, and lean body mass with precision using the U.S. Navy circumference body composition method.
+formulaIntro: The U.S. Navy method estimates body fat percentage using body height and circumference measurements.
+formulaItems:
+  - name: Male Body Fat Formula
+    expr: BF% = 495 / (1.0324 - 0.19077·log10(waist - neck) + 0.15456·log10(height)) - 450
+  - name: Female Body Fat Formula
+    expr: BF% = 495 / (1.29579 - 0.35004·log10(waist + hip - neck) + 0.22100·log10(height)) - 450
+howto:
+  - Select your unit system (Metric or Imperial).
+  - Choose your sex and enter your age.
+  - Enter your height, weight, and neck measurement.
+  - Enter your waist measurement (and hip measurement for females).
+  - Read your body fat percentage and fat vs lean mass breakdown.
+faq:
+  - q: How accurate is the Navy Body Fat Calculator?
+    a: The U.S. Navy formula is accurate within 3% to 4% of a clinical DEXA scan for most adults.
+  - q: What is a healthy body fat percentage?
+    a: Healthy body fat ranges are generally 10% to 20% for adult men and 18% to 28% for adult women.
+related:
+  - bmi-calculator
+  - lean-body-mass-calculator
+  - ideal-weight-calculator
+---
+
+Body fat percentage measures the portion of total body weight composed of fat tissue rather than muscle, bone, and water. Tracking body composition provides a far clearer picture of fitness progress than body weight alone.

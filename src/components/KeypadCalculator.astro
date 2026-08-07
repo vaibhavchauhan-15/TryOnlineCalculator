@@ -39,15 +39,15 @@ type Key = {
 };
 
 const basicKeys: Key[] = [
-  { label: 'AC', action: 'clear', cls: 'key-danger' },
-  { label: 'DEL', action: 'del', cls: 'key-danger' },
-  { label: '(', val: '(' },
-  { label: ')', val: ')' },
-  { label: '7', val: '7' }, { label: '8', val: '8' }, { label: '9', val: '9' }, { label: '\u00F7', val: '\u00F7', cls: 'key-op' },
-  { label: '4', val: '4' }, { label: '5', val: '5' }, { label: '6', val: '6' }, { label: '\u00D7', val: '\u00D7', cls: 'key-op' },
-  { label: '1', val: '1' }, { label: '2', val: '2' }, { label: '3', val: '3' }, { label: '\u2212', val: '\u2212', cls: 'key-op' },
-  { label: '%', val: '%' }, { label: '0', val: '0' }, { label: '.', val: '.' }, { label: '+', val: '+', cls: 'key-op' },
-  { label: '=', action: 'equals', cls: 'key-equal span-4' },
+  { label: 'AC', action: 'clear', cls: 'key-danger', tip: 'All Clear' },
+  { label: 'DEL', action: 'del', cls: 'key-danger', tip: 'Delete' },
+  { label: '(', val: '(', tip: 'Open parenthesis' },
+  { label: ')', val: ')', tip: 'Close parenthesis' },
+  { label: '7', val: '7', tip: '7' }, { label: '8', val: '8', tip: '8' }, { label: '9', val: '9', tip: '9' }, { label: '\u00F7', val: '\u00F7', cls: 'key-op', tip: 'Divide' },
+  { label: '4', val: '4', tip: '4' }, { label: '5', val: '5', tip: '5' }, { label: '6', val: '6', tip: '6' }, { label: '\u00D7', val: '\u00D7', cls: 'key-op', tip: 'Multiply' },
+  { label: '1', val: '1', tip: '1' }, { label: '2', val: '2', tip: '2' }, { label: '3', val: '3', tip: '3' }, { label: '\u2212', val: '\u2212', cls: 'key-op', tip: 'Subtract' },
+  { label: '%', val: '%', tip: 'Percent' }, { label: '0', val: '0', tip: '0' }, { label: '.', val: '.', tip: 'Decimal point' }, { label: '+', val: '+', cls: 'key-op', tip: 'Add' },
+  { label: '=', action: 'equals', cls: 'key-equal span-4', tip: 'Calculate' },
 ];
 
 // ========= SCIENTIFIC CALCULATOR KEY LAYOUT =========
@@ -94,34 +94,24 @@ const sciConstKeys: Key[] = [
   { label: 'Ans', action: 'ans', cls: 'key-fn key-ans', tip: 'Previous answer' },
 ];
 
-// Memory keys
-const sciMemKeys: Key[] = [
-  { label: 'MC', action: 'clear' as const, cls: 'key-mem', tip: 'Memory Clear' },
-  { label: 'MR', action: 'clear' as const, cls: 'key-mem', tip: 'Memory Recall' },
-  { label: 'M+', action: 'clear' as const, cls: 'key-mem', tip: 'Memory Add' },
-  { label: 'M\u2212', action: 'clear' as const, cls: 'key-mem', tip: 'Memory Subtract' },
-];
-
 // Number pad + operators — always visible, 5 columns
 const sciNumKeys: Key[] = [
-  { label: '(', val: '(' }, { label: ')', val: ')' },
-  { label: 'AC', action: 'clear', cls: 'key-danger' },
-  { label: 'DEL', action: 'del', cls: 'key-danger' },
-  { label: '\u00F7', val: '\u00F7', cls: 'key-op' },
+  { label: '(', val: '(', tip: 'Open parenthesis' }, { label: ')', val: ')', tip: 'Close parenthesis' },
+  { label: 'AC', action: 'clear', cls: 'key-danger', tip: 'All Clear' },
+  { label: 'DEL', action: 'del', cls: 'key-danger', tip: 'Delete' },
+  { label: '\u00F7', val: '\u00F7', cls: 'key-op', tip: 'Divide' },
 
-  { label: '7', val: '7' }, { label: '8', val: '8' }, { label: '9', val: '9' },
-  { label: '%', val: '%' }, { label: '\u00D7', val: '\u00D7', cls: 'key-op' },
+  { label: '7', val: '7', tip: '7' }, { label: '8', val: '8', tip: '8' }, { label: '9', val: '9', tip: '9' },
+  { label: '%', val: '%', tip: 'Percent' }, { label: '\u00D7', val: '\u00D7', cls: 'key-op', tip: 'Multiply' },
 
-  { label: '4', val: '4' }, { label: '5', val: '5' }, { label: '6', val: '6' },
-  { label: '.', val: '.' }, { label: '\u2212', val: '\u2212', cls: 'key-op' },
+  { label: '4', val: '4', tip: '4' }, { label: '5', val: '5', tip: '5' }, { label: '6', val: '6', tip: '6' },
+  { label: '.', val: '.', tip: 'Decimal point' }, { label: '\u2212', val: '\u2212', cls: 'key-op', tip: 'Subtract' },
 
-  { label: '1', val: '1' }, { label: '2', val: '2' }, { label: '3', val: '3' },
-  { label: '0', val: '0' }, { label: '+', val: '+', cls: 'key-op' },
+  { label: '1', val: '1', tip: '1' }, { label: '2', val: '2', tip: '2' }, { label: '3', val: '3', tip: '3' },
+  { label: '0', val: '0', tip: '0' }, { label: '+', val: '+', cls: 'key-op', tip: 'Add' },
 
-  { label: '=', action: 'equals', cls: 'key-equal span-5' },
+  { label: '=', action: 'equals', cls: 'key-equal span-5', tip: 'Calculate' },
 ];
-
-const keys = scientific ? [...sciMainKeys, ...sciNumKeys] : basicKeys;
 ---
 
 <div class="calc-device" data-keypad data-mode={scientific ? 'scientific' : 'basic'} data-store={`keypad:${calculator.category}/${calculator.slug}`} tabindex="0" aria-label={label} role="application">
@@ -153,13 +143,14 @@ const keys = scientific ? [...sciMainKeys, ...sciNumKeys] : basicKeys;
     <>
       {/* === MODE TOGGLES: SHIFT + DEG/RAD === */}
       <div class="calc-mode-row">
-        <button type="button" class="calc-mode-btn" data-action="shift" aria-pressed="false">SHIFT</button>
-        <button type="button" class="calc-mode-btn" data-action="deg" data-deg-btn>DEG</button>
+        <button type="button" class="calc-mode-btn" data-action="shift" aria-pressed="false" aria-label="Toggle shift functions">SHIFT</button>
+        <button type="button" class="calc-mode-btn" data-action="deg" data-deg-btn aria-pressed="false" aria-label="Toggle degree or radian mode">DEG</button>
       </div>
 
       {/* === TABBED FUNCTION PANEL === */}
       <div class="calc-tabs" data-tabs>
         <div class="calc-tab-bar" role="tablist" aria-label="Function categories">
+          <div class="calc-tab-pill" data-tab-pill></div>
           <button type="button" class="calc-tab is-active" role="tab" aria-selected="true" data-tab="main">Scientific</button>
           <button type="button" class="calc-tab" role="tab" aria-selected="false" data-tab="func">Functions</button>
           <button type="button" class="calc-tab" role="tab" aria-selected="false" data-tab="const">Constants</button>
@@ -177,7 +168,16 @@ const keys = scientific ? [...sciMainKeys, ...sciNumKeys] : basicKeys;
                 data-2nd-val={k.second?.val}
                 aria-label={k.tip}
                 title={k.tip}
-              >{k.label}</button>
+              >
+                {k.second ? (
+                  <span class="calc-key-labels">
+                    <span class="calc-key-primary">{k.label}</span>
+                    <span class="calc-key-second">{k.second.label}</span>
+                  </span>
+                ) : (
+                  <span class="calc-key-primary">{k.label}</span>
+                )}
+              </button>
             ))}
           </div>
         </div>
@@ -194,7 +194,16 @@ const keys = scientific ? [...sciMainKeys, ...sciNumKeys] : basicKeys;
                 data-2nd-val={k.second?.val}
                 aria-label={k.tip}
                 title={k.tip}
-              >{k.label}</button>
+              >
+                {k.second ? (
+                  <span class="calc-key-labels">
+                    <span class="calc-key-primary">{k.label}</span>
+                    <span class="calc-key-second">{k.second.label}</span>
+                  </span>
+                ) : (
+                  <span class="calc-key-primary">{k.label}</span>
+                )}
+              </button>
             ))}
           </div>
         </div>
@@ -211,7 +220,9 @@ const keys = scientific ? [...sciMainKeys, ...sciNumKeys] : basicKeys;
                 data-2nd-val={k.second?.val}
                 aria-label={k.tip}
                 title={k.tip}
-              >{k.label}</button>
+              >
+                <span class="calc-key-primary">{k.label}</span>
+              </button>
             ))}
           </div>
         </div>
@@ -230,7 +241,9 @@ const keys = scientific ? [...sciMainKeys, ...sciNumKeys] : basicKeys;
           data-action={k.action}
           aria-label={k.tip}
           title={k.tip}
-        >{k.label}</button>
+        >
+          <span class="calc-key-primary">{k.label}</span>
+        </button>
       ))}
     </div>
   ) : (
@@ -245,7 +258,16 @@ const keys = scientific ? [...sciMainKeys, ...sciNumKeys] : basicKeys;
           data-2nd-val={k.second?.val}
           aria-label={k.tip}
           title={k.tip}
-        >{k.label}</button>
+        >
+          {k.second ? (
+            <span class="calc-key-labels">
+              <span class="calc-key-primary">{k.label}</span>
+              <span class="calc-key-second">{k.second.label}</span>
+            </span>
+          ) : (
+            <span class="calc-key-primary">{k.label}</span>
+          )}
+        </button>
       ))}
     </div>
   )}
@@ -274,6 +296,7 @@ const keys = scientific ? [...sciMainKeys, ...sciNumKeys] : basicKeys;
     deg: boolean;
     memory: number;
     hasMemory: boolean;
+    activeOp: string | null;
   };
   type Saved = { expr: string; ans: number; deg: boolean; justEval: boolean; memory?: number; hasMemory?: boolean };
 
@@ -374,23 +397,87 @@ const keys = scientific ? [...sciMainKeys, ...sciNumKeys] : basicKeys;
     const degBtn = root.querySelector<HTMLElement>('[data-deg-btn]');
     const shiftBtn = root.querySelector<HTMLElement>('[data-action="shift"]');
 
-    const state: State = { expr: '', caret: 0, sel: null, ans: 0, justEval: false, shift: false, deg: true, memory: 0, hasMemory: false };
+    const state: State = { expr: '', caret: 0, sel: null, ans: 0, justEval: false, shift: false, deg: true, memory: 0, hasMemory: false, activeOp: null };
     const store = root.dataset.store;
 
-    // === Tab switching ===
-    const tabBar = root.querySelector<HTMLElement>('[data-tabs]');
-    if (tabBar) {
-      const tabs = tabBar.querySelectorAll<HTMLElement>('[role="tab"]');
-      const panels = tabBar.querySelectorAll<HTMLElement>('[role="tabpanel"]');
-      tabs.forEach((tab) => {
+    // Ink ripple effect for keys and mode buttons
+    function spawnRipple(btn: HTMLElement, e: PointerEvent): void {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const rect = btn.getBoundingClientRect();
+      const ripple = document.createElement('span');
+      ripple.className = 'calc-ripple';
+      const size = Math.max(rect.width, rect.height) * 2;
+      ripple.style.width = ripple.style.height = `${size}px`;
+      ripple.style.left = `${e.clientX - rect.left - size / 2}px`;
+      ripple.style.top = `${e.clientY - rect.top - size / 2}px`;
+      btn.appendChild(ripple);
+      window.setTimeout(() => ripple.remove(), 400);
+    }
+
+    // Flash display area on constants insertion, paste, or history load
+    function flashDisplay(cls: 'is-inserted-flash' | 'is-pasted-flash' | 'is-history-flash'): void {
+      const screen = root.querySelector<HTMLElement>('.calc-screen');
+      if (!screen) return;
+      screen.classList.remove('is-inserted-flash', 'is-pasted-flash', 'is-history-flash');
+      requestAnimationFrame(() => {
+        screen.classList.add(cls);
+        window.setTimeout(() => screen.classList.remove(cls), 400);
+      });
+    }
+
+    // Pending operator highlight helper
+    function updateActiveOperator(opVal?: string | null): void {
+      state.activeOp = opVal ?? null;
+      root.querySelectorAll<HTMLElement>('.calc-key.key-op').forEach((b) => {
+        const isActive = opVal ? b.dataset.val === opVal : false;
+        b.classList.toggle('is-active-op', isActive);
+      });
+    }
+
+    // === Tab switching with sliding pill & horizontal slide ===
+    const tabContainer = root.querySelector<HTMLElement>('[data-tabs]');
+    if (tabContainer) {
+      const pill = tabContainer.querySelector<HTMLElement>('[data-tab-pill]');
+      const tabs = tabContainer.querySelectorAll<HTMLElement>('[role="tab"]');
+      const panels = tabContainer.querySelectorAll<HTMLElement>('[role="tabpanel"]');
+      let currentTabIndex = 0;
+
+      function updatePill(activeTab: HTMLElement): void {
+        if (!pill || !activeTab) return;
+        pill.style.transform = `translateX(${activeTab.offsetLeft}px)`;
+        pill.style.width = `${activeTab.offsetWidth}px`;
+      }
+
+      // Initial pill position
+      const initialTab = tabContainer.querySelector<HTMLElement>('[role="tab"].is-active');
+      if (initialTab) {
+        requestAnimationFrame(() => updatePill(initialTab));
+      }
+
+      tabs.forEach((tab, index) => {
         tab.addEventListener('click', () => {
           const target = tab.dataset.tab;
+          const isRight = index > currentTabIndex;
+          currentTabIndex = index;
+
           tabs.forEach((t) => { t.classList.remove('is-active'); t.setAttribute('aria-selected', 'false'); });
-          panels.forEach((p) => { p.classList.remove('is-active'); p.hidden = true; });
+          panels.forEach((p) => {
+            p.classList.remove('is-active', 'is-slide-right', 'is-slide-left');
+            p.hidden = true;
+          });
+
           tab.classList.add('is-active');
           tab.setAttribute('aria-selected', 'true');
-          const panel = tabBar.querySelector<HTMLElement>(`[data-panel="${target}"]`);
-          if (panel) { panel.classList.add('is-active'); panel.hidden = false; }
+          updatePill(tab);
+
+          const panel = tabContainer.querySelector<HTMLElement>(`[data-panel="${target}"]`);
+          if (panel) {
+            panel.classList.add('is-active');
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+              panel.classList.add(isRight ? 'is-slide-right' : 'is-slide-left');
+            }
+            panel.hidden = false;
+          }
           haptic.tap();
         });
       });
@@ -399,6 +486,21 @@ const keys = scientific ? [...sciMainKeys, ...sciNumKeys] : basicKeys;
     // History panel + copy control.
     const historyMount = root.querySelector<HTMLElement>('[data-history-mount]');
     const history = historyMount && store ? createHistoryUI({ key: store, mount: historyMount }) : null;
+
+    // Event listener for tapping history entry to populate display
+    root.addEventListener('calculator:load-history', ((e: CustomEvent<{ value: string; expr: string }>) => {
+      const { value, expr } = e.detail;
+      if (expr) {
+        state.expr = expr;
+        state.caret = expr.length;
+        state.justEval = false;
+      } else if (value) {
+        insert(value);
+      }
+      render();
+      flashDisplay('is-history-flash');
+    }) as EventListener);
+
     const copyBtn = root.querySelector<HTMLElement>('[data-copy-btn]');
     copyBtn?.addEventListener('click', () => {
       haptic.tap();
@@ -413,6 +515,7 @@ const keys = scientific ? [...sciMainKeys, ...sciNumKeys] : basicKeys;
       if (prev) clearTimeout(Number(prev));
       pasteBtn.classList.add('is-copied');
       if (pasteIco) pasteIco.innerHTML = CHECK_ICON;
+      flashDisplay('is-pasted-flash');
       const timer = window.setTimeout(() => {
         pasteBtn.classList.remove('is-copied');
         if (pasteIco) pasteIco.innerHTML = pasteIcoHTML;
@@ -430,15 +533,20 @@ const keys = scientific ? [...sciMainKeys, ...sciNumKeys] : basicKeys;
     const charBefore = () => state.expr[state.caret - 1] ?? '';
     const needsMult = () => /[0-9)%\u03C0e]/.test(charBefore());
 
+    let prevExprLength = 0;
     function paintExpr(): void {
       const { expr, caret, sel } = state;
-      if (!expr) { exprEl.innerHTML = CARET; return; }
+      if (!expr) { exprEl.innerHTML = CARET; prevExprLength = 0; return; }
       const toks = tokenize(expr);
       let html = '';
       let caretDone = false;
+      const isNewEntry = expr.length > prevExprLength;
+      prevExprLength = expr.length;
+
       for (const t of toks) {
         const selected = !!sel && sel.s <= t.s && t.e <= sel.e;
-        const open = selected ? '<span class="tok is-sel">' : '<span class="tok">';
+        const animateClass = isNewEntry && t.e === expr.length ? ' calc-digit-enter' : '';
+        const open = selected ? '<span class="tok is-sel' + animateClass + '">' : '<span class="tok' + animateClass + '">';
         if (caret >= t.s && caret < t.e) {
           html += open + esc(expr.slice(t.s, caret)) + CARET + esc(expr.slice(caret, t.e)) + '</span>';
           caretDone = true;
@@ -452,14 +560,39 @@ const keys = scientific ? [...sciMainKeys, ...sciNumKeys] : basicKeys;
     }
 
     function scrollCaretIntoView(): void {
-      const caret = exprEl.querySelector<HTMLElement>('.calc-caret');
-      if (!caret) { exprEl.scrollTop = exprEl.scrollHeight; return; }
-      const top = caret.offsetTop;
-      const bottom = top + caret.offsetHeight;
-      if (top < exprEl.scrollTop) exprEl.scrollTop = top;
-      else if (bottom > exprEl.scrollTop + exprEl.clientHeight) {
-        exprEl.scrollTop = bottom - exprEl.clientHeight;
+      requestAnimationFrame(() => {
+        const caret = exprEl.querySelector<HTMLElement>('.calc-caret');
+        if (!caret) { exprEl.scrollTop = exprEl.scrollHeight; return; }
+        const top = caret.offsetTop;
+        const bottom = top + caret.offsetHeight;
+        if (top < exprEl.scrollTop) exprEl.scrollTop = top;
+        else if (bottom > exprEl.scrollTop + exprEl.clientHeight) {
+          exprEl.scrollTop = bottom - exprEl.clientHeight;
+        }
+      });
+    }
+
+    function animateResultCountUp(targetVal: number): void {
+      const startVal = parseFloat((resultEl.textContent ?? '0').replace(/,/g, '')) || 0;
+      if (!Number.isFinite(startVal) || Math.abs(targetVal - startVal) < 1e-6 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        resultEl.textContent = fmt(targetVal);
+        return;
       }
+      const startTime = performance.now();
+      const duration = 280;
+      function step(now: number) {
+        const elapsed = now - startTime;
+        const progress = Math.min(1, elapsed / duration);
+        const ease = 1 - Math.pow(1 - progress, 3);
+        const current = startVal + (targetVal - startVal) * ease;
+        resultEl.textContent = fmt(current);
+        if (progress < 1) {
+          requestAnimationFrame(step);
+        } else {
+          resultEl.textContent = fmt(targetVal);
+        }
+      }
+      requestAnimationFrame(step);
     }
 
     function render(): void {
@@ -498,6 +631,19 @@ const keys = scientific ? [...sciMainKeys, ...sciNumKeys] : basicKeys;
         state.sel = null;
         state.justEval = false;
       }
+
+      // Check if constant (π, e) or constant-like function is being inserted
+      if (/[\u03C0e\u03C6]/.test(val)) {
+        flashDisplay('is-inserted-flash');
+      }
+
+      // Operator vs operand state tracking
+      if (/^[+\-\u2212\u00D7\u00F7%]/.test(val)) {
+        updateActiveOperator(val);
+      } else {
+        updateActiveOperator(null);
+      }
+
       const isFuncOrConst = /[a-z\u221A\u221B\u03C0(]/i.test(val[0]) || val === '10^';
       if (isFuncOrConst && !state.sel && needsMult() && !/^[\^]/.test(val)) {
         spliceAtCaret('\u00D7');
@@ -544,7 +690,9 @@ const keys = scientific ? [...sciMainKeys, ...sciNumKeys] : basicKeys;
     function setShift(on: boolean): void {
       state.shift = on;
       shiftBtn?.classList.toggle('is-active', on);
+      shiftBtn?.setAttribute('aria-pressed', String(on));
       shiftChip?.toggleAttribute('hidden', !on);
+      root.classList.toggle('is-shift-active', on);
     }
 
     function updateMemChip(): void {
@@ -552,6 +700,7 @@ const keys = scientific ? [...sciMainKeys, ...sciNumKeys] : basicKeys;
     }
 
     function equals(): void {
+      updateActiveOperator(null);
       if (!state.expr.trim()) return;
       let res = evalDetailed(state.expr, state.deg, sci);
       let source = state.expr;
@@ -575,7 +724,7 @@ const keys = scientific ? [...sciMainKeys, ...sciNumKeys] : basicKeys;
       state.sel = null;
       exprEl.textContent = source + ' =';
       resultEl.classList.remove('is-error', 'is-shake');
-      resultEl.textContent = fmt(res.value);
+      animateResultCountUp(res.value);
       history?.record(source, fmt(res.value));
       state.justEval = true;
       haptic.success();
@@ -583,6 +732,7 @@ const keys = scientific ? [...sciMainKeys, ...sciNumKeys] : basicKeys;
     }
 
     function clearAll(): void {
+      updateActiveOperator(null);
       state.expr = '';
       state.caret = 0;
       state.sel = null;
@@ -591,6 +741,7 @@ const keys = scientific ? [...sciMainKeys, ...sciNumKeys] : basicKeys;
     }
 
     function del(): void {
+      updateActiveOperator(null);
       if (state.justEval) state.justEval = false;
       if (state.sel) {
         state.expr = state.expr.slice(0, state.sel.s) + state.expr.slice(state.sel.e);
@@ -670,7 +821,6 @@ const keys = scientific ? [...sciMainKeys, ...sciNumKeys] : basicKeys;
 
     function handle(action: string | undefined, val: string | undefined, second: string | undefined, label?: string): void {
       if (action === 'clear') {
-        // Check if it's a memory button by label
         if (label && /^M[CR+\u2212S]/.test(label)) { memoryOp(label); return; }
         clearAll(); return;
       }
@@ -681,8 +831,16 @@ const keys = scientific ? [...sciMainKeys, ...sciNumKeys] : basicKeys;
       if (action === 'deg') {
         state.deg = !state.deg;
         const mode = state.deg ? 'DEG' : 'RAD';
-        if (degBtn) degBtn.textContent = mode;
-        if (angleChip) angleChip.textContent = mode;
+        if (degBtn) {
+          degBtn.textContent = mode;
+          degBtn.setAttribute('aria-pressed', String(!state.deg));
+        }
+        if (angleChip) {
+          angleChip.textContent = mode;
+          angleChip.classList.remove('is-pulsing');
+          void angleChip.offsetWidth;
+          angleChip.classList.add('is-pulsing');
+        }
         render();
         return;
       }
@@ -691,10 +849,20 @@ const keys = scientific ? [...sciMainKeys, ...sciNumKeys] : basicKeys;
     }
 
     root.querySelectorAll<HTMLButtonElement>('.calc-key').forEach((btn) => {
+      btn.addEventListener('pointerdown', (e) => {
+        spawnRipple(btn, e);
+        if (btn.classList.contains('key-danger')) {
+          btn.classList.remove('is-flashing');
+          void btn.offsetWidth;
+          btn.classList.add('is-flashing');
+        }
+      });
+
       btn.addEventListener('click', () => {
         if (btn.dataset.action !== 'equals') haptic.tap();
         handle(btn.dataset.action, btn.dataset.val, btn.dataset['2ndVal'], btn.textContent?.trim());
       });
+
       const press = () => btn.classList.add('is-press');
       const release = () => btn.classList.remove('is-press');
       btn.addEventListener('touchstart', press, { passive: true });
@@ -704,6 +872,7 @@ const keys = scientific ? [...sciMainKeys, ...sciNumKeys] : basicKeys;
 
     // Mode buttons (SHIFT / DEG) — separate from calc-key
     root.querySelectorAll<HTMLButtonElement>('.calc-mode-btn').forEach((btn) => {
+      btn.addEventListener('pointerdown', (e) => spawnRipple(btn, e));
       btn.addEventListener('click', () => {
         haptic.tap();
         handle(btn.dataset.action, undefined, undefined);
@@ -745,7 +914,8 @@ const keys = scientific ? [...sciMainKeys, ...sciNumKeys] : basicKeys;
       }
       const k = e.key;
       let handled = true;
-      if (/^[0-9.]$/.test(k)) insert(k);
+      if (k === 'Shift') setShift(!state.shift);
+      else if (/^[0-9.]$/.test(k)) insert(k);
       else if (k === '+') insert('+');
       else if (k === '-') insert('\u2212');
       else if (k === '*') insert('\u00D7');
@@ -785,7 +955,10 @@ const keys = scientific ? [...sciMainKeys, ...sciNumKeys] : basicKeys;
     }
     if (sci) {
       const mode = state.deg ? 'DEG' : 'RAD';
-      if (degBtn) degBtn.textContent = mode;
+      if (degBtn) {
+        degBtn.textContent = mode;
+        degBtn.setAttribute('aria-pressed', String(!state.deg));
+      }
       if (angleChip) angleChip.textContent = mode;
     }
     updateMemChip();

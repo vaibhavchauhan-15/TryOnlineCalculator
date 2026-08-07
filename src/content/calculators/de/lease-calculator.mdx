@@ -1,0 +1,33 @@
+---
+slug: "lease-calculator"
+category: "finance"
+title: "Leasingrechner - Auto Leasingrate & Gesamtkosten"
+description: "Berechnen Sie monatliche Leasingraten, Wertverlust, Zinsgebühren und Gesamtkosten für Fahrzeug- und Leasingverträge."
+keywords: ["leasingrechner","auto leasing rechner","leasingrate rechner","fahrzeug leasing rechner","kfz leasing rechner"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "gemini-3.6-flash"
+labels: {"depreciation":"Gesamter Wertverlust","downPayment":"Sonderzahlung / Anzahlung","field.apr":"Zinssatz APR (%)","field.downPayment":"Sonderzahlung / Anzahlung","field.price":"Fahrzeugpreis / Listenpreis","field.residualPercent":"Restwert (%)","field.termMonths":"Leasingdauer (Monate)","finance":"Gesamte Zinsgebühr","monthlyDepreciation":"Monatlicher Wertverlust","monthlyFinance":"Monatliche Zinsgebühr","monthlyLease":"Gesamte monatliche Leasingrate","totalLeaseCost":"Gesamtkosten des Leasings"}
+enums: {}
+hints: {}
+chartTitles: {"lease.pieTitle":"Aufteilung der Leasingkosten"}
+intro: "Berechnen Sie monatliche Leasingraten für Autos und Fahrzeuge. Der Rechner schlüsselt den monatlichen Wertverlust und die Zinsgebühren auf."
+formulaIntro: "Die monatliche Leasingrate setzt sich aus zwei Hauptkomponenten zusammen: Wertverlust und Zinsgebühr."
+formulaItems: [{"name":"Monatlicher Wertverlust","expr":"Wertverlust = (Nettokaufpreis − Restwert) / Laufzeit","desc":"Verlust des Fahrzeugwerts geteilt durch die Leasingdauer in Monaten."},{"name":"Monatliche Zinsgebühr","expr":"Zinsgebühr = (Nettokaufpreis + Restwert) × Zinssatz / 2400","desc":"Finanzierungskosten für den gebundenen Fahrzeugwert."}]
+howto: ["Geben Sie den Fahrzeugpreis oder Listenpreis ein.","Tragen Sie eine optionale Sonderzahlung ein.","Wählen Sie die Leasingdauer in Monaten.","Geben Sie den Zinssatz ein.","Legen Sie den erwarteten Restwert in % fest.","Lesen Sie die monatliche Leasingrate und Gesamtkosten ab."]
+examples: [{"title":"35.000 € Auto, 3.000 € Sonderzahlung, 36 Monate bei 4,5 % Zinssatz (55 % Restwert)","body":"Bei 35.000 € Kaufpreis und 3.000 € Sonderzahlung beträgt der monatliche Wertverlust 354,17 € und die Zinsgebühr 96,09 € (450,26 € monatliche Leasingrate). Gesamtkosten: 19.209,25 €."},{"title":"50.000 € Fahrzeug mit 5.000 € Sonderzahlung über 36 Monate bei 3,9 %","body":"Ein 50.000 € Fahrzeug mit 60 % Restwert (30.000 €) ergibt ca. 515 € monatliche Leasingrate."}]
+faq: [{"q":"Was ist der Restwert beim Leasing?","a":"Der Restwert ist der geschätzte Wert des Fahrzeugs am Ende der Leasinglaufzeit."},{"q":"Ist eine hohe Sonderzahlung beim Leasing sinnvoll?","a":"Experten raten meist zu geringen Sonderzahlungen, da die Anzahlung bei Fahrzeugverlust oder Diebstahl meist verloren ist."}]
+related: ["auto-loan-calculator","car-payment-calculator","loan-calculator","personal-loan-calculator"]
+---
+
+## Was ist ein Leasingrechner?
+
+Ein Leasingrechner ermittelt die monatliche Rate beim Fahrzeug-Leasing. Er trennt den reinen Wertverlust von den Finanzierungskosten der Bank.
+
+## Zusammensetzung der Leasingrate
+
+1. **Wertverlust**: Deckt den Wertverlust des Autos während der Nutzung ab.
+2. **Finanzierungskosten (Zinsgebühr)**: Verzinsung des im Fahrzeug gebundenen Kapitals.

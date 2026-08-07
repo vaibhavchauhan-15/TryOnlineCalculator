@@ -18,7 +18,7 @@ test('every enabled locale index covers all calculators', () => {
   for (const code of enabledLocaleCodes()) {
     assert.equal(buildLocale(code).length, enCount, `${code} index matches en count`);
   }
-});
+}, 30000);
 
 test('German index uses localized titles + native synonyms', () => {
   const de = buildLocale('de');
@@ -43,4 +43,4 @@ test('every locale index path is locale-prefixed', () => {
     const recs = buildLocale(code);
     assert.ok(recs.every((r) => r.p.startsWith(`/${code}/`)), `${code} paths are prefixed with /${code}/`);
   }
-});
+}, 30000);

@@ -1,0 +1,40 @@
+---
+slug: "prime-number-calculator"
+category: "math"
+title: "Primzahlenrechner — Primzahl prüfen & zerlegen"
+description: "Prüfen Sie, ob eine Zahl eine Primzahl ist, und berechnen Sie die Primfaktorzerlegung, die nächste und die vorherige Primzahl."
+keywords: ["primzahlenrechner","primzahl prüfen","primfaktorzerlegung","ist es eine primzahl"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "gemini-3.6-flash"
+labels: {"field.n":"Zahl (N)","isPrime":"Ist es eine Primzahl?","nextPrime":"Nächste Primzahl","prevPrime":"Vorherige Primzahl","factorCount":"Anzahl Primfaktoren"}
+enums: {"yes":"Ja — Es ist eine Primzahl","no":"Nein — Es ist eine zusammengesetzte Zahl"}
+intro: "Prüfen Sie, ob eine beliebige positive ganze Zahl eine Primzahl ist, und bestimmen Sie ihre Primfaktoren."
+formulaItems:
+  - name: "Primzahl-Definition"
+    expr: "n > 1, nur teilbar durch 1 und n"
+    desc: "Eine natürliche Zahl größer als 1, die nur durch 1 und sich selbst teilbar ist."
+  - name: "Primfaktorzerlegung"
+    expr: "n = p1^a1 × p2^a2 × ... × pk^ak"
+    desc: "Eindeutige Zerlegung in ein Produkt aus Primzahlen."
+howto:
+  - "Geben Sie eine positive ganze Zahl (N) ein."
+  - "Der Rechner prüft die Primzahleigenschaft."
+  - "Sehen Sie das Ergebnis, die Primfaktoren sowie die nächste und vorherige Primzahl."
+examples:
+  - title: "Primzahlprüfung"
+    body: "Für N = 29: 29 ist eine Primzahl. Die nächste Primzahl ist 31, die vorherige Primzahl ist 23."
+faq:
+  - q: "Ist die Zahl 1 eine Primzahl?"
+    a: "Nein, per Definition ist 1 weder eine Primzahl noch eine zusammengesetzte Zahl."
+  - q: "Welche ist die kleinste Primzahl?"
+    a: "Die Zahl 2 ist die kleinste Primzahl und zugleich die einzige gerade Primzahl."
+related: ["gcf-calculator","lcm-calculator","basic-calculator"]
+---
+
+## Grundlagen von Primzahlen
+
+Eine **Primzahl** ist eine ganze Zahl größer als 1, die außer durch 1 und sich selbst durch keine andere natürliche Zahl ohne Rest teilbar ist.

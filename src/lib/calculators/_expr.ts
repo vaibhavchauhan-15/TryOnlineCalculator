@@ -100,10 +100,15 @@ function gammaPositive(x: number): number {
 const ALL_FUNC_NAMES = new Set([...Object.keys(FUNCS), ...Object.keys(FUNCS2), ...Object.keys(FUNCS0)]);
 
 const CONSTS: Record<string, number> = { pi: Math.PI, e: Math.E };
-const PREC: Record<string, number> = { '+': 2, '-': 2, '*': 3, '/': 3, '%': 3, '^': 4, 'u-': 5 };
+const PREC: Record<string, number> = { '+': 2, '-': 2, '*': 3, '/': 3, '%': 3, '^': 4, 'u-': 4 };
 const RIGHT = new Set(['^', 'u-']);
 
+const tokenCache = new Map<string, Token[]>();
+const MAX_TOKEN_CACHE = 100;
+
 function tokenize(input: string): Token[] {
+  let cached = tokenCache.get(input);
+  if (cached) return cached;
   const tokens: Token[] = [];
   const s = input.replace(/\s+/g, '');
   let i = 0;
@@ -140,6 +145,11 @@ function tokenize(input: string): Token[] {
       throw new Error(`Unexpected character: ${c}`);
     }
   }
+  if (tokenCache.size >= MAX_TOKEN_CACHE) {
+    const firstKey = tokenCache.keys().next().value;
+    if (firstKey !== undefined) tokenCache.delete(firstKey);
+  }
+  tokenCache.set(input, tokens);
   return tokens;
 }
 

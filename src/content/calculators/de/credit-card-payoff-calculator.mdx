@@ -1,0 +1,32 @@
+---
+slug: "credit-card-payoff-calculator"
+category: "finance"
+title: "Kreditkarten Schulden Rechner - Abbezahlen & Zinsen"
+description: "Berechnen Sie die Dauer der Entschuldung, Zinskosten und optimale monatliche Raten für Kreditkartenschulden."
+keywords: ["kreditkarten schulden rechner","kreditkarten rechner","kreditkarten tilgungsrechner","kreditkarten abbezahlen rechner"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "gemini-3.6-flash"
+labels: {"balance":"Restlicher Kreditkartensaldo","field.apr":"Jahreszins APR (%)","field.balance":"Aktueller Saldo","field.monthlyPayment":"Monatliche Rate","interest":"Gesamte Zinskosten","payoffMonths":"Tilgungsdauer (Monate)","totalInterest":"Gezahlte Zinsen gesamt","totalPaid":"Gesamter Rückzahlungsbetrag"}
+enums: {}
+hints: {}
+chartTitles: {"creditCard.growthTitle":"Verlauf des Schuldenabbaus","creditCard.pieTitle":"Ursprungsschulden vs. Zinskosten"}
+intro: "Hohe Kreditkartenzinsen machen Schulden teuer. Berechnen Sie mit diesem Tilgungsrechner, wie schnell Sie schuldenfrei werden."
+formulaIntro: "Die Tilgung von Kreditkartenschulden verrechnet monatliche Zinsen mit Ihrer Rückzahlungsrate."
+formulaItems: [{"name":"Monatlicher Zinsbetrag","expr":"Zins_m = Saldo_m × (APR / 12)","desc":"Monatliche Zinsbelastung auf den verbleibenden Saldo."},{"name":"Monatliche Tilgung","expr":"Tilgung_m = Rate − Zins_m","desc":"Reiner Betrag, der Ihre Schulden jeden Monat verringert."}]
+howto: ["Geben Sie Ihren aktuellen Kreditkartensaldo ein.","Tragen Sie den jährlichen Zinssatz (APR %) ein.","Geben Sie Ihre geplante monatliche Rückzahlungsrate ein.","Lesen Sie die Tilgungsdauer in Monaten und die Gesamtzinsen ab."]
+examples: [{"title":"5.000 € Kreditkartenschulden zu 21,99 % APR mit 200 € monatlicher Rate","body":"Bei 200 € monatlich dauert die Tilgung von 5.000 € zu 21,99 % Zinsen 34 Monate und kostet 1.691 € Zinsen (6.691 € gesamt)."},{"title":"Erhöhung der Monatsrate auf 350 €","body":"Eine Erhöhung der Rate von 200 € auf 350 € verkürzt die Tilgungsdauer auf 17 Monate und spart 849 € Zinsen."}]
+faq: [{"q":"Warum ist nur die Mindestrückzahlung gefährlich?","a":"Die Mindestrate deckt fast nur Zinsen ab, wodurch die Tilgung Jahrzehnte dauert und extrem teuer wird."},{"q":"Wie wird man Kreditkartenschulden am schnellsten los?","a":"Zahlen Sie deutlich mehr als die Mindestrate oder schichten Sie teure Kredite in einen günstigeren Ratenkredit um."}]
+related: ["debt-payoff-calculator","personal-loan-calculator","loan-calculator","apr-calculator"]
+---
+
+## Was ist ein Kreditkarten Schulden Rechner?
+
+Ein Kreditkarten Schulden Rechner zeigt den Weg zur vollständigen Schuldenfreiheit. Er berechnet Tilgungsfristen und Zinskosten bei unterschiedlichen monatlichen Raten.
+
+## Warum Kreditkartenschulden so teuer sind
+
+Kreditkartenzinsen liegen häufig zwischen 15 % und 24 %. Wer nur die Mindestrate zahlt, zahlt jahrelang Zinsen. Bereits kleine Erhöhungen der Monatsrate sparen hunderte Euro Zinsen.

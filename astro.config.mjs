@@ -69,8 +69,9 @@ export default defineConfig({
         if (url.match(/\/(?:en|de)\/$/)) {
           return { ...item, changefreq: EnumChangefreq.WEEKLY, priority: 1.0 };
         }
-        // Category pages: high priority
-        if (url.match(/\/(?:en|de)\/(?:finance|health|education|math|salary|shopping|date-time|travel|unit-converter)\/?$/)) {
+        // Category pages: high priority. Both English and German category slugs
+        // (the DE routes use localized segments like /finanzen/, /gesundheit/).
+        if (url.match(/\/(?:en|de)\/(?:finance|health|education|math|salary|shopping|date-time|travel|unit-converter|finanzen|gesundheit|bildung|mathematik|gehalt|einkaufen|datum-zeit|reise|einheitenumrechner)\/?$/)) {
           return { ...item, changefreq: EnumChangefreq.WEEKLY, priority: 0.9 };
         }
         // Converter type pages

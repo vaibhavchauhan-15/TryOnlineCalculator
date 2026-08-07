@@ -1,0 +1,35 @@
+---
+slug: "commission-calculator"
+category: "salary"
+title: "Provisionsrechner"
+description: "Berechnen Sie Verkaufsprovision und Gesamtverdienst aus Verkaufssumme, Provisionssatz und Grundgehalt."
+keywords: ["provisionsrechner","provision berechnen","verkaufsprovision rechner","provisionssatz berechnen","provision gehalt"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "manual-de-v1"
+searchIntent: "Die Verkaufsprovision und den Gesamtverdienst berechnen."
+readingLevel: "general"
+market: "global"
+audience: "Vertriebsmitarbeiter, Makler und Freelancer mit Provisionsvergütung"
+labels: {"field.saleAmount":"Verkaufssumme","field.commissionRate":"Provisionssatz","field.basePay":"Grundgehalt","commission":"Provision","totalEarnings":"Gesamtverdienst","basePay":"Grundgehalt"}
+chartTitles: {"commission.pieTitle":"Grundgehalt und Provision"}
+intro: "Geben Sie die Verkaufssumme und Ihren Provisionssatz ein, um Ihre Provision zu sehen. Fügen Sie ein Grundgehalt hinzu, um Ihren Gesamtverdienst für den Zeitraum zu erhalten."
+formulaIntro: "Die Provision ist ein Prozentsatz des Umsatzes, optional zusätzlich zu einem festen Grundgehalt."
+formulaItems: [{"name":"Provision","expr":"Provision = Verkaufssumme × Satz / 100"},{"name":"Gesamtverdienst","expr":"Gesamt = Grundgehalt + Provision"}]
+howto: ["Geben Sie die gesamte Verkaufssumme ein.","Geben Sie Ihren Provisionssatz ein.","Fügen Sie optional ein Grundgehalt für den Gesamtverdienst hinzu."]
+examples: [{"title":"10.000 € Umsatz bei 5 %","body":"Ein Provisionssatz von 5 % auf 10.000 € Umsatz zahlt 500 €. Mit 2.000 € Grundgehalt beträgt der Gesamtverdienst 2.500 €."}]
+faq: [{"q":"Wie wird die Provision berechnet?","a":"Die Provision ist die Verkaufssumme multipliziert mit dem Provisionssatz. Ein Satz von 5 % auf 10.000 € Umsatz ergibt 500 € Provision."},{"q":"Was ist eine gestaffelte Provision?","a":"Bei einer Staffelung gilt ab einer bestimmten Schwelle ein höherer Satz. Berechnen Sie jede Stufe einzeln und addieren Sie die Ergebnisse."},{"q":"Wird Provision anders besteuert?","a":"Provision ist steuerpflichtiges Einkommen und wird wie Lohn versteuert. Die endgültige Steuer hängt von Ihrem Gesamteinkommen ab."}]
+related: ["salary-calculator","paycheck-calculator","profit-calculator","markup-calculator"]
+---
+
+Ein Provisionsrechner ermittelt, wie viel Sie an einem Verkauf verdienen und —
+wenn Sie ein Grundgehalt haben — Ihren Gesamtverdienst für den Zeitraum. Geben
+Sie Verkaufssumme, Provisionssatz und Grundgehalt ein, und Provision sowie
+Gesamtverdienst erscheinen sofort.
+
+Das ist nützlich für Vertriebsrollen, Immobilienmakler und Freelancer, die nach
+Prozentsatz abrechnen. Für gestaffelte oder gedeckelte Modelle rechnen Sie jede
+Stufe einzeln durch und addieren die Teile zu Ihrer vollen Auszahlung.

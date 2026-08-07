@@ -1,0 +1,39 @@
+---
+slug: "determinant-calculator"
+category: "math"
+title: "Determinantenrechner — 2x2 & 3x3 Determinanten"
+description: "Berechnen Sie die Determinante det(A) und Spur für 2x2 und 3x3 Matrizen schnell und präzise mit Formelentwicklung."
+keywords: ["determinantenrechner","determinante berechnen","matrix determinante","det a berechnen"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "gemini-3.6-flash"
+labels: {"field.dim":"Matrix-Dimension","dim.2x2":"2x2 Matrix","dim.3x3":"3x3 Matrix","field.a11":"A (1,1)","field.a12":"A (1,2)","field.a13":"A (1,3)","field.a21":"A (2,1)","field.a22":"A (2,2)","field.a23":"A (2,3)","field.a31":"A (3,1)","field.a32":"A (3,2)","field.a33":"A (3,3)","determinant":"Determinante |A|","trace":"Spur tr(A)"}
+intro: "Berechnen Sie die Determinante det(A) und Spur für 2x2 und 3x3 Matrizen mit Schritt-für-Schritt Formelentwicklung."
+formulaItems:
+  - name: "2x2 Determinante"
+    expr: "det(A) = a11·a22 - a12·a21"
+    desc: "Überkreuz-Multiplikation der Haupt- und Nebendiagonale."
+  - name: "3x3 Determinante"
+    expr: "det(A) = a11(a22·a33 - a23·a32) - a12(a21·a33 - a23·a31) + a13(a21·a32 - a22·a31)"
+    desc: "Laplacescher Entwicklungssatz nach der ersten Zeile."
+howto:
+  - "Wählen Sie die Matrix-Dimension (2x2 oder 3x3)."
+  - "Tragen Sie die Matrixkoeffizienten ein."
+  - "Lesen Sie die berechnete Determinante det(A) und die Spur ab."
+examples:
+  - title: "2x2 Determinante berechnen"
+    body: "Für A = [[4, 3], [2, 5]] gilt: det(A) = (4×5) - (3×2) = 20 - 6 = 14."
+faq:
+  - q: "Was ist die Determinante einer Matrix?"
+    a: "Die Determinante ist eine Skalarzahl einer quadratischen Matrix, die Auskunft über die Invertierbarkeit und Eigenschaften der linearen Abbildung gibt."
+  - q: "Was bedeutet eine Determinante von Null?"
+    a: "Wenn det(A) = 0 ist, ist die Matrix singulär und nicht invertierbar (sie besitzt keine Kehrmatrix)."
+related: ["matrix-calculator","scientific-calculator","quadratic-calculator"]
+---
+
+## Determinanten quadratischer Matrizen
+
+Die **Determinante** einer quadratischen Matrix ist ein zentraler Kennwert der linearen Algebra.

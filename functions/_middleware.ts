@@ -1,3 +1,4 @@
+/// <reference path="../worker-configuration.d.ts" />
 // Cloudflare Pages Function middleware.
 //
 // Runs at the edge for EVERY request. Two responsibilities:
@@ -27,8 +28,18 @@ const SKIP_PATTERN = /^\/(?:fonts|_astro|_image|favicon|robots\.txt|sitemap|site
 
 /** Extract a named cookie value from the Cookie header string. */
 function getCookie(cookieHeader: string, name: string): string | null {
-  const match = cookieHeader.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`));
-  return match ? decodeURIComponent(match[1]) : null;
+  const prefix = name + '=';
+  for (const part of cookieHeader.split('; ')) {
+    const trimmed = part.trimStart();
+    if (trimmed.startsWith(prefix)) {
+      try {
+        return decodeURIComponent(trimmed.slice(prefix.length));
+      } catch {
+        return null;
+      }
+    }
+  }
+  return null;
 }
 
 /**

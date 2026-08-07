@@ -1,0 +1,37 @@
+---
+slug: "vat-calculator"
+category: "finance"
+title: "Umsatzsteuer-Rechner (VAT)"
+description: "Umsatzsteuer auf einen Nettobetrag aufschlagen oder aus einem Bruttobetrag herausrechnen — sofort und kostenlos."
+keywords: ["umsatzsteuer rechner","vat rechner","umsatzsteuer berechnen","netto brutto rechner","umsatzsteuer herausrechnen","19 prozent umsatzsteuer"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "manual-de-v1"
+searchIntent: "Umsatzsteuer auf einen Betrag aufschlagen oder aus einem Bruttobetrag herausrechnen."
+readingLevel: "general"
+market: "DE"
+audience: "Selbstständige, Unternehmer und Verbraucher, die Umsatzsteuer berechnen müssen"
+labels: {"field.mode":"Modus","field.amount":"Betrag","field.rate":"USt-Satz","vatAmount":"USt-Betrag","netAmount":"Nettobetrag","grossAmount":"Bruttobetrag"}
+enums: {"mode.addVat":"USt aufschlagen (Netto → Brutto)","mode.removeVat":"USt herausrechnen (Brutto → Netto)"}
+chartTitles: {"vat.pieTitle":"Netto- und USt-Anteil"}
+intro: "Geben Sie einen Betrag und den Umsatzsteuersatz ein, um sofort den Nettobetrag, den USt-Betrag und den Bruttobetrag zu sehen. Wechseln Sie den Modus, um USt aufzuschlagen oder herauszurechnen."
+formulaIntro: "Die Umsatzsteuer wird auf den Nettobetrag aufgeschlagen oder aus dem Bruttobetrag herausgerechnet."
+formulaItems: [{"name":"USt aufschlagen","expr":"Brutto = Netto × (1 + Satz / 100)"},{"name":"USt herausrechnen","expr":"Netto = Brutto / (1 + Satz / 100)"},{"name":"USt-Betrag","expr":"USt = Brutto − Netto"}]
+howto: ["Wählen Sie, ob Sie USt aufschlagen oder herausrechnen möchten.","Geben Sie den Betrag ein.","Legen Sie den USt-Satz fest (z. B. 19 %).","Lesen Sie Netto, USt und Brutto ab."]
+examples: [{"title":"100 € netto bei 19 % USt","body":"Ein Nettobetrag von 100 € ergibt bei 19 % Umsatzsteuer 19 € USt und einen Bruttobetrag von 119 €."},{"title":"119 € brutto bei 19 % USt","body":"Rechnet man 19 % aus 119 € brutto heraus, ergeben sich 100 € netto und 19 € Umsatzsteuer."}]
+faq: [{"q":"Wie rechne ich die Umsatzsteuer aus einem Bruttobetrag heraus?","a":"Wechseln Sie in den Modus 'USt herausrechnen'. Der Rechner teilt den Bruttobetrag durch (1 + Satz/100), um den Nettobetrag zu ermitteln, und zeigt die USt als Differenz."},{"q":"Was ist der Unterschied zwischen Umsatzsteuer und Mehrwertsteuer?","a":"In Deutschland sind die Begriffe synonym. 'Umsatzsteuer' ist der gesetzliche Fachbegriff, 'Mehrwertsteuer' der im Alltag gebräuchlichere Begriff. Der englische Begriff VAT meint dasselbe."},{"q":"Welchen USt-Satz soll ich verwenden?","a":"In Deutschland gilt der Regelsatz von 19 % und ein ermäßigter Satz von 7 % (z. B. für Lebensmittel und Bücher). Nutzen Sie den passenden Satz für Ihr Produkt."}]
+related: ["sales-tax-calculator","margin-calculator","markup-calculator","discount-calculator"]
+---
+
+Ein Umsatzsteuer-Rechner (englisch VAT) schlägt die Steuer auf einen
+Nettobetrag auf oder rechnet sie aus einem Bruttobetrag heraus. Geben Sie den
+Betrag ein, wählen Sie den Modus, legen Sie den Satz fest — und Netto, USt und
+Brutto erscheinen sofort.
+
+Das ist praktisch für Rechnungen, Angebote und die Prüfung von Belegen. Beim
+Aufschlagen wird der Nettobetrag mit eins plus dem Satz multipliziert; beim
+Herausrechnen wird der Bruttobetrag durch denselben Faktor geteilt, um den
+Nettoanteil und die enthaltene Steuer sichtbar zu machen.

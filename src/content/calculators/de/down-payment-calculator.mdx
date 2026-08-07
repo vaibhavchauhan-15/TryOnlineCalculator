@@ -1,0 +1,34 @@
+---
+slug: "down-payment-calculator"
+category: "finance"
+title: "Eigenkapital Rechner - Hauskauf Ansparen & Dauer"
+description: "Berechnen Sie das benötigte Eigenkapital für den Immobilienkauf, die verbleibende Sparsumme und die Dauer bis zum Ziel."
+keywords: ["eigenkapital rechner","hauskauf eigenkapital rechner","eigenkapital ansparen rechner","anzahlungsrechner","immobilien anzahlung rechner"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "gemini-3.6-flash"
+labels: {"balance":"Sparguthaben","contributed":"Monatliche Sparbeiträge","currentSavings":"Bisheriges Eigenkapital","field.currentSavings":"Bisher Erspartes","field.downPercent":"Ziel-Eigenkapital (%)","field.homePrice":"Ziel-Immobilienpreis","field.monthlySavings":"Monatliche Sparrate","field.savingsYield":"Zinssatz auf Ersparnisse (%)","interest":"Zinserträge auf Ersparnisse","interestEarned":"Zinserträge auf Ersparnisse","monthsToGoal":"Dauer bis zum Ziel (Monate)","remainingToSave":"Noch anzusparender Betrag","targetDownPayment":"Benötigtes Eigenkapital"}
+enums: {}
+hints: {}
+chartTitles: {"downPayment.growthTitle":"Fortschritt des Eigenkapital-Sparens","downPayment.pieTitle":"Aufteilung des Eigenkapital-Ziels"}
+intro: "Das Ansparen von Eigenkapital für den Immobilienkauf erfordert einen klaren Sparplan. Berechnen Sie das benötigte Eigenkapital und die Spardauer."
+formulaIntro: "Die Berechnung verbindet den Ziel-Prozentsatz der Immobilie mit der Verzinsung Ihrer monatlichen Sparraten."
+formulaItems: [{"name":"Benötigtes Eigenkapital","expr":"Eigenkapital = Immobilienpreis × (Ziel % / 100)","desc":"Erforderliches Barkapital für den Immobilienkauf."},{"name":"Verbleibendes Sparziel","expr":"Restbetrag = Ziel-Eigenkapital − Bisher Erspartes","desc":"Noch anzusparendes Kapital für die Kaufreife."}]
+howto: ["Geben Sie den Ziel-Kaufpreis der Immobilie ein.","Wählen Sie den gewünschten Eigenkapital-Anteil in % (empfohlen mind. 20 %).","Geben Sie Ihr bereits vorhandenes Eigenkapital ein.","Tragen Sie Ihre monatliche Sparrate ein.","Geben Sie den Zinssatz Ihres Sparkontos/Tagesgelds ein.","Lesen Sie das benötigte Eigenkapital und die Spardauer in Monaten ab."]
+examples: [{"title":"350.000 € Immobilienpreis, 20 % Eigenkapital (70.000 €) mit 20.000 € Startguthaben bei 1.500 €/Monat","body":"Um 20 % (70.000 €) für eine 350.000 € Immobilie anzusparen (mit 20.000 € Startguthaben und 1.500 € monatlich zu 4,5 % Zinsen), benötigen Sie 31 Monate und erhalten 2.389 € Zinsen."},{"title":"500.000 € Immobilienpreis, 10 % Eigenkapital (50.000 €) bei 2.000 €/Monat","body":"50.000 € mit 10.000 € Startguthaben bei 2.000 €/Monat anzusparen dauert ca. 19 Monate."}]
+faq: [{"q":"Wie viel Eigenkapital sollte man beim Hauskauf haben?","a":"Experten empfehlen mindestens 20 % des Kaufpreises plus Kaufnebenkosten (Notar, Grunderwerbsteuer, Makler)."},{"q":"Wo sollte man Eigenkapital vor dem Kauf anlegen?","a":"Eigenkapital sollte sicher auf Tagesgeld- oder Festgeldkonten angelegt werden, um Kursverluste zu vermeiden."}]
+related: ["mortgage-calculator","savings-calculator","auto-loan-calculator","investment-calculator"]
+---
+
+## Was ist ein Eigenkapital Rechner?
+
+Ein Eigenkapital Rechner erstellt den Sparplan für den Immobilienkauf. Er zeigt exakt, wie viele Monate Sie sparen müssen, um das notwendige Eigenkapital zu erreichen.
+
+## Tipps für schnelleres Ansparen von Eigenkapital
+
+1. **Tagesgeld & Festgeld nutzen**: Hohe Zinsen sichern und Zinseszins mitnehmen.
+2. **Daueraufträge einrichten**: Sparraten direkt am Monatsanfang abbuchen lassen.
+3. **Ausgaben optimieren**: Unnötige Konsumausgaben temporär reduzieren.

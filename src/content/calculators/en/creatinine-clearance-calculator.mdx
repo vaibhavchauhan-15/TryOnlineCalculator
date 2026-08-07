@@ -1,0 +1,66 @@
+---
+slug: creatinine-clearance-calculator
+category: health
+title: Creatinine Clearance Calculator
+description: Calculate creatinine clearance (CrCl) and eGFR using Cockcroft-Gault equation for kidney function evaluation.
+keywords:
+  - creatinine clearance calculator
+  - cockcroft gault calculator
+  - egfr calculator
+  - crcl calculator
+  - kidney function calculator
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: en
+searchIntent: Calculate creatinine clearance rate (CrCl) and eGFR kidney function.
+readingLevel: general
+market: global
+audience: medical professionals, patients tracking kidney health
+labels:
+  creatinineClearance: Creatinine Clearance (CrCl)
+  egfr: Estimated GFR (eGFR)
+  stage1Normal: Stage 1 Normal GFR (≥90)
+  stage2Mild: Stage 2 Mild Decrease (60-89)
+  stage3Moderate: Stage 3 Moderate (30-59)
+  field.unitSystem: Units
+  field.sex: Sex
+  field.age: Age
+  field.weight: Weight
+  field.weightLb: Weight (lb)
+  field.serumCreatinine: Serum Creatinine (mg/dL)
+enums:
+  metric: Metric (kg)
+  imperial: Imperial (lb)
+  male: Male
+  female: Female
+hints:
+  cockcroftMethod: Cockcroft-Gault clinical renal clearance equation
+  unit.mlMin: mL/min
+  unit.mlMin173m2: mL/min/1.73m²
+chartTitles:
+  creatinine.chartStages: Kidney Function Stages (mL/min)
+intro: Calculate your estimated creatinine clearance (CrCl) and eGFR kidney function using the Cockcroft-Gault clinical formula.
+formulaIntro: The Cockcroft-Gault equation estimates creatinine clearance from serum creatinine level, age, sex, and weight.
+formulaItems:
+  - name: Cockcroft-Gault Formula (Male)
+    expr: CrCl = ((140 - age) · weight) / (72 · serum creatinine)
+  - name: Cockcroft-Gault Formula (Female)
+    expr: CrCl = CrCl(male) · 0.85
+howto:
+  - Choose Metric or Imperial units.
+  - Select your biological sex.
+  - Enter your age, body weight, and serum creatinine level (mg/dL).
+  - View your estimated creatinine clearance (mL/min) and kidney function classification.
+faq:
+  - q: What is a normal creatinine clearance rate?
+    a: Normal creatinine clearance is generally 97 to 137 mL/min for adult males and 88 to 128 mL/min for adult females.
+  - q: What does low creatinine clearance indicate?
+    a: A clearance rate below 60 mL/min for 3 months or more indicates reduced kidney function and warrants medical evaluation.
+related:
+  - water-intake-calculator
+  - bmi-calculator
+  - ideal-weight-calculator
+---
+
+Creatinine clearance (CrCl) measures the rate at which kidneys filter creatinine from blood plasma. It serves as a vital clinical index for renal health and medication dosing.

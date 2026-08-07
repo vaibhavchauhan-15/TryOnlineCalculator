@@ -1,0 +1,34 @@
+---
+slug: "mutual-fund-calculator"
+category: "finance"
+title: "Fondsrechner - Investmentfonds SIP & Einmalanlage Rechner"
+description: "Berechnen Sie erwartete Renditen und das Depotguthaben für monatliche Sparpläne (SIP) oder Einmalanlagen in Investmentfonds."
+keywords: ["fondsrechner","investmentfonds rechner","mutual fund rechner","fonds rendite rechner","aktienfonds rechner"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "gemini-3.6-flash"
+labels: {"balance":"Depotwert","estReturns":"Geschätzte Rendite","field.amount":"Anlagebetrag","field.mode":"Anlageform","field.rate":"Erwartete Rendite (p.a.)","field.tenureYears":"Anlagehorizont (Jahre)","invested":"Eingezahlter Betrag","investedAmount":"Gesamteinzahlung","returns":"Geschätzter Gewinn","totalValue":"Gesamter Depotwert"}
+enums: {"mode.lumpsum":"Einmalzahlung","mode.sip":"Monatlicher Sparplan (SIP)"}
+hints: {}
+chartTitles: {"mf.growthTitle":"Wertentwicklung des Fonds-Depots","mf.pieTitle":"Aufteilung von Einzahlung und Wertzuwachs"}
+intro: "Investmentfonds bündeln das Geld vieler Anleger für Investments in Aktien, Anleihen oder Wertpapiere. Berechnen Sie Renditen für Sparpläne oder Einmalzahlungen."
+formulaIntro: "Die Berechnung nutzt Formeln für monatliche Sparpläne oder den Zinseszins bei Einmalanlagen."
+formulaItems: [{"name":"Fonds-Sparplan-Formel","expr":"FV = P × [((1 + i)^n − 1) / i] × (1 + i)","desc":"P = monatliche Einzahlung, i = monatlicher Effektivzins, n = Gesamtzahl der Monate."},{"name":"Fonds-Einmalanlage-Formel","expr":"FV = P × (1 + r)^t","desc":"P = Einmalzahlung, r = Jahresrendite, t = Dauer in Jahren."}]
+howto: ["Wählen Sie die Anlageform: Monatlicher Sparplan oder Einmalzahlung.","Geben Sie den Anlagebetrag ein.","Tragen Sie die erwartete jährliche Rendite ein.","Wählen Sie die Anlagedauer in Jahren.","Analysieren Sie die Gesamteinzahlung, den Gewinn und den gesamten Depotwert."]
+examples: [{"title":"5.000 monatlich in Fonds-SIP zu 12 % über 10 Jahre","body":"5.000 monatlich über 10 Jahre (600.000 eingezahlt) bei 12 % erwarteter Rendite ergeben ca. 1.161.695 Depotwert (561.695 Rendite)."},{"title":"100.000 Einmalanlage in Aktienfonds zu 12 % über 15 Jahre","body":"Eine einmalige Anlage von 100.000 zu 12 % p.a. wächst in 15 Jahren auf ca. 547.357."}]
+faq: [{"q":"Was ist ein Investmentfonds?","a":"Ein Investmentfonds bündelt Kapital vieler Anleger und investiert breit diversifiziert in Aktien, Anleihen oder Rohstoffe."},{"q":"Was ist besser: Sparplan oder Einmalzahlung?","a":"Sparpläne nutzen den Durchschnittskosteneffekt (Cost-Average-Effekt), während Einmalzahlungen bei günstigen Marktphasen höhere Erträge erzielen."},{"q":"Sind Fondserträge garantiert?","a":"Nein, Investmentfonds unterliegen Wertschwankungen des Kapitalmarktes."}]
+related: ["sip-calculator","lumpsum-calculator","investment-calculator","compound-interest-calculator"]
+---
+
+## Was ist ein Fondsrechner?
+
+Ein Fondsrechner simuliert das langfristige Wachstum von Investmentfonds. Er berechnet sowohl regelmäßige Sparpläne als auch Einmalzahlungen.
+
+## Vorteile von Investmentfonds
+
+1. Professionelles Management durch Fondsmanager.
+2. Risikostreuung über viele Einzelwerte.
+3. Hohe Liquidität und Verfügbarkeit des Kapitals.

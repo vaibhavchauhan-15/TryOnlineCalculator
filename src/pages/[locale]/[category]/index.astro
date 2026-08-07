@@ -40,9 +40,32 @@ const catLabel = categoryName(locale, cat.id);
 
 const entries = await getCollection('calculators', (e) => e.id.startsWith(`${locale}/`));
 const titleBySlug = new Map(entries.map((e) => [e.id.slice(locale.length + 1), e.data.title]));
+const descBySlug = new Map(entries.map((e) => [e.id.slice(locale.length + 1), e.data.description]));
 const locTitle = (slug: string, fallback: string) => titleBySlug.get(slug) ?? fallback;
+const locDesc = (slug: string, fallback: string) => descBySlug.get(slug) ?? fallback;
 
-const calcs = calculatorsByCategory(cat.id);
+const categoryMdxSlugs = entries
+  .filter((e) => e.data.category === cat.id)
+  .map((e) => e.id.slice(locale.length + 1));
+
+const legacyCalcs = calculatorsByCategory(cat.id);
+const allCategorySlugs = Array.from(new Set([...legacyCalcs.map((c) => c.slug), ...categoryMdxSlugs]));
+
+const calcs = allCategorySlugs.map((slug) => {
+  const legacy = legacyCalcs.find((c) => c.slug === slug);
+  return (
+    legacy ?? {
+      slug,
+      category: cat.id as any,
+      title: locTitle(slug, slug),
+      description: locDesc(slug, ''),
+      keywords: [],
+      inputs: [],
+      compute: () => ({ results: [] }),
+      faq: [],
+    }
+  );
+});
 const openLabel = home.open ?? 'Open';
 
 // FAQs and structured data — English uses categoryFaqs, other locales use categoryFaqsByLocale
@@ -90,17 +113,21 @@ const catKeywords = isDefault ? Array.from(
     ...entries.flatMap((e) => (e.data.keywords as string[]) ?? []),
   ]),
 ).slice(0, 20) : []);
-// Build SEO-optimized meta description with top calculator names
-const topCalcNames = calcs.slice(0, 5).map((c) => locTitle(c.slug, c.title).replace(' Calculator', '').replace(' Rechner', '')).join(', ');
-const seoDescription = isDefault
-  ? `Free online ${cat.name.toLowerCase()} calculators: ${topCalcNames} and more. ${calcs.length} accurate tools with instant results — no sign-up needed.`
-  : (localizedCatDesc || home.metaDescription || 'Free, fast, privacy-friendly online calculators.');
+// Build SEO-optimized meta description with top calculator names, capped under 155 chars
+const topCalcNames = calcs.slice(0, 3).map((c) => c.title).join(', ');
+const seoDescription = (() => {
+  if (isDefault) {
+    const raw = `Free online ${cat.name.toLowerCase()} calculators: ${topCalcNames} and more. ${calcs.length} accurate tools.`;
+    return raw.length <= 155 ? raw : `Free online ${cat.name.toLowerCase()} calculators with instant results. ${calcs.length}+ free tools, no sign-up needed.`;
+  }
+  return localizedCatDesc.length <= 155 ? localizedCatDesc : (home.metaDescription ?? 'Kostenlose, schnelle Online-Rechner.');
+})();
 ---
 
 <Layout
   title={isDefault
-    ? `${cat.name} Calculators — Free Online ${cat.name} Calculator Tools (${calcs.length}+)`
-    : `${catLabel} — ${home.metaTitle ?? 'Free Online Calculators'}`}
+    ? `${cat.name} Calculators — Free Online Tools`
+    : `${catLabel} — Kostenlose Online-Rechner`}
   description={seoDescription}
   path={to(cat.path, locale)}
   locale={locale}
@@ -129,7 +156,7 @@ const seoDescription = isDefault
           <LinkCard
             href={to(`/${c.category}/${c.slug}`, locale)}
             title={locTitle(c.slug, c.title)}
-            desc=""
+            desc={locDesc(c.slug, c.description)}
             icon={calculatorIcon(c.slug) ?? cat.icon}
             cta={openLabel}
           />

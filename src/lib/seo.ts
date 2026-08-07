@@ -77,6 +77,14 @@ export function websiteSchema() {
   };
 }
 
+// Authoritative profiles for the publishing organization. Populate with real
+// profile URLs as they go live — an empty entry is omitted so we never emit a
+// broken `sameAs`. This is a standard entity-trust (EEAT) signal.
+const ORG_SAME_AS = [
+  // 'https://twitter.com/tryonlinecalc',
+  // 'https://www.linkedin.com/company/tryonlinecalculator',
+].filter(Boolean);
+
 export function organizationSchema() {
   return {
     '@context': 'https://schema.org',
@@ -86,6 +94,7 @@ export function organizationSchema() {
     logo: `${SITE}/web-app-manifest-512x512.png`,
     description:
       'Try Online Calculator provides fast, free and privacy-friendly online calculators for finance, health, education and everyday math.',
+    ...(ORG_SAME_AS.length ? { sameAs: ORG_SAME_AS } : {}),
   };
 }
 

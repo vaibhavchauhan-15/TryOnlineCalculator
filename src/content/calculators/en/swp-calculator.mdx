@@ -1,0 +1,32 @@
+---
+slug: "swp-calculator"
+category: "finance"
+title: "SWP Calculator - Systematic Withdrawal Plan Calculator"
+description: "Calculate monthly income, remaining portfolio balance, and total returns from a Systematic Withdrawal Plan (SWP)."
+keywords: ["swp calculator","systematic withdrawal plan calculator","mutual fund swp calculator","swp monthly income calculator","swp payout calculator"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+labels: {"balance":"Portfolio balance","field.monthlyWithdrawal":"Monthly withdrawal","field.rate":"Expected return rate (p.a.)","field.tenureYears":"Duration (years)","field.totalInvestment":"Total investment amount","finalBalance":"Remaining balance","totalReturns":"Total portfolio profit","totalWithdrawn":"Total amount withdrawn","withdrawn":"Total withdrawn"}
+enums: {}
+hints: {}
+chartTitles: {"swp.growthTitle":"SWP Portfolio Balance Over Time","swp.pieTitle":"Final Portfolio Balance vs Total Withdrawn"}
+intro: "A Systematic Withdrawal Plan (SWP) allows you to withdraw a fixed amount monthly from your investment portfolio while the remaining capital continues to grow."
+formulaIntro: "SWP calculations update your corpus balance each month by adding monthly growth and subtracting your fixed withdrawal."
+formulaItems: [{"name":"Monthly SWP Balance Update","expr":"B_m = B_{m-1} × (1 + r/12) − W","desc":"B_m = balance at month m, r = annual return rate, W = monthly withdrawal amount."},{"name":"Total Profit","expr":"Total Profit = Final Balance + Total Withdrawn − Initial Investment","desc":"Net financial gain produced by the portfolio."}]
+howto: ["Enter your initial lump sum investment amount.","Set your target monthly withdrawal amount.","Input your expected annual return rate.","Choose the withdrawal duration in years.","Analyze your remaining portfolio balance and total money received."]
+examples: [{"title":"$500,000 portfolio, $4,000 monthly withdrawal at 8% p.a. for 10 years","body":"With a $500,000 initial investment withdrawing $4,000 monthly at 8% annual return over 10 years, you withdraw $480,000 in total while maintaining a remaining balance of ~$294,625."},{"title":"$1,000,000 portfolio, $7,000 monthly withdrawal at 9% p.a. for 15 years","body":"Withdrawing $7,000 monthly from a $1M portfolio at 9% for 15 years yields $1,260,000 in cash payouts while preserving $1,059,200 in capital."}]
+faq: [{"q":"What is a Systematic Withdrawal Plan (SWP)?","a":"An SWP is a facility offered by mutual funds allowing investors to redeem a specified amount from their scheme at regular intervals."},{"q":"Who should use an SWP?","a":"SWPs are ideal for retirees, freelance workers, or anyone seeking a steady monthly cash flow from an existing lump sum investment."},{"q":"What happens if my withdrawal rate exceeds portfolio growth?","a":"If withdrawals exceed investment returns, your capital will gradually decrease over time until the balance is exhausted."},{"q":"Are SWP withdrawals tax-efficient?","a":"Yes, only the capital gain portion of each withdrawal is taxed, making SWPs more tax-efficient than regular dividend payouts."}]
+related: ["sip-calculator","mutual-fund-calculator","retirement-calculator","lumpsum-calculator"]
+---
+
+## What is an SWP Calculator?
+
+A Systematic Withdrawal Plan (SWP) calculator models regular income payouts from a mutual fund or investment portfolio. It computes how much cash you can extract monthly without prematurely depleting your capital.
+
+## Benefits of an SWP Strategy
+
+1. **Regular Cash Flow**: Generate consistent monthly income for living expenses or retirement.
+2. **Capital Growth**: Unwithdrawn funds remain invested and compound over time.
+3. **Tax Efficiency**: Taxation applies only to gains, preserving your principal base.

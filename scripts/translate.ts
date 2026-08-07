@@ -117,7 +117,7 @@ const mapObj = (m: Map<string, string>, o: Record<string, string> | undefined) =
  * Produce the localized document: apply the translation map to every
  * translatable field, preserve the protected ones, and stamp provenance.
  */
-export function applyTranslations(en: Doc, m: Map<string, string>, locale: string, model: string): Doc {
+export function applyTranslations(en: Doc, m: Map<string, string>, _locale: string, model: string): Doc {
   const fm: Record<string, any> = { ...en.fm };
 
   fm.title = mapStr(m, en.fm.title);

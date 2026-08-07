@@ -1,0 +1,45 @@
+---
+slug: "standard-deviation-calculator"
+category: "math"
+title: "Standard Deviation Calculator — Sample & Population"
+description: "Calculate sample standard deviation s, population standard deviation σ, variance, and mean for any dataset with step-by-step math."
+keywords: ["standard deviation calculator","sample standard deviation","population standard deviation","variance calculator"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+labels: {"field.values":"Dataset Numbers","sampleSd":"Sample Std Dev (s)","popSd":"Population Std Dev (σ)","sampleVar":"Sample Variance (s²)","popVar":"Population Variance (σ²)","mean":"Mean (μ)","count":"Count (N)","sum":"Sum (∑x)"}
+intro: "Calculate sample standard deviation (s), population standard deviation (σ), variance, mean, and sum for any numerical dataset."
+formulaItems:
+  - name: "Sample Standard Deviation"
+    expr: "s = √[ ∑(x_i - x̄)² / (N - 1) ]"
+    desc: "Uses N-1 (Bessel's correction) to estimate population variability from a sample."
+  - name: "Population Standard Deviation"
+    expr: "σ = √[ ∑(x_i - μ)² / N ]"
+    desc: "Calculated using total population count N."
+howto:
+  - "Paste or type your numbers separated by commas, spaces, or newlines."
+  - "View sample standard deviation s and population standard deviation σ."
+  - "Check the sample and population variance, mean, count, and sum."
+examples:
+  - title: "Standard Deviation Calculation"
+    body: "For dataset [10, 12, 23, 23, 16, 23, 21, 16]: Mean = 18. Sample Std Dev s ≈ 5.237. Population Std Dev σ ≈ 4.899."
+faq:
+  - q: "Why is Bessel's correction (N-1) used for sample standard deviation?"
+    a: "Dividing by N-1 corrects the bias when estimating a population standard deviation from a sample dataset."
+  - q: "What is standard deviation?"
+    a: "Standard deviation measures the amount of variation or dispersion of a set of values relative to their mean."
+related: ["average-calculator","percentage-calculator","basic-calculator"]
+---
+
+## Understanding Standard Deviation and Variance
+
+**Standard deviation** is a fundamental measure of statistical dispersion. It quantifies how spread out numbers in a data set are from their arithmetic mean.
+
+- **Low Standard Deviation**: Indicates that data points tend to be close to the mean.
+- **High Standard Deviation**: Indicates that data points are spread out over a wider range of values.
+
+### Sample vs. Population
+
+- Use **Sample Standard Deviation (s)** when working with a sample subset selected from a larger group.
+- Use **Population Standard Deviation (σ)** when you have data for every member of the entire population.

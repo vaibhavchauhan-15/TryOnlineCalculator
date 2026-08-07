@@ -27,17 +27,28 @@ export function currency(n: number, opts: { decimals?: number; symbol?: string }
   return formatCurrency(n, { decimals: opts.decimals });
 }
 
+const numCache = new Map<number, Intl.NumberFormat>();
+
+function getEnUsFormatter(decimals: number): Intl.NumberFormat {
+  let fmt = numCache.get(decimals);
+  if (!fmt) {
+    fmt = new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: decimals,
+    });
+    numCache.set(decimals, fmt);
+  }
+  return fmt;
+}
+
 export function number(n: number, decimals = 2): string {
   if (!Number.isFinite(n)) return '—';
-  return n.toLocaleString('en-US', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: decimals,
-  });
+  return getEnUsFormatter(decimals).format(n);
 }
 
 export function percent(n: number, decimals = 2): string {
   if (!Number.isFinite(n)) return '—';
-  return `${n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: decimals })}%`;
+  return `${getEnUsFormatter(decimals).format(n)}%`;
 }
 
 export function fixed(n: number, decimals = 2): string {

@@ -5,7 +5,7 @@ import { breadcrumbSchema, itemListSchema, faqPageSchema } from '../../../lib/se
 import { getUnitConverterFaqs } from '../../../lib/faq';
 import FaqAccordion from '../../../components/FaqAccordion.astro';
 import LinkCard from '../../../components/LinkCard.astro';
-import { enabledLocaleCodes, DEFAULT_LOCALE, isIndexedLocale } from '../../../lib/i18n/locales';
+import { enabledLocaleCodes, isIndexedLocale } from '../../../lib/i18n/locales';
 import { to } from '../../../lib/i18n/paths';
 import { hreflangAlternates } from '../../../lib/i18n/seo-head';
 import { localizedConverterParentSlug } from '../../../lib/i18n/slugs';
@@ -18,7 +18,6 @@ export function getStaticPaths() {
 }
 
 const { locale } = Astro.params as { locale: string };
-const isDefault = locale === DEFAULT_LOCALE;
 const isDe = locale === 'de';
 
 // Localized hub strings
@@ -48,8 +47,8 @@ const keywords = isDe
   ? ['einheitenumrechner', 'umrechnungsrechner', 'maßeinheiten umrechnen', ...converters.flatMap((c) => (convertersDe[c.slug]?.keywords ?? c.keywords).slice(0, 2))]
   : ['unit converter', 'conversion calculator', 'measurement converter', ...converters.flatMap((c) => c.keywords.slice(0, 2))];
 
-const pageTitle = hub?.metaTitle ?? 'Unit Converter — Free Online Length, Weight, Temperature & Currency Conversion';
-const pageDesc = hub?.metaDescription ?? `Free unit converter with ${converters.length} tools: length, weight, temperature, speed, volume, area and currency. Instant conversions between metric and imperial — no sign-up needed.`;
+const pageTitle = hub?.metaTitle ?? (isDe ? 'Einheitenumrechner — Online-Umrechner' : 'Unit Converter — Free Online Tools');
+const pageDesc = hub?.metaDescription ?? (isDe ? 'Kostenloser Einheitenumrechner: Länge, Gewicht, Temperatur, Währung und mehr. Schnelle Umrechnungen.' : `Free unit converter with ${converters.length} tools: length, weight, temperature, speed & currency. Instant conversions.`);
 ---
 
 <Layout

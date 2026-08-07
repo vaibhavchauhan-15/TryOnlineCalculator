@@ -42,24 +42,37 @@ const secondaryCategories = categories.slice(4);
       <span class="brand-name">Try Online Calculator</span>
     </a>
 
-    <!-- Navigation (desktop) -->
     <nav class="header-nav" aria-label="Calculator categories" data-menu>
-      {primaryCategories.map((c) => (
-        <a href={link(c.path)} class="nav-link">{categoryName(locale, c.id)}</a>
-      ))}
+      {primaryCategories.map((c) => {
+        const href = link(c.path);
+        const isActive = Astro.url.pathname.endsWith(c.path) || Astro.url.pathname.includes(`${c.path}/`);
+        return (
+          <a href={href} class={`nav-link${isActive ? ' is-active' : ''}`} aria-current={isActive ? 'page' : undefined}>
+            {categoryName(locale, c.id)}
+          </a>
+        );
+      })}
 
       <!-- More dropdown for secondary categories -->
       <div class="nav-more" data-nav-more>
-        <button type="button" class="nav-link nav-more-btn" aria-expanded="false" aria-haspopup="true" data-nav-more-toggle>
+        <button
+          type="button"
+          class="nav-link nav-more-btn"
+          aria-expanded="false"
+          aria-haspopup="true"
+          aria-controls="header-more-menu"
+          id="header-more-toggle"
+          data-nav-more-toggle
+        >
           <span>{chrome.more ?? 'More'}</span>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
         </button>
-        <div class="nav-more-menu" data-nav-more-menu hidden>
+        <div class="nav-more-menu" id="header-more-menu" role="menu" aria-labelledby="header-more-toggle" data-nav-more-menu hidden>
           {secondaryCategories.map((c) => (
-            <a href={link(c.path)} class="nav-more-item">{categoryName(locale, c.id)}</a>
+            <a href={link(c.path)} class="nav-more-item" role="menuitem">{categoryName(locale, c.id)}</a>
           ))}
-          <div class="nav-more-divider"></div>
-          <a href={link('/unit-converter')} class="nav-more-item">{chrome.converters ?? 'Converters'}</a>
+          <div class="nav-more-divider" role="separator"></div>
+          <a href={link('/unit-converter')} class="nav-more-item" role="menuitem">{chrome.converters ?? 'Converters'}</a>
         </div>
       </div>
     </nav>
@@ -88,7 +101,7 @@ const secondaryCategories = categories.slice(4);
       <LanguageSwitcher />
 
       <!-- Theme toggle -->
-      <button class="icon-btn theme-toggle" type="button" aria-label="Toggle color theme" data-theme-toggle>
+      <button class="icon-btn theme-toggle" type="button" aria-label="Toggle color theme" aria-pressed="true" data-theme-toggle>
         <svg class="theme-icon theme-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <circle cx="12" cy="12" r="4"></circle>
           <path d="M12 2v2"></path><path d="M12 20v2"></path>
@@ -102,7 +115,7 @@ const secondaryCategories = categories.slice(4);
       </button>
 
       <!-- Mobile menu toggle -->
-      <button class="icon-btn menu-toggle" aria-label="Toggle menu" aria-expanded="false" data-menu-toggle>
+      <button class="icon-btn menu-toggle" type="button" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav-drawer" data-menu-toggle>
         <svg class="menu-icon-open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
           <line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="18" x2="20" y2="18"></line>
         </svg>
@@ -121,7 +134,7 @@ const secondaryCategories = categories.slice(4);
   </div>
 
   <!-- Mobile nav drawer -->
-  <div class="mobile-nav" data-mobile-nav hidden>
+  <nav class="mobile-nav" id="mobile-nav-drawer" aria-label="Mobile navigation" data-mobile-nav hidden>
     <div class="container-page mobile-nav-inner">
       {categories.map((c) => (
         <a href={link(c.path)} class="mobile-nav-link">{categoryName(locale, c.id)}</a>
@@ -129,7 +142,7 @@ const secondaryCategories = categories.slice(4);
       <div class="mobile-nav-divider"></div>
       <a href={link('/unit-converter')} class="mobile-nav-link">{chrome.converters ?? 'Converters'}</a>
     </div>
-  </div>
+  </nav>
 </header>
 
 <script>
@@ -149,7 +162,7 @@ const secondaryCategories = categories.slice(4);
     if (closeIcon) closeIcon.style.display = isOpen ? 'none' : '';
   });
 
-  // "More" dropdown on desktop – open on hover
+  // "More" dropdown on desktop – open on hover/focus
   const moreToggle = document.querySelector<HTMLButtonElement>('[data-nav-more-toggle]');
   const moreMenu = document.querySelector<HTMLElement>('[data-nav-more-menu]');
   const moreWrapper = document.querySelector<HTMLElement>('[data-nav-more]');
@@ -172,10 +185,39 @@ const secondaryCategories = categories.slice(4);
     moreCloseTimer = setTimeout(closeMore, 150);
   });
 
-  // Also toggle on click for touch devices
+  // Toggle on click
   moreToggle?.addEventListener('click', () => {
     const isOpen = moreMenu?.hidden === false;
     if (isOpen) closeMore(); else openMore();
+  });
+
+  // Keyboard navigation for More menu
+  moreToggle?.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      openMore();
+      const firstItem = moreMenu?.querySelector<HTMLElement>('[role="menuitem"]');
+      firstItem?.focus();
+    }
+  });
+
+  moreMenu?.addEventListener('keydown', (e) => {
+    const items = Array.from(moreMenu.querySelectorAll<HTMLElement>('[role="menuitem"]'));
+    const currentIndex = items.indexOf(document.activeElement as HTMLElement);
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      const nextIndex = (currentIndex + 1) % items.length;
+      items[nextIndex]?.focus();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      const prevIndex = (currentIndex - 1 + items.length) % items.length;
+      items[prevIndex]?.focus();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      closeMore();
+      moreToggle?.focus();
+    }
   });
 
   // Close "More" dropdown when clicking outside
@@ -190,6 +232,13 @@ const secondaryCategories = categories.slice(4);
     if (e.key === 'Escape' && moreMenu && !moreMenu.hidden) {
       closeMore();
       moreToggle?.focus();
+    }
+    if (e.key === 'Escape' && mobileNav && !mobileNav.hidden) {
+      mobileNav.hidden = true;
+      toggle?.setAttribute('aria-expanded', 'false');
+      if (openIcon) openIcon.style.display = '';
+      if (closeIcon) closeIcon.style.display = 'none';
+      toggle?.focus();
     }
   });
 
@@ -238,6 +287,7 @@ const secondaryCategories = categories.slice(4);
   const syncThemeUi = (theme: string) => {
     const isDark = theme === 'dark';
     themeToggle?.setAttribute('aria-pressed', String(isDark));
+    themeToggle?.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
     if (themeColorMeta) themeColorMeta.content = isDark ? '#000000' : '#ffffff';
   };
   syncThemeUi(root.getAttribute('data-theme') ?? 'dark');
@@ -373,6 +423,12 @@ const secondaryCategories = categories.slice(4);
   .nav-link:hover {
     color: var(--color-ink);
     background-color: var(--color-canvas-soft-2);
+  }
+  .nav-link.is-active {
+    color: var(--color-ink);
+    font-weight: 600;
+    background-color: var(--color-canvas-soft-2);
+    box-shadow: inset 0 0 0 1px var(--color-hairline);
   }
   .nav-link:active { transform: scale(0.95); }
 

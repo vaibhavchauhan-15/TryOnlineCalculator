@@ -3,7 +3,7 @@ import Layout from '../../../layouts/Layout.astro';
 import UnitConverter from '../../../components/UnitConverter.astro';
 import CurrencyConverter from '../../../components/CurrencyConverter.astro';
 import { converters, converterPageSchemas } from '../../../lib/converters';
-import { enabledLocaleCodes, DEFAULT_LOCALE, isIndexedLocale } from '../../../lib/i18n/locales';
+import { enabledLocaleCodes, isIndexedLocale } from '../../../lib/i18n/locales';
 import { to } from '../../../lib/i18n/paths';
 import { hreflangAlternates } from '../../../lib/i18n/seo-head';
 import { localizedConverterParentSlug, localizedConverterTypeSlug } from '../../../lib/i18n/slugs';
@@ -23,7 +23,6 @@ export function getStaticPaths() {
 }
 
 const { locale } = Astro.params as { locale: string };
-const isDefault = locale === DEFAULT_LOCALE;
 const isDe = locale === 'de';
 const { cfg } = Astro.props;
 
@@ -53,15 +52,31 @@ const bcHome = labels?.breadcrumbHome ?? 'Home';
 const bcHub = labels?.breadcrumbHub ?? 'Unit Converter';
 const eyebrow = labels?.eyebrow ?? 'Unit converter';
 
-// Enhanced SEO title — front-load the conversion type keyword
-const seoTitle = metaTitle.includes('—') || metaTitle.includes('|')
-  ? metaTitle
-  : `${metaTitle} — Free Online ${name} Conversion Tool`;
+// Enhanced SEO title — tailored per locale to stay strictly within 60-65 chars with brand suffix
+const seoTitle = (() => {
+  const brand = ' | Try Online Calculator';
+  if (isDe) {
+    const base = title.includes('Umrechner') ? title : `${title}-Umrechner`;
+    if ((base + ' — Kostenlos' + brand).length <= 65) return `${base} — Kostenlos`;
+    return base;
+  }
+  const base = title.includes('Converter') ? title : `${title} Converter`;
+  if ((base + ' — Free Online Tool' + brand).length <= 65) return `${base} — Free Online Tool`;
+  if ((base + ' — Free Tool' + brand).length <= 65) return `${base} — Free Tool`;
+  return base;
+})();
 
-// Enhanced description with CTA
-const seoDesc = metaDesc.length > 130
-  ? metaDesc
-  : `${metaDesc} Instant results, accurate conversion factors, no sign-up needed.`;
+// Enhanced description with CTA, capped between 110 and 155 chars
+const seoDesc = (() => {
+  if (metaDesc.length >= 110 && metaDesc.length <= 155) return metaDesc;
+  if (metaDesc.length > 155) return metaDesc.slice(0, 152).replace(/\s+\S*$/, '...');
+  if (isDe) {
+    const s = `${metaDesc} Kostenlos & präzise.`;
+    return s.length <= 165 ? s : metaDesc;
+  }
+  const s = `${metaDesc} Instant results & formula.`;
+  return s.length <= 165 ? s : metaDesc;
+})();
 ---
 
 <Layout

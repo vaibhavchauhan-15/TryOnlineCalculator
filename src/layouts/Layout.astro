@@ -47,7 +47,6 @@ const fullTitle = title.includes('Try Online Calculator') ? title : `${title} | 
 const ogImage = ogImageProp
   ? (ogImageProp.startsWith('http') ? ogImageProp : `${site}${ogImageProp}`)
   : `${site}/web-app-manifest-512x512.png`;
-const keywordsContent = keywords.length ? keywords.join(', ') : undefined;
 const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 ---
 
@@ -57,14 +56,27 @@ const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WKXRCW8RFV"></script>
+    <!-- Google tag (gtag.js) deferred for maximum LCP & INP performance -->
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-WKXRCW8RFV');
+      (function() {
+        function loadGtag() {
+          if (window.__gtagLoaded) return;
+          window.__gtagLoaded = true;
+          gtag('js', new Date());
+          gtag('config', 'G-WKXRCW8RFV');
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = 'https://www.googletagmanager.com/gtag/js?id=G-WKXRCW8RFV';
+          document.head.appendChild(s);
+        }
+        if ('requestIdleCallback' in window) {
+          window.requestIdleCallback(function() { loadGtag(); }, { timeout: 3000 });
+        } else {
+          window.addEventListener('load', function() { setTimeout(loadGtag, 1000); });
+        }
+      })();
     </script>
 
     <!-- Set theme before paint to avoid a flash. Defaults to dark. -->
@@ -99,7 +111,6 @@ const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    {keywordsContent && <meta name="keywords" content={keywordsContent} />}
     <meta name="author" content="Try Online Calculator" />
     <meta name="publisher" content="Try Online Calculator" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
@@ -139,13 +150,14 @@ const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     <meta name="twitter:site" content="@tryonlinecalc" />
 
     {schemas.map((s) => (
-      <script type="application/ld+json" set:html={JSON.stringify(s)} />
+      <script is:inline type="application/ld+json" set:html={JSON.stringify(s)} />
     ))}
   </head>
   <body>
     <a href="#main" class="skip-link">Skip to content</a>
+    <div id="a11y-announcer" aria-live="polite" aria-atomic="true" class="sr-only"></div>
     <Header locale={locale} />
-    <main id="main">
+    <main id="main" tabindex="-1">
       <slot />
     </main>
     <Footer locale={locale} />
@@ -160,14 +172,22 @@ const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 <style>
   .skip-link {
     position: absolute;
-    left: -9999px;
-    top: 0;
+    top: -100%;
+    left: 0;
     z-index: 100;
-    padding: 0.5rem 1rem;
+    padding: 0.75rem 1.25rem;
     background: var(--color-ink);
     color: var(--color-on-primary);
+    font-weight: 600;
     border-radius: 0 0 var(--radius-sm) 0;
+    transition: top 0.15s ease;
   }
-  .skip-link:focus { left: 0; }
+  .skip-link:focus,
+  .skip-link:focus-visible {
+    top: 0;
+    outline: 3px solid var(--color-link);
+    outline-offset: 2px;
+  }
   main { min-height: 60vh; }
+  main:focus { outline: none; }
 </style>

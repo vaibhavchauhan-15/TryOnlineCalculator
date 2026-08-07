@@ -110,8 +110,12 @@ function enhance(root: HTMLElement): void {
     } else {
       const scored: { el: HTMLElement; s: number; i: number }[] = [];
       INDEX.forEach((entry, i) => {
+        const el = byCode.get(entry.code);
+        // The index covers the whole currency catalog; a picker may render a
+        // subset (e.g. tests, a region-restricted list). Skip codes absent
+        // from the DOM.
+        if (!el) return;
         const s = score(entry, q);
-        const el = byCode.get(entry.code)!;
         if (s < 0) {
           el.hidden = true;
         } else {

@@ -1,0 +1,74 @@
+---
+slug: body-fat-calculator
+category: health
+title: Körperfett Rechner (KFA Berechnen)
+description: Berechnen Sie Ihren Körperfettanteil (KFA), die Fettmasse und die fettfreie Masse präzise mit der US Navy Methode.
+keywords:
+  - körperfett rechner
+  - körperfettanteil berechnen
+  - kfa rechner
+  - us navy körperfett rechner
+  - fettfreie masse
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: en
+translatedFromVersion: 1
+model: manual
+searchIntent: Meinen Körperfettanteil (KFA) und die Körperzusammensetzung berechnen.
+readingLevel: general
+market: de
+audience: Fitnessbegeisterte und Erwachsene zur Gewichtskontrolle
+labels:
+  bodyFat: Körperfettanteil
+  fatMass: Fettmasse
+  leanMass: Fettfreie Masse
+  field.unitSystem: Einheiten
+  field.sex: Geschlecht
+  field.age: Alter
+  field.height: Körpergröße
+  field.weight: Gewicht
+  field.heightFt: Höhe (Fuß)
+  field.heightIn: Höhe (Zoll)
+  field.weightLb: Gewicht (lb)
+  field.neck: Halsumfang
+  field.neckIn: Hals (Zoll)
+  field.waist: Taillenumfang
+  field.waistIn: Taille (Zoll)
+  field.hip: Hüftumfang
+  field.hipIn: Hüfte (Zoll)
+enums:
+  metric: Metrisch (cm, kg)
+  imperial: Imperial (in, lb)
+  male: Männlich
+  female: Weiblich
+hints:
+  bodyFatMethod: U.S. Navy Formel zur Berechnung der Körperzusammensetzung
+  unit.percent: "%"
+chartTitles:
+  bodyFat.chartComposition: Aufteilung der Körperzusammensetzung
+intro: Berechnen Sie Ihren Körperfettanteil (KFA), Ihre Fettmasse und Muskelmasse präzise mit der bewährten U.S. Navy Methode.
+formulaIntro: Die U.S. Navy Methode schätzt den Körperfettanteil anhand von Körpergröße und Umfangsmessungen.
+formulaItems:
+  - name: Formel für Männer
+    expr: KFA% = 495 / (1.0324 - 0.19077·log10(Taille - Hals) + 0.15456·log10(Größe)) - 450
+  - name: Formel für Frauen
+    expr: KFA% = 495 / (1.29579 - 0.35004·log10(Taille + Hüfte - Hals) + 0.22100·log10(Größe)) - 450
+howto:
+  - Wählen Sie das Einheitensystem (Metrisch oder Imperial).
+  - Wählen Sie Ihr Geschlecht und geben Sie Ihr Alter ein.
+  - Tragen Sie Körpergröße, Gewicht und Halsumfang ein.
+  - Geben Sie den Taillenumfang (und bei Frauen den Hüftumfang) ein.
+  - Lesen Sie Ihren Körperfettanteil und die Aufteilung ab.
+faq:
+  - q: Wie genau ist der Navy Körperfett Rechner?
+    a: Die U.S. Navy Formel weicht bei den meisten Erwachsenen nur etwa 3% bis 4% von einem medizinischen DEXA-Scan ab.
+  - q: Was ist ein gesunder Körperfettanteil?
+    a: Ein gesunder KFA liegt bei Männern meist zwischen 10% und 20%, bei Frauen zwischen 18% und 28%.
+related:
+  - bmi-calculator
+  - lean-body-mass-calculator
+  - ideal-weight-calculator
+---
+
+Der Körperfettanteil (KFA) gibt an, wie viel Prozent des Gesamtkörpergewichts aus Fettgewebe bestehen. Die Messung der Körperzusammensetzung ist deutlich aussagekräftiger für den Fitnessfortschritt als das bloße Körpergewicht.

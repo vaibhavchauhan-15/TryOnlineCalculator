@@ -41,12 +41,20 @@ function parseParts(text: string): NumParts | null {
   };
 }
 
+const countupFmtCache = new Map<string, Intl.NumberFormat>();
+
 function fmt(n: number, decimals: number, grouped: boolean): string {
-  return n.toLocaleString('en-US', {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
-    useGrouping: grouped,
-  });
+  const key = `${decimals}:${grouped}`;
+  let formatter = countupFmtCache.get(key);
+  if (!formatter) {
+    formatter = new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals,
+      useGrouping: grouped,
+    });
+    countupFmtCache.set(key, formatter);
+  }
+  return formatter.format(n);
 }
 
 function prefersReducedMotion(): boolean {

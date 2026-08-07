@@ -7,6 +7,7 @@ import { bmiEngine, bmiCategory } from './bmi';
 import { percentageEngine } from './percentage';
 import { mortgageEngine } from './mortgage';
 import { currencyConverterEngine, convert, exchangeRate } from './currency-converter';
+import { oneRepMaxEngine } from './health';
 import type { EngineResult, ResultItem } from '../contract';
 
 // --- Shared invariant: no localized strings anywhere in a result -----------
@@ -19,7 +20,7 @@ function assertNoProse(result: EngineResult): void {
       assert.equal('label' in it, false, 'no label field');
       assert.equal('hint' in it, false, 'no hint prose field');
       if (it.value !== undefined) assert.equal(typeof it.value, 'number');
-      assert.match(it.key, /^[a-z][a-zA-Z.]*$/, `key "${it.key}" is an identifier`);
+      assert.match(it.key, /^[a-z][a-zA-Z0-9.]*$/, `key "${it.key}" is an identifier`);
       if (it.enumKey) assert.match(it.enumKey, /^[a-z][a-zA-Z]*$/, `enumKey "${it.enumKey}"`);
     }
   };
@@ -145,3 +146,24 @@ test('Currency: unavailable rate fails validation without a network call', () =>
   assert.equal(v.issues[0].code, 'currency.rateUnavailable');
   assert.equal(v.issues[0].params!.code, 'ZZZ');
 });
+
+// =========================================================================
+// One Rep Max
+// =========================================================================
+test('One Rep Max: 100 kg / 5 reps computes ~115.1 kg with format mass', () => {
+  const r = oneRepMaxEngine.compute({ ...oneRepMaxEngine.defaultInput(), unitSystem: 'metric', weightLiftedKg: 100, reps: 5 });
+  const item1RM = r.items.find((i) => i.key === 'oneRepMax')!;
+  assert.ok(Math.abs(item1RM.value! - 115.084) < 0.01);
+  assert.equal(item1RM.format, 'mass');
+  assertNoProse(r);
+});
+
+test('One Rep Max: 100 lb / 5 reps converts to SI internally and outputs format mass', () => {
+  const r = oneRepMaxEngine.compute({ ...oneRepMaxEngine.defaultInput(), unitSystem: 'imperial', weightLiftedLb: 100, reps: 5 });
+  const item1RM = r.items.find((i) => i.key === 'oneRepMax')!;
+  // Internal kg value should be ~52.201 kg (which converts to 115.1 lb when rendered with imperial unitSystem)
+  assert.ok(Math.abs(item1RM.value! - 52.201) < 0.01);
+  assert.equal(item1RM.format, 'mass');
+  assertNoProse(r);
+});
+

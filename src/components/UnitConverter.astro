@@ -33,7 +33,7 @@ const clientConfig = {
   data-slug={slug}
   aria-label={`${converter.title} tool`}
 >
-  <script type="application/json" data-uc-config set:html={JSON.stringify(clientConfig)} />
+  <script is:inline type="application/json" data-uc-config set:html={JSON.stringify(clientConfig)} />
 
   <div class="uc-io">
     <!-- FROM -->
@@ -249,8 +249,9 @@ const clientConfig = {
     swapBtn.addEventListener('click', () => {
       // Replay the spin animation on every click (works the same on tap and mouse click).
       swapBtn.classList.remove('is-swapping');
-      void swapBtn.offsetWidth; // force reflow so the animation restarts
-      swapBtn.classList.add('is-swapping');
+      requestAnimationFrame(() => {
+        swapBtn.classList.add('is-swapping');
+      });
 
       const f = getUnit(fromEl);
       const t = getUnit(toEl);

@@ -26,7 +26,9 @@ const EN_DIR = join(process.cwd(), 'src', 'content', 'calculators', 'en');
 
 function readFrontmatter(slug: string): Record<string, any> {
   const raw = readFileSync(join(EN_DIR, `${slug}.mdx`), 'utf8');
-  const m = raw.match(/^---\n([\s\S]*?)\n---/);
+  // Normalize CRLF (Windows) line endings so the frontmatter regex matches.
+  const normalized = raw.replace(/\r\n/g, '\n');
+  const m = normalized.match(/^---\n([\s\S]*?)\n---/);
   assert.ok(m, `${slug}: has frontmatter`);
   return parse(m![1]) as Record<string, any>;
 }

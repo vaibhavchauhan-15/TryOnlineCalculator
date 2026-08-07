@@ -127,17 +127,18 @@ function enhance(select: HTMLSelectElement): void {
     });
   };
 
-  const setActive = (i: number): void => {
+  const setActive = (i: number, scroll = true): void => {
     const max = optionEls.length - 1;
     let next = i;
     if (next < 0) next = 0;
     if (next > max) next = max;
+    if (activeIndex === next && !scroll) return;
     activeIndex = next;
     optionEls.forEach((li, idx) => li.classList.toggle('is-active', idx === next));
     const activeEl = optionEls[next];
     if (activeEl) {
       panel.setAttribute('aria-activedescendant', activeEl.id);
-      activeEl.scrollIntoView({ block: 'nearest' });
+      if (scroll) activeEl.scrollIntoView({ block: 'nearest' });
     }
   };
 
@@ -147,7 +148,7 @@ function enhance(select: HTMLSelectElement): void {
     panel.hidden = false;
     wrap.classList.add('is-open');
     trigger.setAttribute('aria-expanded', 'true');
-    setActive(select.selectedIndex < 0 ? 0 : select.selectedIndex);
+    setActive(select.selectedIndex < 0 ? 0 : select.selectedIndex, true);
     openInstances.add(close);
     // Move focus into the panel so arrow-key navigation & type-ahead work
     // whether the dropdown was opened by mouse or keyboard.
@@ -206,8 +207,8 @@ function enhance(select: HTMLSelectElement): void {
 
   panel.addEventListener('mousemove', (e) => {
     const li = (e.target as HTMLElement).closest<HTMLLIElement>('.cs-option');
-    if (li && li.dataset.index) setActive(Number(li.dataset.index));
-  });
+    if (li && li.dataset.index) setActive(Number(li.dataset.index), false);
+  }, { passive: true });
 
   panel.addEventListener('keydown', (e) => {
     switch (e.key) {

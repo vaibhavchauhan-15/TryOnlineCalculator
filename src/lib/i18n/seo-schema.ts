@@ -53,8 +53,9 @@ export function localizedBreadcrumbSchema(
 /** Localized WebApplication schema for a calculator page. */
 export function localizedCalculatorSchema(
   locale: string,
-  opts: { title: string; description: string; pagePath: string },
+  opts: { title: string; description: string; pagePath: string; dateModified?: string },
 ) {
+  const publisher = { '@type': 'Organization', name: 'Try Online Calculator', url: SITE };
   return {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
@@ -67,7 +68,9 @@ export function localizedCalculatorSchema(
     description: opts.description,
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
     isAccessibleForFree: true,
-    publisher: { '@type': 'Organization', name: 'Try Online Calculator', url: SITE },
+    publisher,
+    author: publisher,
+    ...(opts.dateModified ? { dateModified: opts.dateModified } : {}),
   };
 }
 
@@ -90,6 +93,7 @@ export function localizedHowToSchema(
   locale: string,
   opts: { title: string; description: string; pagePath: string; steps: string[] },
 ) {
+  const stepPrefix = locale === 'de' ? 'Schritt' : 'Step';
   return {
     '@context': 'https://schema.org',
     '@type': 'HowTo',
@@ -100,6 +104,7 @@ export function localizedHowToSchema(
     step: opts.steps.map((text, i) => ({
       '@type': 'HowToStep',
       position: i + 1,
+      name: `${stepPrefix} ${i + 1}`,
       text,
     })),
   };
@@ -121,6 +126,7 @@ export function localizedCalculatorPageSchemas(
     pagePath: string;
     faq: LocalizedFaqItem[];
     howto?: string[];
+    dateModified?: string;
   },
 ): Record<string, unknown>[] {
   const schemas: Record<string, unknown>[] = [

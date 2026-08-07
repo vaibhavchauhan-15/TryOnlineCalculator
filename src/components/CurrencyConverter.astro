@@ -61,7 +61,7 @@ const ranges: { id: string; label: string }[] = [
 ---
 
 <section class="cc card" data-cc aria-label="Currency converter tool">
-  <script type="application/json" data-cc-config set:html={JSON.stringify(clientConfig)} />
+  <script is:inline type="application/json" data-cc-config set:html={JSON.stringify(clientConfig)} />
 
   <!-- Amount + from  →  Result + to -->
   <div class="cc-io">
@@ -289,43 +289,81 @@ const ranges: { id: string; label: string }[] = [
     position: relative;
     width: 100%;
     min-height: 210px;
-    background-color: var(--color-canvas-soft);
+    background-color: color-mix(in srgb, var(--color-canvas-soft) 55%, transparent);
     border-radius: var(--radius-md);
     box-shadow: inset 0 0 0 1px var(--color-hairline);
     transition: opacity 0.2s ease;
     overflow: hidden;
+    touch-action: pan-y;
   }
-  .cc-chart.is-loading { opacity: 0.5; }
-  .cc-svg { display: block; width: 100%; height: auto; overflow: visible; }
-  .cc-svg .cc-axis { fill: var(--color-mute); font-size: 11px; font-family: var(--font-mono); }
-  .cc-svg .cc-grid { stroke: var(--color-hairline); stroke-width: 1; }
-  .cc-svg .cc-grid-base { stroke: var(--color-hairline-strong); }
-  .cc-cross-line { stroke: var(--color-hairline-strong); stroke-width: 1; stroke-dasharray: 3 3; }
-  /* Dot is filled with the line's accent colour (set inline in JS) and wrapped
-     in a canvas-coloured ring so it stays clearly visible on both themes. */
-  .cc-cross-dot { stroke: var(--color-canvas); stroke-width: 2.5; }
+  html[data-theme='dark'] .cc-chart {
+    background-color: #141414;
+    box-shadow: inset 0 0 0 1px var(--color-hairline);
+  }
+  .cc-chart.is-loading { opacity: 0.45; }
+  .cc-chart :global(.cc-svg) { display: block; width: 100%; height: auto; overflow: visible; }
+  .cc-chart :global(.cc-axis) {
+    fill: var(--color-mute);
+    font-size: var(--cc-axis-fs, 11px);
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+  .cc-chart :global(.cc-axis-y) { letter-spacing: -0.02em; }
+  .cc-chart :global(.cc-grid) { stroke: var(--color-hairline); stroke-width: 1; opacity: 0.7; }
+  .cc-chart :global(.cc-baseline) {
+    stroke: var(--color-hairline-strong);
+    stroke-width: 1;
+    stroke-dasharray: 2 4;
+    opacity: 0.7;
+  }
 
-  .cc-tip {
+  /* Line draws in on render; area fades in just behind it. */
+  .cc-chart :global(.cc-line) {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: cc-draw 0.7s ease-out forwards;
+  }
+  .cc-chart :global(.cc-area) { opacity: 0; animation: cc-fade 0.5s ease-out 0.25s forwards; }
+  .cc-chart :global(.cc-end-dot) { stroke: var(--color-canvas); stroke-width: 2; }
+  @keyframes cc-draw { to { stroke-dashoffset: 0; } }
+  @keyframes cc-fade { to { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) {
+    .cc-chart :global(.cc-line) { animation: none; stroke-dashoffset: 0; }
+    .cc-chart :global(.cc-area) { animation: none; opacity: 1; }
+  }
+
+  .cc-chart :global(.cc-cross-line) { stroke: var(--color-hairline-strong); stroke-width: 1; stroke-dasharray: 3 3; }
+  .cc-chart :global(.cc-cross-dot) { stroke: var(--color-canvas); stroke-width: 2.5; }
+
+  .cc-chart :global(.cc-tip) {
     position: absolute;
-    /* Anchored to the hovered point (left/top set in JS); floats just above
-       the dot, flipping below when the dot is near the top edge. */
     transform: translate(-50%, calc(-100% - 12px));
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-    padding: 0.35rem 0.55rem;
-    background-color: var(--color-ink);
-    color: var(--color-on-primary, #fff);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.65rem;
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    border: 1px solid var(--color-hairline-strong);
     border-radius: var(--radius-sm);
     font-family: var(--font-mono);
     pointer-events: none;
     white-space: nowrap;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
-    z-index: 2;
+    box-shadow: var(--shadow-float);
+    z-index: 10;
+    transition: left 0.06s linear, top 0.06s linear;
   }
-  .cc-tip.is-below { transform: translate(-50%, 12px); }
-  .cc-tip-val { font-size: 12.5px; font-weight: 600; }
-  .cc-tip-date { font-size: 10.5px; opacity: 0.75; }
+  .cc-chart :global(.cc-tip[hidden]) { display: none !important; }
+  .cc-chart :global(.cc-tip.is-below) { transform: translate(-50%, 12px); }
+  .cc-chart :global(.cc-tip-val) {
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-ink);
+  }
+  .cc-chart :global(.cc-tip-sep) { color: var(--color-mute); opacity: 0.6; font-size: 11px; }
+  .cc-chart :global(.cc-tip-date) { font-size: 11px; color: var(--color-mute); font-family: var(--font-sans); }
 
   .cc-chart-note { margin: 0; font-size: 12px; color: var(--color-mute); text-align: center; }
 

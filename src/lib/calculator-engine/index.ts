@@ -23,6 +23,7 @@ import { salaryEngines } from './engines/salary';
 import { shoppingEngines } from './engines/shopping';
 import { dateTimeEngines } from './engines/date-time';
 import { travelEngines } from './engines/travel';
+import { businessEngines } from './engines/business';
 
 export const engines: AnyEngine[] = [
   // Pilots (health/math/finance).
@@ -39,6 +40,7 @@ export const engines: AnyEngine[] = [
   ...shoppingEngines,
   ...dateTimeEngines,
   ...travelEngines,
+  ...businessEngines,
 ];
 
 const bySlug = new Map<string, AnyEngine>(engines.map((e) => [e.slug, e]));

@@ -1,0 +1,32 @@
+---
+slug: "rd-calculator"
+category: "finance"
+title: "RD Calculator - Recurring Deposit Interest & Maturity Calculator"
+description: "Calculate recurring deposit (RD) maturity value, total invested amount, and interest earned with monthly compounding schedules."
+keywords: ["rd calculator","recurring deposit calculator","rd interest calculator","rd maturity calculator","recurring deposit return calculator"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+labels: {"balance":"Total balance","field.monthlyDeposit":"Monthly deposit","field.rate":"Interest rate (p.a.)","field.tenureYears":"Tenure (years)","interest":"Interest earned","invested":"Invested amount","maturityAmount":"Maturity amount","totalInterest":"Total interest earned","totalInvested":"Total invested amount"}
+enums: {}
+hints: {}
+chartTitles: {"rd.growthTitle":"Recurring Deposit Growth Timeline","rd.pieTitle":"Invested vs Interest"}
+intro: "A Recurring Deposit (RD) allows you to deposit a fixed amount every month while earning compound interest. Calculate your RD maturity value and interest earnings effortlessly."
+formulaIntro: "Recurring deposit returns are calculated by compounding each monthly installment over its remaining duration."
+formulaItems: [{"name":"RD Maturity Amount Formula","expr":"M = P × ((1 + r/4)^(4n/12) − 1) / (1 − (1 + r/4)^(-1/3))","desc":"M = maturity amount, P = monthly deposit, r = annual interest rate, n = number of months."},{"name":"Total Invested","expr":"Total Invested = P × n","desc":"Sum of all monthly deposits over the tenure."}]
+howto: ["Enter your monthly deposit amount.","Input the annual interest rate offered by your bank.","Select the tenure in years.","View total invested capital, total interest, and final maturity amount."]
+examples: [{"title":"$500/month RD at 7% p.a. for 3 years","body":"Depositing $500 every month for 3 years (total $18,000 invested) at 7% interest yields a maturity value of approximately $20,086.12 ($2,086.12 interest)."},{"title":"$1,000/month RD at 6.5% p.a. for 5 years","body":"Investing $1,000 monthly for 5 years ($60,000 total) at 6.5% grows to $70,892.45."}]
+faq: [{"q":"What is a Recurring Deposit (RD)?","a":"A Recurring Deposit is a term deposit that allows investors to make regular monthly deposits and earn interest until maturity."},{"q":"How is RD interest calculated?","a":"RD interest is compounded quarterly based on the tenure of each monthly installment deposited into the account."},{"q":"Can I withdraw money from an RD before maturity?","a":"Premature withdrawal is usually permitted by banks, but it may attract a penalty fee or lower interest rate."},{"q":"What is the main difference between RD and SIP?","a":"RDs offer fixed, guaranteed interest rates backed by banks, while Mutual Fund SIPs are market-linked with fluctuating returns."}]
+related: ["fd-calculator","sip-calculator","savings-calculator","compound-interest-calculator"]
+---
+
+## What is an RD Calculator?
+
+A Recurring Deposit (RD) calculator is a tool designed to estimate the maturity value of monthly savings deposited in a recurring deposit scheme. It helps disciplined savers plan short to medium-term financial goals by forecasting total savings and interest returns.
+
+## Why Choose a Recurring Deposit?
+
+1. **Disciplined Savings**: Build a habit of investing a fixed sum every month.
+2. **Guaranteed Returns**: Unlike stocks or mutual funds, RDs provide fixed, risk-free interest rates.
+3. **Flexible Options**: Tenure options typically range from 6 months up to 10 years.

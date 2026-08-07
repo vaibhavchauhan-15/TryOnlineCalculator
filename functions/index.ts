@@ -1,3 +1,4 @@
+/// <reference path="../worker-configuration.d.ts" />
 // Cloudflare Pages Function: dynamic locale redirect for the root path "/".
 //
 // Priority:
@@ -44,8 +45,18 @@ function matchAcceptLanguage(header: string | null): string | null {
 /** Extract a named cookie value from the Cookie header string. */
 function getCookie(cookieHeader: string | null, name: string): string | null {
   if (!cookieHeader) return null;
-  const match = cookieHeader.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`));
-  return match ? decodeURIComponent(match[1]) : null;
+  const prefix = name + '=';
+  for (const part of cookieHeader.split('; ')) {
+    const trimmed = part.trimStart();
+    if (trimmed.startsWith(prefix)) {
+      try {
+        return decodeURIComponent(trimmed.slice(prefix.length));
+      } catch {
+        return null;
+      }
+    }
+  }
+  return null;
 }
 
 interface Env {}

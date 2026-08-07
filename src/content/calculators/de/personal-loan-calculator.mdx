@@ -1,0 +1,33 @@
+---
+slug: "personal-loan-calculator"
+category: "finance"
+title: "Privatkredit Rechner - Ratenkredit & Monatsrate"
+description: "Berechnen Sie Monatsrate (EMI), Bearbeitungsgebühren, Zinskosten und Gesamtrückzahlung für Ratenkredite."
+keywords: ["privatkredit rechner","ratenkredit rechner","konsumentenkredit rechner","privatkredit zinsrechner","kreditrechner privat"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "gemini-3.6-flash"
+labels: {"feeAmount":"Bearbeitungsgebühr","field.loanAmount":"Kreditbetrag","field.originationFeePercent":"Bearbeitungsgebühr (%)","field.rate":"Sollzins (p.a.)","field.tenureYears":"Laufzeit (Jahre)","interest":"Gesamte Zinskosten","monthlyEmi":"Monatliche Kreditrate","principal":"Nettokreditbetrag","totalCost":"Gesamtkosten des Kredits","totalInterest":"Zinsen insgesamt"}
+enums: {}
+hints: {}
+chartTitles: {"personalLoan.pieTitle":"Aufteilung der Gesamtkreditkosten"}
+intro: "Berechnen Sie Ihre monatliche Kreditrate (EMI), Gebühren und Gesamtkosten vor Abschluss eines Privatkredits."
+formulaIntro: "Die Kreditrate basiert auf der Annuitätenberechnung unter Berücksichtigung von Einmalgebühren."
+formulaItems: [{"name":"Monatliche Kreditraten-Formel","expr":"EMI = P × r × (1 + r)^n / ((1 + r)^n − 1)","desc":"P = Kreditbetrag, r = monatlicher Zinssatz, n = Laufzeit in Monaten."},{"name":"Gesamtkreditkosten","expr":"Gesamtkosten = (Rate × n) + Gebühren","desc":"Gesamter Rückzahlungsbetrag inklusive aller Zinsen und Gebühren."}]
+howto: ["Geben Sie den gewünschten Kreditbetrag ein.","Tragen Sie den jährlichen Sollzins ein.","Wählen Sie die Laufzeit in Jahren.","Geben Sie etwaige Bearbeitungsgebühren in % ein.","Lesen Sie Ihre monatliche Ratenhöhe und Gesamtkosten ab."]
+examples: [{"title":"15.000 € Privatkredit zu 10,5 % für 3 Jahre mit 2 % Gebühr","body":"Bei 15.000 € zu 10,5 % über 3 Jahre beträgt die Monatsrate ca. 487,49 €. Die Zinsen betragen 2.549,64 € und die Gebühr (300 €) ergibt Gesamtkosten von 17.849,64 €."},{"title":"25.000 € Kredit zu 8,9 % für 5 Jahre ohne Gebühren","body":"25.000 € zu 8,9 % über 5 Jahre ergeben 517,65 € Monatsrate und 6.059 € Gesamtzinsen."}]
+faq: [{"q":"Was ist eine Monatsrate (EMI)?","a":"Die monatliche Kreditrate ist ein fester Teilbetrag aus Zins und Tilgung, der jeden Monat an die Bank gezahlt wird."},{"q":"Sind Bearbeitungsgebühren zulässig?","a":"In Deutschland sind gesonderte Bearbeitungsgebühren bei Verbraucherkrediten unzulässig, fließen in anderen Ländern aber als Einmalkosten ein."}]
+related: ["loan-calculator","auto-loan-calculator","debt-payoff-calculator","credit-card-payoff-calculator"]
+---
+
+## Was ist ein Privatkredit Rechner?
+
+Ein Privatkredit Rechner berechnet die monatliche Ratenbelastung und die Gesamtkosten eines Konsumentenkredits.
+
+## Faktoren für günstige Kreditkonditionen
+
+- **Bonität & Schufa**: Gute Bonität sichert niedrigere Zinsen.
+- **Kreditlaufzeit**: Kürzere Laufzeiten sparen Zinskosten trotz höherer Monatsrate.

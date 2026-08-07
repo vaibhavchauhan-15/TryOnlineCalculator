@@ -1,0 +1,68 @@
+---
+slug: creatinine-clearance-calculator
+category: health
+title: Kreatinin Clearance Rechner (eGFR)
+description: Berechnen Sie die Kreatinin-Clearance (CrCl) und eGFR zur Beurteilung der Nierenfunktion nach Cockcroft-Gault.
+keywords:
+  - kreatinin clearance rechner
+  - cockcroft gault rechner
+  - egfr rechner
+  - nierenfunktion rechner
+  - kreatinin rechner
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: en
+translatedFromVersion: 1
+model: manual
+searchIntent: Meine Kreatinin-Clearance (CrCl) und Nierenfunktion (eGFR) berechnen.
+readingLevel: general
+market: de
+audience: Medizinisches Fachpersonal und Patienten zur Überwachung der Nierengesundheit
+labels:
+  creatinineClearance: Kreatinin-Clearance (CrCl)
+  egfr: Geschätzte GFR (eGFR)
+  stage1Normal: Stadium 1 Normal (≥90)
+  stage2Mild: Stadium 2 Leicht vermindert (60-89)
+  stage3Moderate: Stadium 3 Moderat vermindert (30-59)
+  field.unitSystem: Einheiten
+  field.sex: Geschlecht
+  field.age: Alter
+  field.weight: Gewicht
+  field.weightLb: Gewicht (lb)
+  field.serumCreatinine: Serum-Kreatinin (mg/dL)
+enums:
+  metric: Metrisch (kg)
+  imperial: Imperial (lb)
+  male: Männlich
+  female: Weiblich
+hints:
+  cockcroftMethod: Klinische Formel nach Cockcroft-Gault zur Nierenfunktionsbestimmung
+  unit.mlMin: mL/min
+  unit.mlMin173m2: mL/min/1,73m²
+chartTitles:
+  creatinine.chartStages: Nierenfunktions-Stadien (mL/min)
+intro: Berechnen Sie Ihre Kreatinin-Clearance (CrCl) und eGFR zur Einschätzung der Nierenfunktion nach der Cockcroft-Gault-Formel.
+formulaIntro: Die Cockcroft-Gault-Formel berechnet die Nieren-Filfiltrationsrate aus Serumkreatinin, Alter, Geschlecht und Gewicht.
+formulaItems:
+  - name: Cockcroft-Gault-Formel (Männer)
+    expr: CrCl = ((140 - Alter) · Gewicht) / (72 · Serumkreatinin)
+  - name: Cockcroft-Gault-Formel (Frauen)
+    expr: CrCl = CrCl(Männer) · 0,85
+howto:
+  - Wählen Sie Metrisch (kg) oder Imperial (lb).
+  - Wählen Sie Ihr Geschlecht.
+  - Geben Sie Alter, Gewicht und Ihren Serum-Kreatininwert (mg/dL) ein.
+  - Lesen Sie Ihre Kreatinin-Clearance (mL/min) und Nierenfunktionsstufe ab.
+faq:
+  - q: Was ist eine normale Kreatinin-Clearance?
+    a: Normalwerte liegen in der Regel zwischen 95 und 140 mL/min bei Männern sowie zwischen 85 und 125 mL/min bei Frauen.
+  - q: Was bedeutet ein verringerter Kreatinin-Clearance Wert?
+    a: Ein Wert unter 60 mL/min über einen Zeitraum von mehr als 3 Monaten deutet auf eine eingeschränkte Nierenfunktion hin.
+related:
+  - water-intake-calculator
+  - bmi-calculator
+  - ideal-weight-calculator
+---
+
+Die Kreatinin-Clearance (CrCl) ist ein wichtiger klinischer Parameter zur Messung der Filterleistung der Nieren und zur Dosierungsanpassung von Medikamenten.

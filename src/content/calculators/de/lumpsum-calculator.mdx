@@ -1,0 +1,34 @@
+---
+slug: "lumpsum-calculator"
+category: "finance"
+title: "Einmalanlage Rechner - Lumpsum Rendite & Zinseszins Rechner"
+description: "Berechnen Sie den Endbetrag, Wertzuwachs und Zinseszins einer einmaligen Kapitalanlage über beliebige Anlagezeiträume."
+keywords: ["einmalanlage rechner","lumpsum rechner","einmalzahlung rechner","kapitalanlage rechner","einmalzahlung ertrag rechner"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "gemini-3.6-flash"
+labels: {"balance":"Gesamtes Guthaben","field.investment":"Anfangskapital","field.rate":"Erwartete Rendite (p.a.)","field.tenureYears":"Anlagedauer (Jahre)","growth":"Wertzuwachs","maturityValue":"Zukünftiger Endbetrag","principal":"Anfangskapital","totalGrowth":"Gesamter Wertzuwachs","totalInvested":"Anfangskapital"}
+enums: {}
+hints: {}
+chartTitles: {"lumpsum.growthTitle":"Zinseszins-Wachstum der Einmalanlage","lumpsum.pieTitle":"Anfangskapital vs. Wertzuwachs"}
+intro: "Bei einer Einmalanlage wird ein Geldbetrag einmalig angelegt, um über die Jahre vom Zinseszins zu profitieren. Berechnen Sie Ihren zukünftigen Depotwert."
+formulaIntro: "Die Berechnung der Einmalzahlung basiert auf der Standard-Formel für jährlichen Zinseszins."
+formulaItems: [{"name":"Einmalanlage-Endwert-Formel","expr":"FV = P × (1 + r)^t","desc":"FV = zukünftiger Endbetrag, P = Anfangskapital, r = Jahresrendite, t = Dauer in Jahren."},{"name":"Nettogewinn","expr":"Nettogewinn = FV − P","desc":"Gesamter Gewinn durch Zinseszins über die Laufzeit."}]
+howto: ["Geben Sie Ihren einmaligen Anlagebetrag ein.","Tragen Sie die erwartete jährliche Rendite ein.","Wählen Sie die Anlagedauer in Jahren.","Lesen Sie den zukünftigen Endbetrag und Gewinn direkt ab."]
+examples: [{"title":"100.000 € Einmalzahlung zu 12 % Rendite für 10 Jahre","body":"100.000 € einmalig zu 12 % p.a. ergeben nach 10 Jahren einen Endbetrag von ca. 310.584,82 € (210.584,82 € Gewinn)."},{"title":"250.000 € Einmalzahlung zu 10 % Rendite für 20 Jahre","body":"Eine Einmalanlage von 250.000 € zu 10 % über 20 Jahre wächst auf ca. 1.681.750 € an."}]
+faq: [{"q":"Was ist eine Einmalanlage?","a":"Eine Einmalanlage ist die einmalige Investition eines Geldbetrags in ein Anlageprodukt wie einen Fonds, Aktien oder Festgeld."},{"q":"Wann ist der beste Zeitpunkt für eine Einmalzahlung?","a":"Einmalanlagen erzielen historisch die besten Ergebnisse, wenn sie möglichst früh getätigt werden oder nach Markt-Korrekturen."},{"q":"Wie wirkt der Zinseszins bei Einmalzahlungen?","a":"Jährliche Gewinne werden dem Kapital zugeschlagen und im Folgejahr mitverzinst, was zu exponentiellem Wachstum führt."}]
+related: ["sip-calculator","mutual-fund-calculator","compound-interest-calculator","investment-calculator"]
+---
+
+## Was ist ein Einmalanlage Rechner?
+
+Ein Einmalanlage Rechner ermittelt den zukünftigen Wert einer einmaligen Kapitalanlage. Er veranschaulicht die Hebelwirkung des Zinseszinses über lange Zeiträume.
+
+## Vorteile einer Einmalanlage
+
+1. Volle Marktbeteiligung des Kapitals ab Tag eins.
+2. Exponentielles Wachstum durch Zinseszins.
+3. Kein laufender Buchungsaufwand.

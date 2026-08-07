@@ -53,6 +53,7 @@ const { items, title = 'Frequently asked questions', eyebrow = 'Answers' } = Ast
   .faq-item summary::-webkit-details-marker { display: none; }
   .faq-item summary::after { content: '+'; color: var(--color-mute); font-size: 18px; flex: none; }
   .faq-item[open] summary::after { content: '−'; }
+  .faq-item summary:focus-visible { outline: 2px solid var(--color-link); outline-offset: -2px; border-radius: var(--radius-md); }
   .faq-answer {
     margin: 0;
     padding: 0 1rem 1rem;

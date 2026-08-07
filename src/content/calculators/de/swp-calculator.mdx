@@ -1,0 +1,34 @@
+---
+slug: "swp-calculator"
+category: "finance"
+title: "SWP Rechner - Entnahmeplan & Kapitalverzehr Rechner"
+description: "Berechnen Sie monatliche Entnahmen, verbleibendes Restkapital und Gesamterträge Ihres Entnahmeplans (Systematic Withdrawal Plan)."
+keywords: ["entnahmeplan rechner","swp rechner","monatlicher entnahmeplan","kapitalverzehr rechner","privatrente entnahme rechner"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "gemini-3.6-flash"
+labels: {"balance":"Depotguthaben","field.monthlyWithdrawal":"Monatliche Entnahme","field.rate":"Erwartete Rendite (p.a.)","field.tenureYears":"Dauer (Jahre)","field.totalInvestment":"Anfangskapital","finalBalance":"Restguthaben","totalReturns":"Gesamter Portfolio-Gewinn","totalWithdrawn":"Gesamte Entnahmen","withdrawn":"Entnahmen gesamt"}
+enums: {}
+hints: {}
+chartTitles: {"swp.growthTitle":"Entwicklung des Depotguthabens im Entnahmeplan","swp.pieTitle":"Restkapital vs. Gesamte Entnahmen"}
+intro: "Ein Entnahmeplan (SWP) ermöglicht es Ihnen, monatlich einen festen Geldbetrag aus Ihrem Depot zu entnehmen, während das Restkapital weiter verzinst wird."
+formulaIntro: "Beim Entnahmeplan wird das Guthaben jeden Monat um die Rendite erhöht und um die monatliche Auszahlung vermindert."
+formulaItems: [{"name":"Monatliche Guthaben-Anpassung","expr":"B_m = B_{m-1} × (1 + r/12) − W","desc":"B_m = Guthaben im Monat m, r = Jahresrendite, W = monatliche Entnahmerate."},{"name":"Gesamtertrag","expr":"Gesamtertrag = Restguthaben + Auszahlungen − Anfangskapital","desc":"Nettogewinn des Portfolios über die Entnahmedauer."}]
+howto: ["Geben Sie Ihr Anfangskapital ein.","Tragen Sie die gewünschte monatliche Entnahmerate ein.","Geben Sie die erwartete jährliche Rendite ein.","Wählen Sie die Entnahmedauer in Jahren.","Analysieren Sie das Restkapital und die Summe aller Auszahlungen."]
+examples: [{"title":"500.000 € Depot, 4.000 € monatliche Entnahme bei 8 % p.a. über 10 Jahre","body":"Bei 500.000 € Kapital und 4.000 € monatlicher Auszahlung bei 8 % Rendite entnehmen Sie insgesamt 480.000 € und behalten ca. 294.625 € Restkapital."},{"title":"1.000.000 € Depot, 7.000 € Entnahme bei 9 % p.a. über 15 Jahre","body":"7.000 € monatlich aus 1 Mio. € zu 9 % ergeben 1.260.000 € Auszahlungen bei verbleibenden 1.059.200 € Kapital."}]
+faq: [{"q":"Was ist ein Entnahmeplan (SWP)?","a":"Ein Entnahmeplan ist eine Anlagestrategie, bei der regelmäßig Beträge aus einem Investmentdepot ausgezahlt werden."},{"q":"Für wen eignet sich ein Entnahmeplan?","a":"Entnahmepläne eignen sich besonders für Rentner und Privatfinanciers zur monatlichen Einkommenssicherung."},{"q":"Was passiert, wenn die Entnahmerate höher als die Rendite ist?","a":"Liegen die Auszahlungen über den Renditen, wird das Kapital nach und nach aufgezehrt."}]
+related: ["sip-calculator","mutual-fund-calculator","retirement-calculator","lumpsum-calculator"]
+---
+
+## Was ist ein Entnahmeplan Rechner?
+
+Ein Entnahmeplan Rechner berechnet regelmäßige Auszahlungen aus einem Depot oder Investmentfonds. Er zeigt auf, wie viel Geld Sie monatlich entnehmen können, ohne Ihr Vermögen vorzeitig aufzuzoebnen.
+
+## Vorteile eines Entnahmeplans
+
+1. Zuverlässiges monatliches Zusatzeinkommen.
+2. Weiterverzinssung des verbleibenden Kapitals.
+3. Hohe Flexibilität bei Auszahlungsraten.

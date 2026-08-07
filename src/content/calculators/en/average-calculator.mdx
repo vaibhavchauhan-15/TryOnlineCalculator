@@ -1,18 +1,46 @@
 ---
 slug: "average-calculator"
 category: "math"
-title: "Average Calculator"
-description: "Calculate the mean, median, mode, range and sum of a set of numbers."
-keywords: ["average calculator","mean median mode","sum calculator"]
-calculatorVersion: 1
-seoVersion: 1
-translationVersion: 1
+title: "Average & Mean Median Mode Calculator"
+description: "Calculate mean, median, mode, range, variance, and sum of any number set instantly with step-by-step breakdown."
+keywords: ["average calculator","mean median mode calculator","mean median mode finder","calculate mean median mode"]
+calculatorVersion: 2
+seoVersion: 2
+translationVersion: 2
 source: "en"
 labels: {"count":"Count","field.values":"Values","max":"Max","mean":"Mean","median":"Median","mode":"Mode","range":"Range","sum":"Sum"}
-intro: "Paste or type your numbers separated by commas, spaces or new lines."
-formulaItems: [{"name":"Mean","expr":"mean = sum of values / count"}]
-faq: [{"q":"What is the difference between mean and median?","a":"The mean is the sum divided by the count. The median is the middle value when sorted, which is less affected by extreme outliers."}]
-related: ["percentage-calculator","basic-calculator","average-grade-calculator"]
+intro: "Calculate the central tendency metrics—mean, median, and mode—along with range and sum for any set of numbers."
+formulaItems:
+  - name: "Mean"
+    expr: "Mean = ∑x / N"
+    desc: "Sum of all values divided by total count."
+  - name: "Median"
+    expr: "Middle value (or average of two middle values)"
+    desc: "The middle number when data is sorted in order."
+  - name: "Mode"
+    expr: "Most frequent value"
+    desc: "The number that appears most often in the dataset."
+howto:
+  - "Enter or paste your numbers into the input box separated by commas, spaces, or line breaks."
+  - "The calculator instantly updates the mean, median, mode, sum, range, count, min, and max."
+  - "Review the statistical breakdown to understand how the measures of central tendency differ."
+examples:
+  - title: "Calculating Mean, Median, and Mode"
+    body: "For dataset [4, 8, 8, 12, 18]: Mean = (4+8+8+12+18)/5 = 10. Median = 8 (3rd number). Mode = 8 (appears twice)."
+faq:
+  - q: "What is the difference between mean, median, and mode?"
+    a: "The mean is the numerical average of all values. The median is the middle value when data is ordered from least to greatest. The mode is the value that occurs most frequently in the dataset."
+  - q: "When should I use median instead of mean?"
+    a: "Use the median when your dataset contains extreme outliers or is skewed, as the median is not heavily impacted by extreme values."
+related: ["standard-deviation-calculator","basic-calculator","percentage-calculator"]
 ---
 
-Paste or type your numbers separated by commas, spaces or new lines.
+## Understanding Mean, Median, and Mode
+
+In statistics, **mean**, **median**, and **mode** are the three primary measures of central tendency. Each measure offers a unique perspective on the center point of a dataset:
+
+- **Mean**: The arithmetic average calculated by summing all numbers and dividing by the total count.
+- **Median**: The middle value dividing the upper half of sorted data from the lower half.
+- **Mode**: The value that appears with the highest frequency in the dataset.
+
+This calculator computes all three metrics instantly along with the range, minimum, maximum, and total sum.

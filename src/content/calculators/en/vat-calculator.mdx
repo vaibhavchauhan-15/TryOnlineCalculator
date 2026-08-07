@@ -1,0 +1,30 @@
+---
+slug: "vat-calculator"
+category: "finance"
+title: "VAT Calculator"
+description: "Add VAT to a net price or remove VAT from a gross price at any rate. Instant net, VAT and gross amounts."
+keywords: ["vat calculator","add vat","remove vat","vat calculator uk","value added tax calculator","net to gross calculator","20 percent vat"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+labels: {"field.mode":"Mode","field.amount":"Amount","field.rate":"VAT rate","vatAmount":"VAT amount","netAmount":"Net amount","grossAmount":"Gross amount"}
+enums: {"mode.addVat":"Add VAT (net → gross)","mode.removeVat":"Remove VAT (gross → net)"}
+chartTitles: {"vat.pieTitle":"Net vs VAT"}
+intro: "Enter an amount and VAT rate to instantly see the net price, the VAT amount and the gross total. Switch modes to add VAT to a net figure or extract the VAT already inside a gross figure."
+formulaIntro: "VAT is added on top of the net price or extracted from the gross price."
+formulaItems: [{"name":"Add VAT","expr":"Gross = Net × (1 + rate / 100)"},{"name":"Remove VAT","expr":"Net = Gross / (1 + rate / 100)"},{"name":"VAT amount","expr":"VAT = Gross − Net"}]
+howto: ["Choose whether to add VAT to a net amount or remove it from a gross amount.","Enter the amount.","Set the VAT rate (for example 20%).","Read the net price, VAT amount and gross total below."]
+examples: [{"title":"$100 net at 20% VAT","body":"A $100 net price at 20% VAT adds $20 of VAT for a $120 gross total."},{"title":"$120 gross at 20% VAT","body":"Removing 20% VAT from a $120 gross total gives a $100 net price and $20 of VAT."}]
+faq: [{"q":"How do I remove VAT from a gross price?","a":"Switch to \"Remove VAT\". The calculator divides the gross amount by (1 + rate/100) to recover the original net price, then shows the VAT as the difference."},{"q":"What is the difference between VAT and sales tax?","a":"VAT is charged at each stage of the supply chain and is common in the UK and EU, while US sales tax is charged only once at the final sale. The maths of adding a percentage is the same."},{"q":"What VAT rate should I use?","a":"Use the rate for your country and product. The UK standard rate is 20%, and many EU countries sit between 19% and 25%, with reduced rates for essentials."}]
+related: ["sales-tax-calculator","margin-calculator","markup-calculator","discount-calculator"]
+---
+
+A VAT (value added tax) calculator lets you add tax to a net price or strip it
+out of a gross price in one step. Enter the amount, choose whether you are
+working from a net or gross figure, set the rate, and the net price, VAT amount
+and gross total appear instantly.
+
+It is handy for invoices, quotes and expense checks. Adding VAT multiplies the
+net price by one plus the rate; removing VAT divides the gross price by the same
+factor to recover the original net amount and reveal the tax portion.

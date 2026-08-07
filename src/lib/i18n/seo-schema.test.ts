@@ -26,6 +26,16 @@ test('WebApplication schema uses localized name + inLanguage + locale URL', () =
   assert.equal(s.inLanguage, 'de');
   assert.equal(s.url, 'https://tryonlinecalculator.com/de/gesundheit/bmi-rechner');
   assert.equal(s.isAccessibleForFree, true);
+  // Author defaults to the publishing Organization (EEAT entity signal).
+  assert.equal(s.author['@type'], 'Organization');
+  assert.equal(s.author.name, 'Try Online Calculator');
+  // No dateModified unless one is supplied.
+  assert.equal(s.dateModified, undefined);
+});
+
+test('WebApplication schema carries dateModified when provided', () => {
+  const s = localizedCalculatorSchema('de', { ...OPTS, dateModified: '2026-08-07' }) as Record<string, any>;
+  assert.equal(s.dateModified, '2026-08-07');
 });
 
 test('breadcrumb localizes home + category and prefixes every URL', () => {

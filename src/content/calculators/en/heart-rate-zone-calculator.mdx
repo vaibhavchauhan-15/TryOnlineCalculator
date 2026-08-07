@@ -1,0 +1,64 @@
+---
+slug: heart-rate-zone-calculator
+category: health
+title: Heart Rate Zone Calculator
+description: Calculate your max heart rate and 5 target training intensity zones using the Karvonen heart rate reserve formula.
+keywords:
+  - heart rate zone calculator
+  - karvonen formula calculator
+  - target heart rate
+  - max heart rate calculator
+  - fat burn zone calculator
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: en
+searchIntent: Calculate my maximum heart rate and 5 target training zones.
+readingLevel: general
+market: global
+audience: runners, cyclists, endurance athletes, fitness trainees
+labels:
+  maxHeartRate: Max Heart Rate
+  heartRateReserve: Heart Rate Reserve (HRR)
+  zone1Warmup: Zone 1 (Recovery)
+  zone2FatBurn: Zone 2 (Fat Burn / Aerobic)
+  zone3Aerobic: Zone 3 (Tempo / Endurance)
+  zone4Anaerobic: Zone 4 (Threshold)
+  zone5MaxEffort: Zone 5 (Max Effort)
+  zone1: Zone 1
+  zone2: Zone 2
+  zone3: Zone 3
+  zone4: Zone 4
+  zone5: Zone 5
+  field.age: Age
+  field.restingHeartRate: Resting Heart Rate (BPM)
+hints:
+  zoneMethod: Karvonen formula calculation incorporating resting heart rate
+  unit.bpm: BPM
+chartTitles:
+  heartRate.chartZones: Target Heart Rate Training Zones (BPM)
+intro: Calculate your maximum heart rate and 5 target training intensity zones using the Karvonen heart rate reserve equation.
+formulaIntro: The Karvonen formula calculates target heart rate zones by accounting for both maximum and resting heart rate.
+formulaItems:
+  - name: Max Heart Rate (Tanaka)
+    expr: Max HR = 208 - 0.7 · age
+  - name: Heart Rate Reserve (HRR)
+    expr: HRR = Max HR - Resting HR
+  - name: Target Zone HR (Karvonen)
+    expr: Target HR = Resting HR + (HRR · Intensity%)
+howto:
+  - Enter your age in years.
+  - Enter your morning resting heart rate in beats per minute (BPM).
+  - View your calculated Max HR and target BPM boundaries for all 5 training zones.
+faq:
+  - q: What is Zone 2 training?
+    a: Zone 2 (60% to 70% HRR) builds mitochondrial density and aerobic endurance while utilizing fat as primary fuel.
+  - q: Why is resting heart rate included in Karvonen formula?
+    a: Factoring in resting heart rate adjusts target zones to reflect individual cardiorespiratory fitness levels.
+related:
+  - running-pace-calculator
+  - pace-calculator
+  - calorie-calculator
+---
+
+Heart rate zone training optimizes cardiorespiratory adaptations. Training in specific heart rate zones ensures appropriate stimulus for fat metabolism, aerobic capacity, and anaerobic threshold development.

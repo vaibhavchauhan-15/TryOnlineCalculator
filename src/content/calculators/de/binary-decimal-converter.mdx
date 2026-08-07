@@ -1,0 +1,41 @@
+---
+slug: "binary-decimal-converter"
+category: "math"
+title: "Binär-Dezimal-Umrechner"
+description: "Zahlen zwischen Binär- und Dezimalsystem umrechnen. Zeigt auch Oktal- und Hexadezimal-Äquivalente an."
+keywords: ["binär zu dezimal", "dezimal zu binär", "binär umrechner", "binär rechner", "basenumrechnung rechner", "binärzahl umrechnen", "binär in dezimal umwandeln"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "manual-de-v1"
+searchIntent: "Eine Zahl zwischen Binär- (Basis 2) und Dezimalsystem (Basis 10) umrechnen."
+readingLevel: "general"
+market: "global"
+audience: "Schüler, Programmierer und alle, die Zahlensysteme und Informatik lernen"
+labels: {"field.mode": "Umwandeln", "field.binary": "Binär", "field.decimal": "Dezimal", "decimalValue": "Dezimal", "binaryValue": "Binär", "octalValue": "Oktal", "hexValue": "Hexadezimal"}
+enums: {"mode.binToDec": "Binär → Dezimal", "mode.decToBin": "Dezimal → Binär"}
+intro: "Geben Sie eine Binär- oder Dezimalzahl ein, um zwischen den beiden Systemen umzurechnen. Oktal- und Hex-Äquivalente werden ebenfalls angezeigt."
+formulaIntro: "Binär verwendet die Basis 2; Dezimal die Basis 10."
+formulaItems: [{"name": "Binär zu Dezimal", "expr": "Summe jeder Ziffer × 2^Position (von rechts, beginnend bei 0)"}, {"name": "Dezimal zu Binär", "expr": "Wiederholt durch 2 teilen, Reste von unten nach oben lesen"}]
+howto: ["Wählen Sie Binär → Dezimal oder Dezimal → Binär.", "Geben Sie die umzurechnende Zahl ein.", "Lesen Sie das Ergebnis sowie die Oktal- und Hex-Äquivalente ab."]
+examples: [{"title": "11010110 in Dezimal", "body": "Binär 11010110 = 128 + 64 + 16 + 4 + 2 = 214 in Dezimal, D6 in Hex, 326 in Oktal."}, {"title": "255 in Binär", "body": "Dezimal 255 ergibt 11111111 in Binär (alle 8 Bits gesetzt), FF in Hex, 377 in Oktal."}]
+faq: [{"q": "Wie rechne ich Binär in Dezimal um?", "a": "Multiplizieren Sie jede Binärziffer mit 2 hoch ihrer Position (beginnend bei 0 von rechts) und summieren Sie die Ergebnisse. Beispiel: 1011 = 1×8 + 0×4 + 1×2 + 1×1 = 11."}, {"q": "Wie rechne ich Dezimal in Binär um?", "a": "Teilen Sie die Zahl wiederholt durch 2 und notieren Sie die Reste. Lesen Sie die Reste von unten nach oben, um das Binärergebnis zu erhalten."}, {"q": "Was ist das Binärsystem?", "a": "Das Binärsystem (Basis 2) verwendet nur die Ziffern 0 und 1. Es ist die Grundsprache der Computer, wobei jede Ziffer (Bit) einen Ein/Aus-Zustand darstellt."}, {"q": "Was ist die größte Dezimalzahl mit 8 Bits?", "a": "Mit 8 Bits ist der maximale Wert ohne Vorzeichen 11111111 in Binär, was 255 in Dezimal entspricht."}, {"q": "Was sind Oktal- und Hexadezimalsystem?", "a": "Oktal ist die Basis 8 (Ziffern 0–7), Hexadezimal die Basis 16 (Ziffern 0–9, A–F). Sie sind Kurzformen zum Gruppieren von Binärziffern — 3 Bits je Oktalziffer und 4 Bits je Hexziffer."}]
+related: ["hex-rgb-converter", "basic-calculator", "percentage-calculator", "exponent-calculator"]
+---
+
+Ein Binär-Dezimal-Umrechner übersetzt Zahlen zwischen dem Basis-2-System der
+Computer und dem Basis-10-System, das Menschen täglich nutzen. Geben Sie eine
+Binärfolge wie 11010110 ein und erhalten Sie 214 — oder geben Sie eine
+Dezimalzahl ein und sehen deren Binärdarstellung.
+
+Der Umrechner zeigt außerdem die Oktal- (Basis 8) und Hexadezimal-Äquivalente
+(Basis 16) an und ist damit ein vollständiges Werkzeug zur Basenumrechnung. Das
+ist wertvoll für Informatikstudenten, Programmierer beim Debuggen von Bitmustern
+und alle, die digitale Logik lernen.
+
+Binär ist die Grundlage aller digitalen Datenverarbeitung — jede Datei, jedes
+Bild und jede Anweisung lässt sich letztlich auf Folgen von Nullen und Einsen
+zurückführen. Die Binärumrechnung zu verstehen, ist eine Kernkompetenz in der
+Informatik und Elektrotechnik.

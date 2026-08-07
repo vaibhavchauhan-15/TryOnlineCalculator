@@ -1,0 +1,32 @@
+---
+slug: "amortization-calculator"
+category: "finance"
+title: "Amortization Calculator - Loan Amortization Schedule"
+description: "Calculate loan monthly payments, annual principal vs interest split, and complete amortization schedules."
+keywords: ["amortization calculator","loan amortization calculator","amortization schedule calculator","mortgage amortization calculator"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+labels: {"balance":"Remaining balance","field.loanAmount":"Loan amount","field.rate":"Interest rate (p.a.)","field.termYears":"Loan term (years)","interest":"Interest paid","monthlyPayment":"Monthly payment","principal":"Principal paid","totalInterest":"Total interest paid","totalPaid":"Total amount repaid"}
+enums: {}
+hints: {}
+chartTitles: {"amortization.growthTitle":"Loan Balance & Interest Over Time","amortization.pieTitle":"Principal vs Total Interest Breakdown"}
+intro: "An Amortization Calculator generates a detailed schedule showing how each monthly payment is split between interest charges and principal reduction over the loan term."
+formulaIntro: "Loan amortization calculates fixed monthly payments using compound interest formulas while shifting the payment composition from interest-heavy to principal-heavy over time."
+formulaItems: [{"name":"Monthly Amortization Payment Formula","expr":"PMT = P × [r(1 + r)^n] / [(1 + r)^n − 1]","desc":"PMT = monthly payment, P = loan principal, r = monthly interest rate, n = total months."},{"name":"Monthly Interest Component","expr":"Interest_m = Balance_{m-1} × r","desc":"Interest accrued during month m based on outstanding principal."},{"name":"Monthly Principal Component","expr":"Principal_m = PMT − Interest_m","desc":"Portion of payment reducing loan principal balance."}]
+howto: ["Enter the total loan amount.","Input the annual interest rate percentage.","Select the loan term in years.","View your exact monthly payment, total interest, total paid, and yearly balance trajectory."]
+examples: [{"title":"$250,000 mortgage at 6.5% interest for 30 years","body":"A $250,000 loan at 6.5% over 30 years results in a $1,580.17 monthly payment, costing $318,861.42 in total interest ($568,861.42 total repaid)."},{"title":"$100,000 loan at 7.0% interest for 15 years","body":"Shortening the term to 15 years yields an $898.83 monthly payment and lowers total interest to $61,789.09."}]
+faq: [{"q":"What does loan amortization mean?","a":"Amortization is the process of spreading out a loan into a series of equal periodic payments. Over time, a larger portion of each payment goes toward principal rather than interest."},{"q":"Why is interest so high in the early years of a mortgage?","a":"Because interest is calculated on the remaining loan balance, which is at its highest at the start of the loan."},{"q":"How do extra principal payments affect an amortization schedule?","a":"Extra principal payments directly reduce the balance, skipping future interest charges and shortening the total repayment period."}]
+related: ["mortgage-calculator","loan-calculator","auto-loan-calculator","personal-loan-calculator"]
+---
+
+## What is an Amortization Calculator?
+
+An Amortization calculator creates a schedule tracking how your debt is paid off month by month. It details the precise breakdown of interest versus principal for every installment.
+
+## Benefits of Reviewing Your Amortization Schedule
+
+1. **Visualize Debt Decline**: Watch your principal balance decrease over time.
+2. **Evaluate Refinancing**: Compare interest savings of switching terms or rates.
+3. **Plan Prepayments**: See how extra principal payments shorten loan duration.

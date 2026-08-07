@@ -22,7 +22,7 @@ import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 
 import { SITE } from '../src/lib/seo-site.ts';
-import { enabledLocaleCodes, getLocale, isIndexedLocale } from '../src/lib/i18n/locales.ts';
+import { enabledLocaleCodes, isIndexedLocale } from '../src/lib/i18n/locales.ts';
 import { isStaticPageSlug } from '../src/lib/i18n/slugs.ts';
 import { STATIC_PAGE_LOCALES } from '../src/lib/i18n/seo-head.ts';
 

@@ -1,0 +1,43 @@
+---
+slug: "determinant-calculator"
+category: "math"
+title: "Determinant Calculator — 2x2 & 3x3 Matrix Determinants"
+description: "Calculate the determinant |A| and trace for 2x2 and 3x3 matrices instantly with step-by-step expansion formulas."
+keywords: ["determinant calculator","matrix determinant","det calculator","calculate determinant"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+labels: {"field.dim":"Matrix Dimensions","dim.2x2":"2x2 Matrix","dim.3x3":"3x3 Matrix","field.a11":"A (1,1)","field.a12":"A (1,2)","field.a13":"A (1,3)","field.a21":"A (2,1)","field.a22":"A (2,2)","field.a23":"A (2,3)","field.a31":"A (3,1)","field.a32":"A (3,2)","field.a33":"A (3,3)","determinant":"Determinant |A|","trace":"Matrix Trace tr(A)"}
+intro: "Calculate the determinant det(A) and trace for 2x2 and 3x3 matrices using cofactor expansion formulas."
+formulaItems:
+  - name: "2x2 Determinant"
+    expr: "det(A) = a11·a22 - a12·a21"
+    desc: "Cross-multiplication of 2x2 diagonal elements."
+  - name: "3x3 Determinant"
+    expr: "det(A) = a11(a22·a33 - a23·a32) - a12(a21·a33 - a23·a31) + a13(a21·a32 - a22·a31)"
+    desc: "Cofactor expansion across the first row."
+howto:
+  - "Select matrix dimensions (2x2 or 3x3)."
+  - "Enter matrix element values."
+  - "View the calculated determinant det(A) and matrix trace tr(A)."
+examples:
+  - title: "2x2 Determinant Calculation"
+    body: "For A = [[4, 3], [2, 5]], det(A) = (4×5) - (3×2) = 20 - 6 = 14."
+faq:
+  - q: "What is a matrix determinant?"
+    a: "A determinant is a scalar property of a square matrix used to solve systems of linear equations, invert matrices, and calculate volumes in geometry."
+  - q: "What does a zero determinant mean?"
+    a: "If det(A) = 0, the matrix is singular and non-invertible (it does not have a matrix inverse)."
+related: ["matrix-calculator","scientific-calculator","quadratic-calculator"]
+---
+
+## Understanding Matrix Determinants
+
+The **determinant** of a square matrix is a single scalar value that summarizes key geometrical and algebraic properties of the linear transformation represented by the matrix.
+
+### Applications of Determinants
+
+- **Matrix Invertibility**: A matrix has an inverse if and only if its determinant is non-zero (`det(A) ≠ 0`).
+- **Solving Linear Systems**: Used in Cramer's Rule to solve system of linear equations.
+- **Area and Volume Scaling**: Represents the scaling factor of area (in 2D) or volume (in 3D) transformed by the matrix.

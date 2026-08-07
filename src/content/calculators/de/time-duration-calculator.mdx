@@ -1,0 +1,39 @@
+---
+slug: "time-duration-calculator"
+category: "date-time"
+title: "Zeitdauer-Rechner"
+description: "Berechnen Sie die Dauer zwischen zwei Uhrzeiten in Stunden, Minuten und Sekunden. Mitternachtsüberschreitung wird automatisch erkannt."
+keywords: ["zeitdauer rechner", "stunden minuten rechner", "zeit berechnen", "zeitdifferenz rechner", "verstrichene zeit berechnen", "zeitspanne berechnen", "zeit dauer berechnen"]
+calculatorVersion: 1
+seoVersion: 1
+translationVersion: 1
+source: "en"
+translatedFromVersion: 1
+model: "manual-de-v1"
+searchIntent: "Die verstrichene Zeit zwischen zwei Uhrzeiten berechnen."
+readingLevel: "general"
+market: "global"
+audience: "Alle, die Arbeitszeiten, Reisezeiten oder verstrichene Zeit berechnen müssen"
+labels: {"field.start": "Startzeit", "field.end": "Endzeit", "duration": "Dauer", "totalMinutes": "Gesamtminuten", "totalSeconds": "Gesamtsekunden", "decimalHours": "Dezimalstunden"}
+hints: {"duration.hm": "Dauer-Hinweis"}
+intro: "Geben Sie eine Start- und Endzeit im Format HH:MM ein, um die verstrichene Dauer zu sehen. Mitternachtsüberschreitungen werden automatisch erkannt."
+formulaIntro: "Die Dauer ist die Differenz zwischen End- und Startzeit."
+formulaItems: [{"name": "Dauer", "expr": "Dauer = Endzeit − Startzeit"}, {"name": "Über Mitternacht", "expr": "Wenn Ende < Start: Dauer = (Ende + 24:00) − Start"}]
+howto: ["Geben Sie die Startzeit im Format HH:MM (24-Stunden) ein.", "Geben Sie die Endzeit ein.", "Lesen Sie die Dauer in Stunden und Minuten ab."]
+examples: [{"title": "9:00 bis 17:30", "body": "Von 9:00 bis 17:30 sind es 8 Stunden 30 Minuten (510 Gesamtminuten)."}, {"title": "23:00 bis 02:00 (über Mitternacht)", "body": "Von 23:00 bis 02:00 ergibt über Mitternacht 3 Stunden (180 Minuten)."}]
+faq: [{"q": "Wie berechne ich die Zeitdauer?", "a": "Geben Sie Start- und Endzeit im Format HH:MM ein. Der Rechner ermittelt die Differenz in Stunden und Minuten und erkennt Mitternachtsüberschreitungen automatisch."}, {"q": "Funktioniert es über Mitternacht?", "a": "Ja. Wenn die Endzeit vor der Startzeit liegt (z. B. 23:00 bis 02:00), erkennt der Rechner automatisch die Mitternachtsüberschreitung und gibt 3 Stunden aus."}, {"q": "Kann ich das 12-Stunden-Format verwenden?", "a": "Geben Sie Zeiten im 24-Stunden-Format ein (z. B. 14:30 statt 2:30 PM). Das vermeidet Verwechslungen."}, {"q": "Wie rechne ich Minuten in Stunden und Minuten um?", "a": "Teilen Sie die Gesamtminuten durch 60. Der Quotient sind die Stunden, der Rest die Minuten. Beispiel: 150 Minuten = 2 Stunden 30 Minuten."}]
+related: ["date-difference-calculator", "age-calculator", "business-days-calculator", "countdown-calculator"]
+---
+
+Ein Zeitdauer-Rechner berechnet die verstrichene Zeit zwischen zwei Uhrzeiten.
+Geben Sie Start- und Endzeit im 24-Stunden-Format HH:MM ein und der Rechner
+zeigt sofort die Dauer in Stunden und Minuten, Gesamtminuten und Gesamtsekunden.
+
+Mitternachtsüberschreitungen werden automatisch erkannt — wenn Sie 23:00 als
+Start und 02:00 als Ende eingeben, berechnet er korrekt 3 Stunden. Die
+Dezimalstunden-Aufschlüsselung ist nützlich für Stundenabrechnungen und
+Zeiterfassung.
+
+Dieses Werkzeug eignet sich zum Erfassen von Arbeitszeiten, Berechnen von
+Reisezeiten, Messen von Koch- oder Sportdauer und für die stundenweise
+Abrechnung.

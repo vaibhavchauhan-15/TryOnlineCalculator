@@ -499,4 +499,145 @@ export const healthCalculators: Calculator[] = [
     ],
     related: ['bmi-calculator', 'calorie-calculator', 'bmr-calculator'],
   },
+
+  /* ----------------------------------------------------------- Body Fat % */
+  {
+    slug: 'body-fat-calculator',
+    category: 'health',
+    title: 'Body Fat Percentage Calculator',
+    description: 'Calculate your body fat percentage, fat mass, and lean mass using the U.S. Navy method.',
+    intro: 'Estimate your body fat percentage and body composition using circumference measurements.',
+    keywords: ['body fat calculator', 'navy body fat calculator', 'body fat percentage', 'fat mass', 'lean mass'],
+    inputs: [unitField, genderField, { name: 'age', label: 'Age', type: 'number', suffix: 'yrs', default: 30, min: 1, max: 120, step: 1 }],
+    compute: () => ({ results: [] }),
+    faq: [{ q: 'How accurate is the Navy Method?', a: 'The U.S. Navy method is accurate within 3-4% of DEXA scans for most individuals.' }],
+    related: ['bmi-calculator', 'lean-body-mass-calculator', 'ideal-weight-calculator'],
+  },
+
+  /* ----------------------------------------------------------- Lean Body Mass */
+  {
+    slug: 'lean-body-mass-calculator',
+    category: 'health',
+    title: 'Lean Body Mass Calculator',
+    description: 'Estimate your lean muscle mass using the Boer, James, and Hume formulas.',
+    intro: 'Calculate fat-free muscle mass based on height, weight, and sex.',
+    keywords: ['lean body mass calculator', 'lbm calculator', 'fat free mass', 'muscle mass'],
+    inputs: [unitField, genderField],
+    compute: () => ({ results: [] }),
+    faq: [{ q: 'What is lean body mass?', a: 'Lean body mass is the total weight of your body minus body fat (muscles, bones, organs, water).' }],
+    related: ['body-fat-calculator', 'protein-intake-calculator', 'bmi-calculator'],
+  },
+
+  /* ----------------------------------------------------------- One Rep Max */
+  {
+    slug: 'one-rep-max-calculator',
+    category: 'health',
+    title: 'One Rep Max Calculator',
+    description: 'Calculate your maximum 1RM bench press, squat, or deadlift and rep percentages.',
+    intro: 'Estimate the maximum weight you can lift for one single repetition.',
+    keywords: ['1rm calculator', 'one rep max calculator', 'max lift calculator', 'epley formula', 'brzycki formula'],
+    inputs: [unitField],
+    compute: () => ({ results: [] }),
+    faq: [{ q: 'Which 1RM formula is most accurate?', a: 'Epley and Brzycki are most popular and accurate for sets under 10 repetitions.' }],
+    related: ['protein-intake-calculator', 'calorie-calculator', 'tdee-calculator'],
+  },
+
+  /* ----------------------------------------------------------- Pace Calculator */
+  {
+    slug: 'pace-calculator',
+    category: 'health',
+    title: 'Pace Calculator',
+    description: 'Calculate running, walking, or cycling pace per kilometer and per mile.',
+    intro: 'Work out your pace, time, distance, or speed in seconds.',
+    keywords: ['pace calculator', 'calculate pace', 'running pace', 'speed calculator', 'km per hour'],
+    inputs: [unitField],
+    compute: () => ({ results: [] }),
+    faq: [{ q: 'How is pace calculated?', a: 'Pace is total time in minutes divided by total distance covered.' }],
+    related: ['running-pace-calculator', 'heart-rate-zone-calculator', 'calorie-calculator'],
+  },
+
+  /* ----------------------------------------------------------- Running Pace */
+  {
+    slug: 'running-pace-calculator',
+    category: 'health',
+    title: 'Running Pace Calculator',
+    description: 'Predict 5k, 10k, Half Marathon, and Marathon finish times and target running paces.',
+    intro: 'Calculate target running paces and race finish times using the Riegel predictor.',
+    keywords: ['running pace calculator', 'marathon pace calculator', '5k pace calculator', 'race time predictor'],
+    inputs: [unitField],
+    compute: () => ({ results: [] }),
+    faq: [{ q: 'What is the Riegel race formula?', a: 'Riegel formula predicts race times across different distances based on fatigue progression.' }],
+    related: ['pace-calculator', 'heart-rate-zone-calculator', 'tdee-calculator'],
+  },
+
+  /* ----------------------------------------------------------- Heart Rate Zone */
+  {
+    slug: 'heart-rate-zone-calculator',
+    category: 'health',
+    title: 'Heart Rate Zone Calculator',
+    description: 'Calculate your max heart rate and 5 target training zones using the Karvonen formula.',
+    intro: 'Optimize endurance and fat burning by calculating personalized heart rate zones.',
+    keywords: ['heart rate zone calculator', 'karvonen formula', 'target heart rate', 'max heart rate', 'fat burn zone'],
+    inputs: [],
+    compute: () => ({ results: [] }),
+    faq: [{ q: 'What is Karvonen formula?', a: 'Karvonen formula factors in your resting heart rate to calculate precise target zones.' }],
+    related: ['running-pace-calculator', 'pace-calculator', 'calorie-calculator'],
+  },
+
+  /* ----------------------------------------------------------- Pregnancy Due Date */
+  {
+    slug: 'pregnancy-due-date-calculator',
+    category: 'health',
+    title: 'Pregnancy Due Date Calculator',
+    description: 'Calculate your estimated due date, current gestational week, and trimester timeline.',
+    intro: 'Find your baby due date using last period date, conception date, or IVF transfer.',
+    keywords: ['pregnancy due date calculator', 'due date calculator', 'edd calculator', 'pregnancy week calculator'],
+    inputs: [],
+    compute: () => ({ results: [] }),
+    faq: [{ q: 'How is due date calculated?', a: 'Naegele’s rule adds 280 days (40 weeks) to the first day of your last menstrual period.' }],
+    related: ['ovulation-calculator', 'water-intake-calculator', 'bmi-calculator'],
+  },
+
+  /* ----------------------------------------------------------- Ovulation Calculator */
+  {
+    slug: 'ovulation-calculator',
+    category: 'health',
+    title: 'Ovulation Calculator',
+    description: 'Estimate your ovulation day, fertile window, and upcoming period dates.',
+    intro: 'Calculate your most fertile days of the month to plan conception or track cycle.',
+    keywords: ['ovulation calculator', 'fertile window calculator', 'conception calculator', 'period cycle calculator'],
+    inputs: [],
+    compute: () => ({ results: [] }),
+    faq: [{ q: 'When does ovulation occur?', a: 'Ovulation typically occurs 14 days before the start of your next period.' }],
+    related: ['pregnancy-due-date-calculator', 'water-intake-calculator', 'bmi-calculator'],
+  },
+
+  /* ----------------------------------------------------------- Protein Intake */
+  {
+    slug: 'protein-intake-calculator',
+    category: 'health',
+    title: 'Protein Intake Calculator',
+    description: 'Calculate your daily protein intake requirement in grams for muscle gain, cutting, or endurance.',
+    intro: 'Find out how much protein you need per day based on body weight and activity goal.',
+    keywords: ['protein intake calculator', 'daily protein requirement', 'how much protein do i need', 'protein calculator'],
+    inputs: [unitField],
+    compute: () => ({ results: [] }),
+    faq: [{ q: 'How much protein for muscle growth?', a: 'For muscle hypertrophy, aim for 1.6 to 2.2 grams of protein per kilogram of body weight.' }],
+    related: ['macro-calculator', 'calorie-calculator', 'tdee-calculator', 'one-rep-max-calculator'],
+  },
+
+  /* ----------------------------------------------------------- Creatinine Clearance */
+  {
+    slug: 'creatinine-clearance-calculator',
+    category: 'health',
+    title: 'Creatinine Clearance Calculator',
+    description: 'Estimate creatinine clearance (CrCl) and eGFR using Cockcroft-Gault equation.',
+    intro: 'Calculate renal function and kidney clearance rate based on serum creatinine, age, and weight.',
+    keywords: ['creatinine clearance calculator', 'cockcroft gault calculator', 'egfr calculator', 'kidney function calculator'],
+    inputs: [unitField, genderField],
+    compute: () => ({ results: [] }),
+    faq: [{ q: 'What is normal creatinine clearance?', a: 'Normal values are generally 90-120 mL/min for healthy adults.' }],
+    related: ['water-intake-calculator', 'bmi-calculator', 'ideal-weight-calculator'],
+  },
 ];
+
