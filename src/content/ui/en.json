@@ -51,7 +51,8 @@
     "keypadCopy": "Copy result",
     "keypadCopied": "Copied result",
     "keypadExpr": "Expression (tap a value to edit it)",
-    "keypadNoscript": "This calculator runs entirely in your browser and needs JavaScript to work. Please enable JavaScript, or use one of our other calculators that show a full worked example on the page."
+    "keypadNoscript": "This calculator runs entirely in your browser and needs JavaScript to work. Please enable JavaScript, or use one of our other calculators that show a full worked example on the page.",
+    "reviewed": "Reviewed"
   },
   "errors": {
     "404Title": "Page Not Found",

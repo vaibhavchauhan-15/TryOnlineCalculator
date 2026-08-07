@@ -47,7 +47,6 @@ const fullTitle = title.includes('Try Online Calculator') ? title : `${title} | 
 const ogImage = ogImageProp
   ? (ogImageProp.startsWith('http') ? ogImageProp : `${site}${ogImageProp}`)
   : `${site}/web-app-manifest-512x512.png`;
-const keywordsContent = keywords.length ? keywords.join(', ') : undefined;
 const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 ---
 
@@ -112,7 +111,6 @@ const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    {keywordsContent && <meta name="keywords" content={keywordsContent} />}
     <meta name="author" content="Try Online Calculator" />
     <meta name="publisher" content="Try Online Calculator" />
     <meta name="referrer" content="no-referrer-when-downgrade" />

@@ -41,7 +41,8 @@
     "keypadCopy": "Ergebnis kopieren",
     "keypadCopied": "Ergebnis kopiert",
     "keypadExpr": "Ausdruck (tippen Sie auf einen Wert, um ihn zu bearbeiten)",
-    "keypadNoscript": "Dieser Rechner läuft vollständig in Ihrem Browser und benötigt JavaScript. Bitte aktivieren Sie JavaScript oder nutzen Sie einen unserer anderen Rechner, die ein vollständiges Rechenbeispiel auf der Seite zeigen."
+    "keypadNoscript": "Dieser Rechner läuft vollständig in Ihrem Browser und benötigt JavaScript. Bitte aktivieren Sie JavaScript oder nutzen Sie einen unserer anderen Rechner, die ein vollständiges Rechenbeispiel auf der Seite zeigen.",
+    "reviewed": "Zuletzt geprüft"
   },
   "categories": {
     "finance": "Finanzen",

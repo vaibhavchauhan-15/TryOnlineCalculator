@@ -15,6 +15,9 @@ https://tryonlinecalculator.pages.dev/*
 https://master.tryonlinecalculator.pages.dev/*
   X-Robots-Tag: noindex
 
+https://try-online-calculator.vercel.app/*
+  X-Robots-Tag: noindex
+
 # ── Security headers for every response ──────────────────────────────
 #
 # Content-Security-Policy: baseline policy that locks down sources while
